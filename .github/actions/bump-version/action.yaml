@@ -5,6 +5,10 @@ inputs:
   git-token:
     description: The GitHub Token to use
     required: true
+  dry-run:
+    type: boolean
+    required: false
+    default: false
 outputs:
   chart-version: 
     value: ${{ steps.setversion.outputs.version }}
@@ -33,6 +37,7 @@ runs:
 
     - name: Create tag
       uses: rickstaa/action-create-tag@v1
+      if: inputs.dry-run == false
       id: create_tag
       with:
         tag: charts-${{ steps.semvers.outputs.minor }}
