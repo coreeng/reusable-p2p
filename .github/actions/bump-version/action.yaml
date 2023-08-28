@@ -1,0 +1,47 @@
+name: bump-version
+description: Bump the version
+
+inputs:
+  git-token:
+    description: The GitHub Token to use
+    required: true
+outputs:
+  chart-version: 
+    value: ${{ steps.setversion.outputs.version }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  
+        
+    - name: Get Previous tag
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      with:
+        prefix: v
+        fallback: v0.0.0
+      env:
+        GITHUB_TOKEN: "${{ inputs.git-token }}"
+
+
+    - name: Get next minor version
+      id: semvers
+      uses: "WyriHaximus/github-action-next-semvers@v1"
+      with:
+        version: ${{ steps.previousversion.outputs.version }} 
+
+    - name: Create tag
+      uses: rickstaa/action-create-tag@v1
+      id: create_tag
+      with:
+        tag: charts-${{ steps.semvers.outputs.minor }}
+        tag_exists_error: true
+
+    - name: Set bumped version in ourput
+      id: setversion
+      shell: bash
+      run: |
+        echo "version=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
+    
+

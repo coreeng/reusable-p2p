@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - initial-p2p
+
+jobs:
+  p2p:
+    uses: ./.github/workflows/p2p.yaml
+    with:
+      project-id: PROJECT-ID
+      project-number: PROJECT-NUMBER
+      tenant-name: TEST-TENANT
+      dry-run: true
+
