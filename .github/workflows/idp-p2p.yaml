@@ -1,4 +1,4 @@
-name: P2P
+name: IDP P2P
 
 on:
   workflow_call:

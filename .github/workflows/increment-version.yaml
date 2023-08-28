@@ -1,5 +1,5 @@
 
-name: p2p-command
+name: increment-version
 
 on:
   workflow_call:

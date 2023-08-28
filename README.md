@@ -1,9 +1,10 @@
-# reusable-p2p
-Reusable Github Actions P2P
+# Reusable P2P
+
+This is a reusable Github Actions P2P for CECG's IDP
 
 ## Usage
 
-Create a workflow on your repository to use the p2p.yaml workflow
+Create a workflow on your repository to use the idp-p2p.yaml workflow
 
 ```
 name: P2P
@@ -52,4 +53,4 @@ p2p-dev:  ## Deploys to dev environment
 These will be your entrypoint. Any custom action you'd like the pipeline to do should be defined as dependencies on these ones.
 
 ## Versioning
-This pipeline uses semantic versioning. When creating your pipeline, check the latest version. (eg `uses: coreeng/reusable-p2p/.github/workflows/p2p.yaml@v0.0.2`)
+This pipeline uses semantic versioning. When creating your pipeline, check the latest version. (eg `uses: coreeng/reusable-p2p/.github/workflows/idp-p2p.yaml@v0.0.2`)
