@@ -28,7 +28,7 @@ runs:
       env:
         GITHUB_TOKEN: "${{ inputs.git-token }}"
 
-     - name: get previous version from tag
+    - name: get previous version from tag
       id: previousversion
       shell: bash
       run: |
