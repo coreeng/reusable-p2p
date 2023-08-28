@@ -4,9 +4,6 @@ name: p2p-command
 on:
   workflow_call:
     inputs:
-      git-token:
-        description: The GitHub Token to use
-        required: true
       dry-run:
         type: boolean
         required: false
@@ -33,7 +30,7 @@ jobs:
         prefix: v
         fallback: v0.0.0
       env:
-        GITHUB_TOKEN: "${{ inputs.git-token }}"
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
     - name: get previous version from tag
       id: previousversion

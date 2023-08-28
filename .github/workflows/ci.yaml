@@ -10,7 +10,6 @@ jobs:
   increment-version:
     uses: ./.github/workflows/increment-version.yaml   
     with: 
-      git-token: ${{secrets.GITHUB_TOKEN}}
       dry-run: true
   p2p:
     uses: ./.github/workflows/p2p.yaml
