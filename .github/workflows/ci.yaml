@@ -16,7 +16,7 @@ jobs:
     - name: Increment version
       uses: ./.github/actions/bump-version
       with: 
-        git_token: ${{secrets.GITHUB_TOKEN}}
+        git-token: ${{secrets.GITHUB_TOKEN}}
         dry-run: true
   p2p:
     uses: ./.github/workflows/p2p.yaml
