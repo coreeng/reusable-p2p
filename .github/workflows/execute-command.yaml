@@ -19,7 +19,9 @@ on:
         required: false
         type: boolean
         default: false
-
+env:
+  REGISTRY: europe-west2-docker.pkg.dev/${{ inputs.project-id }}/tenant
+  
 jobs:
   run-command:
     name: command-${{ inputs.command }}
