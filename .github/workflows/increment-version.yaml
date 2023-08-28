@@ -1,20 +1,27 @@
-name: bump-version
-description: Bump the version
 
-inputs:
-  git-token:
-    description: The GitHub Token to use
-    required: true
-  dry-run:
-    type: boolean
-    required: false
-    default: false
-outputs:
-  chart-version: 
-    value: ${{ steps.setversion.outputs.version }}
-runs:
-  using: "composite"
-  steps:
+name: p2p-command
+
+on:
+  workflow_call:
+    inputs:
+      git-token:
+        description: The GitHub Token to use
+        required: true
+      dry-run:
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  increment-version:
+    name: increment-version
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0  
@@ -53,5 +60,3 @@ runs:
       shell: bash
       run: |
         echo "version=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
-    
-

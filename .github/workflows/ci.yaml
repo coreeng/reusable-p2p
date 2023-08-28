@@ -8,16 +8,10 @@ on:
 
 jobs:
   increment-version:
-    name: increment-version-dry-run
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      
-    - name: Increment version
-      uses: ./.github/actions/bump-version
-      with: 
-        git-token: ${{secrets.GITHUB_TOKEN}}
-        dry-run: true
+    uses: ./.github/workflows/increment-version.yaml   
+    with: 
+      git-token: ${{secrets.GITHUB_TOKEN}}
+      dry-run: true
   p2p:
     uses: ./.github/workflows/p2p.yaml
     with:

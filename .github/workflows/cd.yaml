@@ -9,12 +9,6 @@ concurrency: cd-main
 
 jobs:
   increment-version:
-    name: increment-version
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Increment version
-      uses: ./.github/actions/bump-version
-      with: 
-        git-token: ${{secrets.GITHUB_TOKEN}}
+    uses: ./.github/workflows/increment-version.yaml   
+    with: 
+      git-token: ${{secrets.GITHUB_TOKEN}}

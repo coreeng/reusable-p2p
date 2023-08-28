@@ -24,7 +24,6 @@ env:
   WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
 
 
-
 jobs:
   setup:
     runs-on: ubuntu-latest
