@@ -20,7 +20,7 @@ on:
 
 env:
   REGISTRY: europe-west2-docker.pkg.dev/${{ inputs.project-id }}/tenant
-  SERVICE_ACCOUNT: p2p-${{ inputs.tenant_name }}@${{ inputs.project-id }}.iam.gserviceaccount.com
+  SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.project-id }}.iam.gserviceaccount.com
   WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
 
 
