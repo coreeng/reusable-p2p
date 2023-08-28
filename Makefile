@@ -16,7 +16,7 @@ p2p-functional: ## Execute functional tests
 	echo "##### EXECUTING P2P-FUNCTIONAL #####"
 
 .PHONY: p2p-nft
-p2p-nft:  ## Execute functional tests
+p2p-nft:  ## Execute non-functional tests
 	echo "##### EXECUTING P2P-NFT #####"
 
 .PHONY: p2p-dev
