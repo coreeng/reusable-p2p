@@ -5,12 +5,12 @@ on:
     branches:
       - main
 
+
 concurrency: cd-main
 
-permissions:
-  contents: read
-  id-token: write
   
 jobs:
   increment-version:
     uses: ./.github/workflows/increment-version.yaml
+    secrets:
+      git-token: ${{ secrets.GITHUB_TOKEN }}

@@ -3,6 +3,9 @@ name: increment-version
 
 on:
   workflow_call:
+    secrets:
+      git-token:
+        required: true
     inputs:
       dry-run:
         type: boolean
@@ -14,16 +17,16 @@ jobs:
     name: increment-version
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      id-token: write
-
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0  
     - name: Configure Git
       run: |
+        echo Input ${{ secrets.git-token }}
+        echo Secret ${{ secrets.GITHUB_TOKEN  }}
+        echo Actor "$GITHUB_ACTOR"
+
         git config user.name "$GITHUB_ACTOR"
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"    
         
@@ -34,7 +37,7 @@ jobs:
         prefix: v
         fallback: v0.0.0
       env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_TOKEN: ${{ secrets.git-token }}
 
     - name: get previous version from tag
       id: previousversion

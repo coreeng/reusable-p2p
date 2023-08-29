@@ -9,8 +9,11 @@ on:
 jobs:
   increment-version:
     uses: ./.github/workflows/increment-version.yaml   
+    secrets:
+      git-token: ${{ secrets.GITHUB_TOKEN }}
     with: 
       dry-run: true
+      
   p2p:
     uses: ./.github/workflows/idp-p2p.yaml
     with:
