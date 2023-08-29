@@ -1,0 +1,12 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: cd-main
+
+jobs:
+  increment-version:
+    uses: ./.github/workflows/increment-version.yaml
