@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      
+
 
 concurrency: cd-main
 
@@ -15,3 +15,5 @@ permissions:
 jobs:
   increment-version:
     uses: ./.github/workflows/increment-version.yaml
+    secrets:
+      git-token: ${{ secrets.GITHUB_TOKEN }}
