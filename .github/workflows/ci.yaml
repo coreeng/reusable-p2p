@@ -11,6 +11,7 @@ jobs:
     uses: ./.github/workflows/increment-version.yaml   
     with: 
       dry-run: true
+      git-token: ${{ secrets.GITHUB_TOKEN }}
   p2p:
     uses: ./.github/workflows/idp-p2p.yaml
     with:
