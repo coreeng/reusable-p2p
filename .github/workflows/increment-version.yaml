@@ -27,7 +27,7 @@ jobs:
         fetch-depth: 0  
     - name: Configure Git
       run: |
-        echo Input ${{ inputs.git-token }}
+        echo Input ${{ secrets.git-token }}
         echo Secret ${{ secrets.GITHUB_TOKEN  }}
         git config user.name "$GITHUB_ACTOR"
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"    
@@ -39,7 +39,7 @@ jobs:
         prefix: v
         fallback: v0.0.0
       env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_TOKEN: ${{ secrets.git-token }}
 
     - name: get previous version from tag
       id: previousversion
