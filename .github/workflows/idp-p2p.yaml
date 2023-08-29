@@ -68,8 +68,8 @@ jobs:
 
   dev-deploy:
     name: dev-deploy
+    if: github.ref == 'refs/heads/main'
     needs: [nft-test, setup]
-    if: github.ref_name == 'main'
     uses: ./.github/workflows/execute-command.yaml
     with:
       command: p2p-dev
