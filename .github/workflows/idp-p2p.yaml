@@ -17,7 +17,6 @@ on:
         type: boolean
         default: false
 
-
 env:
   REGISTRY: europe-west2-docker.pkg.dev/${{ inputs.project-id }}/tenant
   SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.project-id }}.iam.gserviceaccount.com
@@ -67,7 +66,7 @@ jobs:
       project-id: ${{ inputs.project-id }}
       dry-run: ${{ inputs.dry-run }}
 
-  dev-deploy: 
+  dev-deploy:
     name: dev-deploy
     needs: [nft-test, setup]
     if: github.ref_name == 'main'
