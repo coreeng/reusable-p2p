@@ -17,10 +17,6 @@ jobs:
     name: increment-version
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      id-token: write
-
     steps:
     - uses: actions/checkout@v3
       with:
@@ -29,6 +25,8 @@ jobs:
       run: |
         echo Input ${{ secrets.git-token }}
         echo Secret ${{ secrets.GITHUB_TOKEN  }}
+        echo Actor "$GITHUB_ACTOR"
+
         git config user.name "$GITHUB_ACTOR"
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"    
         
