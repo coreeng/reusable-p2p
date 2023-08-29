@@ -8,9 +8,6 @@ on:
 
 concurrency: cd-main
 
-permissions:
-  contents: read
-  id-token: write
   
 jobs:
   increment-version:

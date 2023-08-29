@@ -12,7 +12,7 @@ jobs:
     secrets:
       git-token: ${{ secrets.GITHUB_TOKEN }}
     with: 
-      dry-run: false
+      dry-run: true
       
   p2p:
     uses: ./.github/workflows/idp-p2p.yaml
