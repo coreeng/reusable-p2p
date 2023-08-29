@@ -6,7 +6,6 @@ on:
     secrets:
       git-token:
         required: true
-        type: string
     inputs:
       dry-run:
         type: boolean
