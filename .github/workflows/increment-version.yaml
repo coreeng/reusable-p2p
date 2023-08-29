@@ -49,7 +49,7 @@ jobs:
       if: inputs.dry-run == false
       id: create_tag
       with:
-        tag: charts-${{ steps.semvers.outputs.minor }}
+        tag: v${{ steps.semvers.outputs.minor }}
         tag_exists_error: true
 
     - name: Set bumped version in ourput
