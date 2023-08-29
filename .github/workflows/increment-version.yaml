@@ -60,7 +60,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.git-token }}
       with:
-        branch: release-${{ steps.semvers.outputs.minor }}
+        branch: v${{ steps.semvers.outputs.minor }}
 
     - name: Set bumped version in ourput
       id: setversion
