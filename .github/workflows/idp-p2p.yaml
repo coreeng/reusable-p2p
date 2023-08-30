@@ -12,9 +12,6 @@ on:
       tenant-name:
         required: true
         type: string
-      downstream-version:
-        required: true
-        type: string
       dry-run:
         required: false
         type: boolean
