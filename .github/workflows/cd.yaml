@@ -21,3 +21,5 @@ jobs:
     uses: ./.github/workflows/increment-version.yaml
     secrets:
       git-token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      downstream-version: ${{ github.ref_name }}

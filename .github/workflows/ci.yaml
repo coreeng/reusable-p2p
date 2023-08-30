@@ -21,4 +21,5 @@ jobs:
       project-number: PROJECT-NUMBER
       tenant-name: TEST-TENANT
       dry-run: true
+      downstream-version: ${{ github.ref_name }}
 
