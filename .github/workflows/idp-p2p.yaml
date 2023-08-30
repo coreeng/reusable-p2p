@@ -37,7 +37,7 @@ jobs:
           echo "service_account=$SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
   build:
     needs: [setup]
-    uses: ./.github/workflows/execute-command.yaml
+    uses: coreeng/reusable-p2p/.github/workflows/execute-command.yaml@v0.4.0
     with:
       command: p2p-build
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
@@ -47,7 +47,7 @@ jobs:
 
   functional-test:
     needs: [build, setup]
-    uses: ./.github/workflows/execute-command.yaml
+    uses: coreeng/reusable-p2p/.github/workflows/execute-command.yaml@v0.4.0
     with:
       command: p2p-functional
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
@@ -58,7 +58,7 @@ jobs:
   nft-test:
     name: nft-test
     needs: [functional-test, setup]
-    uses: ./.github/workflows/execute-command.yaml
+    uses: coreeng/reusable-p2p/.github/workflows/execute-command.yaml@v0.4.0
     with:
       command: p2p-nft
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
@@ -70,7 +70,7 @@ jobs:
     name: dev-deploy
     if: github.ref == 'refs/heads/main'
     needs: [nft-test, setup]
-    uses: ./.github/workflows/execute-command.yaml
+    uses: coreeng/reusable-p2p/.github/workflows/execute-command.yaml@v0.4.0
     with:
       command: p2p-dev
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
