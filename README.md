@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   p2p:
-    uses: coreeng/reusable-p2p/.github/workflows/p2p.yaml@v0.0.1
+    uses: coreeng/reusable-p2p/.github/workflows/idp-p2p.yaml@v0.0.1
     with:
       project-id: ${{ vars.PROJECT_ID }}
       project-number: ${{ vars.PROJECT_NUMBER }}
