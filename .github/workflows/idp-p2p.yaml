@@ -40,7 +40,7 @@ jobs:
           echo "service_account=$SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
   build:
     needs: [setup]
-    uses: coreeng/reusable-p2p/.github/workflows/execute-command.yaml@${{ input.downstream-version }}
+    uses: coreeng/reusable-p2p/.github/workflows/execute-command.yaml@${{ inputs.downstream-version }}
     with:
       command: p2p-build
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
