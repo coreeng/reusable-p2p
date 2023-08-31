@@ -16,7 +16,7 @@ jobs:
 
   test_execute_command:
     needs: [build, setup]
-    uses: c./.github/workflows/execute-command.yaml
+    uses: ./.github/workflows/execute-command.yaml
     secrets:
       env_vars: |
         TEST_VARIABLE=value
@@ -26,10 +26,10 @@ jobs:
       service-account: SERVICE_ACCOUNT
       project-id: TEST-TENANT
       dry-run: true
-      
+
   test_execute_command_without_env_vars:
     needs: [build, setup]
-    uses: c./.github/workflows/execute-command.yaml
+    uses: ./.github/workflows/execute-command.yaml
     secrets:
       env_vars: |
         TEST_VARIABLE=value
