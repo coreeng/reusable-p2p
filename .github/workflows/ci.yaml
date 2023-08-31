@@ -15,7 +15,6 @@ jobs:
       dry-run: true
 
   test_execute_command:
-    needs: [build, setup]
     uses: ./.github/workflows/execute-command.yaml
     secrets:
       env_vars: |
@@ -28,7 +27,6 @@ jobs:
       dry-run: true
 
   test_execute_command_without_env_vars:
-    needs: [build, setup]
     uses: ./.github/workflows/execute-command.yaml
     secrets:
       env_vars: |
