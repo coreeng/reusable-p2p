@@ -22,3 +22,7 @@ p2p-nft:  ## Execute non-functional tests
 .PHONY: p2p-dev
 p2p-dev:  ## Deploys to dev environment
 	echo "##### EXECUTING P2P-DEV #####"
+
+.PHONY: test-var-print 
+test-var-print :## Test task
+	echo $${TEST_VARIABLE}
