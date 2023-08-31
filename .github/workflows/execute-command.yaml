@@ -2,6 +2,8 @@ name: p2p-command
 
 on:
   workflow_call:
+    secrets:
+      env_vars: false
     inputs:
       command:
         required: true 
@@ -96,6 +98,14 @@ jobs:
           registry: europe-west2-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
+
+      - name: Decode environment variables
+        run: |
+          for i in $env_vars; do
+            i=$(echo $i | sed 's/=.*//g')=$(echo ${i#*=} | base64 -di | base64 -di)
+            echo ::add-mask::${i#*=}
+            printf '%s\n' $i >> $GITHUB_ENV
+          done
 
       - name: Run Command
         id: run-command
