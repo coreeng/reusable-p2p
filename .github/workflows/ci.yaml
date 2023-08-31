@@ -13,7 +13,28 @@ jobs:
       git-token: ${{ secrets.GITHUB_TOKEN }}
     with: 
       dry-run: true
-      
+
+  test_execute_command:
+    uses: ./.github/workflows/execute-command.yaml
+    secrets:
+      env_vars: |
+        TEST_VARIABLE=value
+    with:
+      command: test-var-print
+      workload-identity-provider: WORKLOAD_IP
+      service-account: SERVICE_ACCOUNT
+      project-id: TEST-TENANT
+      dry-run: true
+
+  test_execute_command_without_env_vars:
+    uses: ./.github/workflows/execute-command.yaml
+    with:
+      command: p2p-build
+      workload-identity-provider: WORKLOAD_IP
+      service-account: SERVICE_ACCOUNT
+      project-id: TEST-TENANT
+      dry-run: true
+
   p2p:
     uses: ./.github/workflows/idp-p2p.yaml
     with:
