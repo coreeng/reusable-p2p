@@ -23,12 +23,17 @@ permissions:
 jobs:
   p2p:
     uses: coreeng/reusable-p2p/.github/workflows/idp-p2p.yaml@v0.0.1
+    secrets:
+      env_vars: |
+        TEST_VARIABLE=value
     with:
       project-id: ${{ vars.PROJECT_ID }}
       project-number: ${{ vars.PROJECT_NUMBER }}
       tenant-name: ${{ vars.TENANT_NAME }}
 
 ```
+
+The `env_vars` secret will be use to propagate env vars to your Makefile calls. They will be redacted from the output so you can pass sensitive information like credentials as they're coming in as `secrets`.
 ### Makefile
 The P2P pipeline assumes you have the following tasks on your makefile:
 
