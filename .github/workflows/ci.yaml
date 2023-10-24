@@ -35,7 +35,7 @@ jobs:
       dry-run: true
 
   p2p:
-    uses: ./.github/workflows/idp-p2p.yaml
+    uses: ./.github/workflows/p2p.yaml
     secrets:
       env_vars: |
         TEST_VARIABLE=value
