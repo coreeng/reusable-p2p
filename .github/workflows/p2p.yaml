@@ -1,4 +1,4 @@
-name: IDP P2P
+name: Developer Platform P2P
 
 on:
   workflow_call:
@@ -40,7 +40,7 @@ jobs:
           echo "service_account=$SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
   build:
     needs: [setup]
-    uses: coreeng/reusable-p2p/.github/workflows/execute-command.yaml@v0.7.0
+    uses: coreeng/p2p/.github/workflows/execute-command.yaml@v0.7.0
     secrets:
       env_vars: ${{ secrets.env_vars }}
     with:
