@@ -17,7 +17,3 @@ jobs:
       project-number: PROJECT-NUMBER
       tenant-name: TEST-TENANT
       dry-run: true
-  increment-version:
-    uses: ./.github/workflows/increment-version.yaml
-    secrets:
-      git-token: ${{ secrets.GITHUB_TOKEN }}
