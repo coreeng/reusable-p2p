@@ -1,10 +1,10 @@
 # Reusable P2P
 
-This is a reusable Github Actions P2P for CECG's IDP
+This is a reusable Github Actions P2P for CECG's Developer Platform
 
 ## Usage
 
-Create a workflow on your repository to use the idp-p2p.yaml workflow
+Create a workflow on your repository to use the p2p.yaml workflow
 
 ```
 name: P2P
@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   p2p:
-    uses: coreeng/reusable-p2p/.github/workflows/idp-p2p.yaml@v0.0.1
+    uses: coreeng/reusable-p2p/.github/workflows/p2p.yaml@v0.0.1
     secrets:
       env_vars: |
         TEST_VARIABLE=value
