@@ -11,7 +11,7 @@ concurrency: cd-main
   
 jobs:
   p2p:
-    uses: ./.github/workflows/idp-p2p.yaml
+    uses: ./.github/workflows/p2p.yaml
     with:
       project-id: PROJECT-ID
       project-number: PROJECT-NUMBER
