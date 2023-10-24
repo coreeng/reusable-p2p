@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - initial-p2p
 
 jobs:
   increment-version:
