@@ -15,13 +15,17 @@ on:
       tenant-name:
         required: true
         type: string
+      region:
+        required: false
+        type: string
+        default: europe-west2
       dry-run:
         required: false
         type: boolean
         default: false
 
 env:
-  REGISTRY: europe-west2-docker.pkg.dev/${{ inputs.project-id }}/tenant
+  REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
   SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.project-id }}.iam.gserviceaccount.com
   WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
 
