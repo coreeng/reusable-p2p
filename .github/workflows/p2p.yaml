@@ -6,6 +6,9 @@ on:
       env_vars:
         required: false
     inputs:
+      env-name:
+        required: true
+        type: string
       project-id:
         required: true
         type: string
@@ -44,11 +47,12 @@ jobs:
           echo "service_account=$SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
   build:
     needs: [setup]
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@v0.14.0
+    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
     secrets:
       env_vars: ${{ secrets.env_vars }}
     with:
       command: p2p-build
+      env-name: ${{ inputs.env-name }}
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
@@ -56,11 +60,12 @@ jobs:
 
   functional-test:
     needs: [build, setup]
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@v0.14.0
+    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
     secrets:
       env_vars: ${{ secrets.env_vars }}
     with:
       command: p2p-functional
+      env-name: ${{ inputs.env-name }}
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
@@ -71,9 +76,10 @@ jobs:
     needs: [functional-test, setup]
     secrets:
       env_vars: ${{ secrets.env_vars }}
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@v0.14.0
+    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
     with:
       command: p2p-nft
+      env-name: ${{ inputs.env-name }}
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
@@ -85,9 +91,10 @@ jobs:
     needs: [nft-test, setup]
     secrets:
       env_vars: ${{ secrets.env_vars }}
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@v0.14.0
+    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
     with:
       command: p2p-dev
+      env-name: ${{ inputs.env-name }}
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
