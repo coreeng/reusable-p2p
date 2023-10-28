@@ -1,0 +1,119 @@
+name: Developer Platform
+
+on:
+  workflow_call:
+    inputs:
+      action:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      platform:
+        required: true
+        type: string
+      release:
+        required: true
+        type: string
+      targets:
+        type: string
+      feature:
+        type: string
+      post-targets:
+        type: string
+    secrets:
+      cecg-registry-username:
+        description: 'The username for the GHCR registry to pull the developer-platform image from'
+        required: true
+      cecg-registry-secret:
+        description: 'The secret for the GHCR registry to pull the developer-platform image from'
+        required: true
+
+jobs:
+  developer-platform:
+    name: ${{ inputs.action }}
+    runs-on: ubuntu-latest
+    concurrency: ${{ inputs.environment }}-${{ inputs.action }}
+    environment: ${{ inputs.environment }}
+
+    env:
+      ENV: ${{ inputs.environment }}
+      PLATFORM: ${{ inputs.platform }}
+      TERRAFORM_ARGS: "-auto-approve"
+
+    permissions:
+      contents: read
+      id-token: write
+      packages: read
+      pull-requests: write
+
+    container:
+      image:  ghcr.io/coreeng/developer-platform:${{ inputs.release }}
+      credentials:
+        username: ${{ secrets.cecg-registry-username }}
+        password: ${{ secrets.cecg-registry-secret }}
+
+    defaults:
+      run:
+        working-directory: /app
+
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+
+      - id: auth-gcloud
+        if: inputs.platform == 'gcp'
+        name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - id: prepare-workspace
+        name: Prepare workspace
+        run: |
+          mv "${GITHUB_WORKSPACE}/environments" "/app/environments"
+          mv "${GITHUB_WORKSPACE}/tenants" "/app/tenants"
+
+      - id: make-targets
+        if: inputs.targets != ''
+        name: Run make ${{ inputs.targets }}
+        run: |
+          make ${{ inputs.targets }}
+
+      - id: features-init
+        if: inputs.feature != ''
+        name: Init feature ${{ inputs.feature }}
+        run: |
+          make features-init feature=${{ inputs.feature }}
+
+      - id: features-plan
+        if: inputs.feature != '' && inputs.action == 'features-plan'
+        name: Plan feature ${{ inputs.feature }}
+        run: |
+          make features-plan feature=${{ inputs.feature }}
+
+      - id: features-apply
+        if: inputs.feature != '' && inputs.action == 'features-apply'
+        name: Apply feature ${{ inputs.feature }}
+        run: |
+          make features-apply feature=${{ inputs.feature }}
+
+      - id: features-test
+        if: inputs.action == 'features-test' || inputs.action == 'features-apply'
+        name: Test feature ${{ inputs.feature }}
+        run: |
+          make features-test feature=${{ inputs.feature }}
+
+      - id: features-destroy
+        if: inputs.feature != '' && inputs.action == 'features-destroy'
+        name: Destroy feature ${{ inputs.feature }}
+        run: |
+          make features-destroy feature=${{ inputs.feature }}
+
+      - id: make-post-targets
+        if: inputs.post-targets != ''
+        name: Run make ${{ inputs.post-targets }}
+        run: |
+          make ${{ inputs.post-targets }}
