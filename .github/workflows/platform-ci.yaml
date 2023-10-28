@@ -13,9 +13,9 @@ on:
         type: string
         required: true
     secrets:
-      cecg-docker-username:
+      cecg-registry-username:
         required: true
-      cecg-docker-secret:
+      cecg-registry-secret:
         required: true
 
 jobs:
@@ -47,8 +47,8 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.tenants == 'true' }}
     secrets:
-      registry-username: ${{ secrets.cecg-docker-username }}
-      registry-secret: ${{ secrets.cecg-docker-secret }}
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: validate
       targets: tenants-validate
@@ -62,8 +62,8 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.environments == 'true' }}
     secrets:
-      registry-username: ${{ secrets.cecg-docker-username }}
-      registry-secret: ${{ secrets.cecg-docker-secret }}
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: features-plan
       feature: connected-kubernetes
@@ -77,8 +77,8 @@ jobs:
     needs: [connected-kubernetes, changes]
     if: ${{ needs.changes.outputs.environments == 'true' }}
     secrets:
-      registry-username: ${{ secrets.cecg-docker-username }}
-      registry-secret: ${{ secrets.cecg-docker-secret }}
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: features-plan
       feature: infra-operator
@@ -92,8 +92,8 @@ jobs:
     needs: [infra-operator, changes]
     if: ${{ needs.changes.outputs.environments == 'true' }}
     secrets:
-      registry-username: ${{ secrets.cecg-docker-username }}
-      registry-secret: ${{ secrets.cecg-docker-secret }}
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: features-plan
       targets: helm-package
@@ -108,8 +108,8 @@ jobs:
     needs: [multi-tenant-kubernetes-access, tenants, changes]
     if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.tenants == 'true' }}
     secrets:
-      registry-username: ${{ secrets.cecg-docker-username }}
-      registry-secret: ${{ secrets.cecg-docker-secret }}
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: features-plan
       feature: tenants-yaml
@@ -123,8 +123,8 @@ jobs:
     needs: [tenants-yaml, connected-kubernetes]
     if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.environments == 'true' }}
     secrets:
-      registry-username: ${{ secrets.cecg-docker-username }}
-      registry-secret: ${{ secrets.cecg-docker-secret }}
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: features-plan
       feature: platform-monitoring
@@ -138,8 +138,8 @@ jobs:
     needs: [tenants-yaml, connected-kubernetes]
     if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.environments == 'true' }}
     secrets:
-      registry-username: ${{ secrets.cecg-docker-username }}
-      registry-secret: ${{ secrets.cecg-docker-secret }}
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: features-plan
       feature: platform-ingress
