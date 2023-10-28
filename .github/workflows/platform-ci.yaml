@@ -2,6 +2,16 @@ name: Developer Platform CI
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      platform:
+        type: string
+        required: true
+      release:
+        type: string
+        required: true
     secrets:
       cecg-docker-username:
         required: true
@@ -9,10 +19,6 @@ on:
         required: true
 
 jobs:
-  matrix:
-    name: Matrix
-    uses: coreeng/p2p/.github/workflows/platform-environment-matrix.yml@main
-
   changes:
     runs-on: ubuntu-latest
     permissions:
@@ -38,65 +44,53 @@ jobs:
   tenants:
     name: tenants
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [matrix, changes]
+    needs: [changes]
     if: ${{ needs.changes.outputs.tenants == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     secrets:
       registry-username: ${{ secrets.cecg-docker-username }}
       registry-secret: ${{ secrets.cecg-docker-secret }}
     with:
       action: validate
       targets: tenants-validate
-      environment: ${{ matrix.environment }}
-      platform: ${{ matrix.platform }}
-      release: ${{ matrix.release }}
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
 
   connected-kubernetes:
     name: connected-kubernetes
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [matrix, changes]
+    needs: [changes]
     if: ${{ needs.changes.outputs.environments == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     secrets:
       registry-username: ${{ secrets.cecg-docker-username }}
       registry-secret: ${{ secrets.cecg-docker-secret }}
     with:
       action: features-plan
       feature: connected-kubernetes
-      environment: ${{ matrix.environment }}
-      platform: ${{ matrix.platform }}
-      release: ${{ matrix.release }}
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
 
   infra-operator:
     name: infra-operator
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [matrix, connected-kubernetes, changes]
+    needs: [connected-kubernetes, changes]
     if: ${{ needs.changes.outputs.environments == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     secrets:
       registry-username: ${{ secrets.cecg-docker-username }}
       registry-secret: ${{ secrets.cecg-docker-secret }}
     with:
       action: features-plan
       feature: infra-operator
-      environment: ${{ matrix.environment }}
-      platform: ${{ matrix.platform }}
-      release: ${{ matrix.release }}
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
 
   multi-tenant-kubernetes-access:
     name: multi-tenant-kubernetes-access
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [matrix, infra-operator, changes]
+    needs: [infra-operator, changes]
     if: ${{ needs.changes.outputs.environments == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     secrets:
       registry-username: ${{ secrets.cecg-docker-username }}
       registry-secret: ${{ secrets.cecg-docker-secret }}
@@ -104,60 +98,51 @@ jobs:
       action: features-plan
       targets: helm-package
       feature: multi-tenant-kubernetes-access
-      environment: ${{ matrix.environment }}
-      platform: ${{ matrix.platform }}
-      release: ${{ matrix.release }}
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
 
   tenants-yaml:
     name: tenants-yaml
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [matrix, multi-tenant-kubernetes-access, tenants, changes]
+    needs: [multi-tenant-kubernetes-access, tenants, changes]
     if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.tenants == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     secrets:
       registry-username: ${{ secrets.cecg-docker-username }}
       registry-secret: ${{ secrets.cecg-docker-secret }}
     with:
       action: features-plan
       feature: tenants-yaml
-      environment: ${{ matrix.environment }}
-      platform: ${{ matrix.platform }}
-      release: ${{ matrix.release }}
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
 
   platform-monitoring:
     name: platform-monitoring
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [matrix, tenants-yaml, connected-kubernetes]
+    needs: [tenants-yaml, connected-kubernetes]
     if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.environments == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     secrets:
       registry-username: ${{ secrets.cecg-docker-username }}
       registry-secret: ${{ secrets.cecg-docker-secret }}
     with:
       action: features-plan
       feature: platform-monitoring
-      environment: ${{ matrix.environment }}
-      platform: ${{ matrix.platform }}
-      release: ${{ matrix.release }}
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
 
   platform-ingress:
     name: platform-ingress
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [matrix, tenants-yaml, connected-kubernetes]
+    needs: [tenants-yaml, connected-kubernetes]
     if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.environments == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     secrets:
       registry-username: ${{ secrets.cecg-docker-username }}
       registry-secret: ${{ secrets.cecg-docker-secret }}
     with:
       action: features-plan
       feature: platform-ingress
-      environment: ${{ matrix.environment }}
-      platform: ${{ matrix.platform }}
-      release: ${{ matrix.release }}
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
