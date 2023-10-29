@@ -7,11 +7,11 @@ help:
 
 # P2P tasks
 
-.PHONY: p2p-build 
+.PHONY: p2p-build
 p2p-build: ## Build phase
 	echo "##### EXECUTING P2P-BUILD #####"
 
-.PHONY: p2p-functional 
+.PHONY: p2p-functional
 p2p-functional: ## Execute functional tests
 	echo "##### EXECUTING P2P-FUNCTIONAL #####"
 
@@ -23,6 +23,14 @@ p2p-nft:  ## Execute non-functional tests
 p2p-dev:  ## Deploys to dev environment
 	echo "##### EXECUTING P2P-DEV #####"
 
-.PHONY: test-var-print 
+.PHONY: test-var-print
 test-var-print :## Test task
 	echo $${TEST_VARIABLE}
+
+.PHONY: test-pre-step
+test-pre-step:## Test pre-step
+	echo "##### EXECUTING TEST-PRE-TASK $${SOME_SECRET} #####"
+
+.PHONY: test-post-step
+test-post-step:## Test post-step
+	echo "##### EXECUTING TEST-POST-TASK $${SOME_SECRET} #####"
