@@ -26,6 +26,18 @@ on:
         required: false
         type: boolean
         default: false
+      pre-targets:
+        description: |
+          Make targets to run before each p2p command
+        required: false
+        type: string
+        default: ''
+      post-targets:
+        description: |
+          Make targets to run after each p2p command
+        required: false
+        type: string
+        default: ''
 
 env:
   REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
@@ -57,6 +69,8 @@ jobs:
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
       dry-run: ${{ inputs.dry-run }}
+      pre-targets: ${{ inputs.pre-targets }}
+      post-targets: ${{ inputs.post-targets }}
 
   functional-test:
     needs: [build, setup]
@@ -70,6 +84,8 @@ jobs:
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
       dry-run: ${{ inputs.dry-run }}
+      pre-targets: ${{ inputs.pre-targets }}
+      post-targets: ${{ inputs.post-targets }}
 
   nft-test:
     name: nft-test
@@ -84,6 +100,8 @@ jobs:
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
       dry-run: ${{ inputs.dry-run }}
+      pre-targets: ${{ inputs.pre-targets }}
+      post-targets: ${{ inputs.post-targets }}
 
   dev-deploy:
     name: dev-deploy
@@ -99,3 +117,5 @@ jobs:
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
       dry-run: ${{ inputs.dry-run }}
+      pre-targets: ${{ inputs.pre-targets }}
+      post-targets: ${{ inputs.post-targets }}
