@@ -39,7 +39,7 @@ jobs:
     outputs:
       workflow_identity_provider: ${{ steps.setup.outputs.workflow_identity_provider }}
       service_account: ${{ steps.setup.outputs.service_account }}
-    steps:   
+    steps:
       - name: Setup inputs passed to the reusable workflow
         id: setup
         run: |

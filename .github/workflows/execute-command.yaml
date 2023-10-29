@@ -7,14 +7,14 @@ on:
         required: false
     inputs:
       command:
-        required: true 
+        required: true
         type: string
       project-id:
         required: true
         type: string
       env-name:
         required: true
-        type: string  
+        type: string
       workload-identity-provider:
         required: true
         type: string
@@ -33,6 +33,18 @@ on:
         required: false
         type: string
         default: europe-west2-a
+      pre-targets:
+        description: |
+          Make targets to run before the command
+        required: false
+        type: string
+        default: ''
+      post-targets:
+        description: |
+          Make targets to run after the command
+        required: false
+        type: string
+        default: ''
 env:
   REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
 
@@ -91,7 +103,7 @@ jobs:
         run: |
           gcloud container clusters get-credentials --project ${{ inputs.project-id }} --zone ${{ inputs.region }} --internal-ip ${{ inputs.env-name }}
           kubectl config set clusters.gke_${{ inputs.project-id }}_${{ inputs.region }}_${{ inputs.env-name }}.proxy-url http://localhost:57755
-    
+
       - name: Test kubectl
         id: test-kubectl
         if: inputs.dry-run == false
@@ -114,7 +126,17 @@ jobs:
             printf '%s\n' $i >> $GITHUB_ENV
           done
 
+      - name: Pre-targets
+        if: inputs.pre-targets != ''
+        run: |
+          make ${{ inputs.pre-targets }}
+
       - name: Run Command
         id: run-command
         run: |
           make ${{ inputs.command }}
+
+      - name: Post-targets
+        if: inputs.post-targets != ''
+        run: |
+          make ${{ inputs.post-targets }}

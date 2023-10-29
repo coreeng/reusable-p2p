@@ -5,14 +5,13 @@ on:
     branches:
       - main
 
-
 concurrency: cd-main
 
-  
 jobs:
   p2p:
     uses: ./.github/workflows/p2p.yaml
     with:
+      env-name: test-env
       project-id: PROJECT-ID
       project-number: PROJECT-NUMBER
       tenant-name: TEST-TENANT
