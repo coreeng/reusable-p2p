@@ -31,7 +31,7 @@ on:
 
 jobs:
   developer-platform:
-    name: ${{ inputs.action }}
+    name: ${{ inputs.feature }}
     runs-on: ubuntu-latest
     concurrency: ${{ inputs.environment }}-${{ inputs.action }}
     environment: ${{ inputs.environment }}
