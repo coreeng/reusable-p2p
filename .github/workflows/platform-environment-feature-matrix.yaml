@@ -1,12 +1,11 @@
-name: Environment Matrix
+name: Environment Feature Matrix
 
 on:
   workflow_call:
     inputs:
-      include_release:
-        required: false
-        default: true
-        type: boolean
+      environment:
+        required: true
+        type: string
     outputs:
       matrix:
         value: ${{ jobs.generate.outputs.matrix }}
@@ -26,12 +25,8 @@ jobs:
         name: Generate Matrix
         run: |
           # generate matrix
-          for f in environments/*/config.yaml ; do
-            if "${{ inputs.include_release }}"; then
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
-            else
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
-            fi
+          for f in $(yq '.features' environments/${{ inputs.environment }}/config.yaml -o csv | tr "," " ") ; do
+            e+="{\"feature\":\"${f}\"},"
           done
           MATRIX="$(printf '{"include":[%s]}' "${e}")"
           echo "${MATRIX}" | yq -o json

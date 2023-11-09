@@ -33,7 +33,7 @@ jobs:
   developer-platform:
     name: ${{ inputs.feature }}
     runs-on: ubuntu-latest
-    concurrency: ${{ inputs.environment }}-${{ inputs.action }}
+    concurrency: ${{ inputs.environment }}
     environment: ${{ inputs.environment }}
 
     env:
@@ -107,7 +107,7 @@ jobs:
           make features-test feature=${{ inputs.feature }}
 
       - id: features-destroy
-        if: inputs.feature != '' && inputs.action == 'features-destroy'
+        if: inputs.action == 'features-destroy'
         name: Destroy feature ${{ inputs.feature }}
         run: |
           make features-destroy feature=${{ inputs.feature }}

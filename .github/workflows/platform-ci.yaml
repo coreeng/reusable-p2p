@@ -56,93 +56,29 @@ jobs:
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
 
-  connected-kubernetes:
-    name: connected-kubernetes
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
+  matrix:
+    name: Matrix
     needs: [changes]
+    uses: ./.github/workflows/platform-environment-feature-matrix.yaml
+    if: ${{ needs.changes.outputs.environments == 'true' }}
+    with:
+      environment: ${{ inputs.environment }}
+
+  feature:
+    name: Feature
+    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
+    needs: [changes, matrix]
     if: ${{ needs.changes.outputs.environments == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     with:
       action: features-plan
-      feature: connected-kubernetes
-      environment: ${{ inputs.environment }}
-      platform: ${{ inputs.platform }}
-      release: ${{ inputs.release }}
-
-  infra-operator:
-    name: infra-operator
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [connected-kubernetes, changes]
-    if: ${{ needs.changes.outputs.environments == 'true' }}
-    secrets:
-      cecg-registry-username: ${{ secrets.cecg-registry-username }}
-      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
-    with:
-      action: features-plan
-      feature: infra-operator
-      environment: ${{ inputs.environment }}
-      platform: ${{ inputs.platform }}
-      release: ${{ inputs.release }}
-
-  multi-tenant-kubernetes-access:
-    name: multi-tenant-kubernetes-access
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [infra-operator, changes]
-    if: ${{ needs.changes.outputs.environments == 'true' }}
-    secrets:
-      cecg-registry-username: ${{ secrets.cecg-registry-username }}
-      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
-    with:
-      action: features-plan
-      targets: helm-package
-      feature: multi-tenant-kubernetes-access
-      environment: ${{ inputs.environment }}
-      platform: ${{ inputs.platform }}
-      release: ${{ inputs.release }}
-
-  tenants-yaml:
-    name: tenants-yaml
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [multi-tenant-kubernetes-access, tenants, changes]
-    if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.tenants == 'true' }}
-    secrets:
-      cecg-registry-username: ${{ secrets.cecg-registry-username }}
-      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
-    with:
-      action: features-plan
-      feature: tenants-yaml
-      environment: ${{ inputs.environment }}
-      platform: ${{ inputs.platform }}
-      release: ${{ inputs.release }}
-
-  platform-monitoring:
-    name: platform-monitoring
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [tenants-yaml, connected-kubernetes]
-    if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.environments == 'true' }}
-    secrets:
-      cecg-registry-username: ${{ secrets.cecg-registry-username }}
-      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
-    with:
-      action: features-plan
-      feature: platform-monitoring
-      environment: ${{ inputs.environment }}
-      platform: ${{ inputs.platform }}
-      release: ${{ inputs.release }}
-
-  platform-ingress:
-    name: platform-ingress
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [tenants-yaml, connected-kubernetes]
-    if: ${{ always() && !failure() && !cancelled() && needs.changes.outputs.environments == 'true' }}
-    secrets:
-      cecg-registry-username: ${{ secrets.cecg-registry-username }}
-      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
-    with:
-      action: features-plan
-      feature: platform-ingress
+      feature: ${{ matrix.feature }}
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
