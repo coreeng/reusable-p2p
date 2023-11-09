@@ -12,6 +12,10 @@ on:
       release:
         type: string
         required: true
+      release_build:
+        type: boolean
+        default: false
+        required: false
     secrets:
       cecg-registry-username:
         required: true
@@ -45,7 +49,7 @@ jobs:
     name: tenants
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
     needs: [changes]
-    if: ${{ needs.changes.outputs.tenants == 'true' }}
+    if: ${{ inputs.release_build == true || needs.changes.outputs.tenants == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
@@ -60,7 +64,7 @@ jobs:
     name: Matrix
     needs: [changes]
     uses: ./.github/workflows/platform-environment-feature-matrix.yaml
-    if: ${{ needs.changes.outputs.environments == 'true' }}
+    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     with:
       environment: ${{ inputs.environment }}
 
@@ -68,7 +72,7 @@ jobs:
     name: Feature
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
     needs: [changes, matrix]
-    if: ${{ needs.changes.outputs.environments == 'true' }}
+    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
