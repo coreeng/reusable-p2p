@@ -3,6 +3,10 @@ name: increment-version
 
 on:
   workflow_call:
+    outputs:
+      version:
+        description: "The next semantic version"
+        value: ${{ jobs.increment-version.outputs.version }}
     secrets:
       git-token:
         required: true
