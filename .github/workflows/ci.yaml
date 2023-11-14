@@ -13,6 +13,15 @@ jobs:
     with:
       dry-run: true
 
+  print-version:
+    runs-on: ubuntu-latest
+    needs: increment-version
+    steps:
+      - env:
+          VERSION=${{needs.increment-version.outputs.version}}
+        id: step1
+        run: echo "The Next Version is $VERSION"
+
   test_execute_command:
     uses: ./.github/workflows/execute-command.yaml
     secrets:

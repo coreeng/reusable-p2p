@@ -18,3 +18,8 @@ jobs:
       dry-run: true
       pre-targets: test-pre-step
       post-targets: test-post-step
+
+  increment-version:
+    uses: ./.github/workflows/increment-version.yaml
+    secrets:
+      git-token: ${{ secrets.GITHUB_TOKEN }}
