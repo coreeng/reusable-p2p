@@ -3,6 +3,10 @@ name: increment-version
 
 on:
   workflow_call:
+    outputs:
+      version:
+        description: "The next semantic version"
+        value: ${{ jobs.increment-version.outputs.version }}
     secrets:
       git-token:
         required: true
@@ -16,7 +20,9 @@ jobs:
   increment-version:
     name: increment-version
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.setversion.outputs.version }}
+      
     steps:
     - uses: actions/checkout@v3
       with:
