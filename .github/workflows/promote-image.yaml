@@ -1,0 +1,117 @@
+name: p2p-command
+
+on:
+  workflow_call:
+    secrets:
+      env_vars:
+        required: false
+    inputs:
+      command:
+        required: true
+        type: string
+      workload-identity-provider:
+        required: true
+        type: string
+      service-account:
+        required: true
+        type: string
+      workload-identity-provider-promote:
+        required: true
+        type: string
+      service-account-promote:
+        required: true
+        type: string
+      dry-run:
+        required: false
+        type: boolean
+        default: false
+      pre-targets:
+        description: |
+          Make targets to run before the command
+        required: false
+        type: string
+        default: ''
+      post-targets:
+        description: |
+          Make targets to run after the command
+        required: false
+        type: string
+        default: ''
+env:
+  REGISTRY_PROMOTE_FROM: ${{ inputs.registry-from }}
+  REGISTRY_PROMOTE_TO: ${{ inputs.registry-to }}
+
+jobs:
+  p2p:
+    name: ${{ inputs.command }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      env_vars: ${{ secrets.env_vars }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        if: inputs.dry-run == false
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ inputs.workload-identity-provider }}
+          service_account: ${{ inputs.service-account }}
+          token_format: access_token
+          access_token_lifetime: 600s
+
+      - name: Authenticate to Google Cloud Promote
+        id: auth-promote
+        if: inputs.dry-run == false
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ inputs.workload-identity-provider-promote }}
+          service_account: ${{ inputs.service-account-promote }}
+          token_format: access_token
+          access_token_lifetime: 600s
+    
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v2
+        if: inputs.dry-run == false
+        with:
+          registry: europe-west2-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      - name: Login to Artifact Registry Promote
+        uses: docker/login-action@v2
+        if: inputs.dry-run == false
+        with:
+          registry: europe-west2-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth-promote.outputs.access_token }}
+
+      - name: Decode environment variables
+        run: |
+          for i in $env_vars; do
+            i=$(echo $i | sed 's/=.*//g')=$(echo ${i#*=})
+            echo ::add-mask::${i#*=}
+            printf '%s\n' $i >> $GITHUB_ENV
+          done
+
+      - name: Pre-targets
+        if: inputs.pre-targets != ''
+        run: |
+          make ${{ inputs.pre-targets }}
+
+      - name: Run Command
+        id: run-command
+        run: |
+          make ${{ inputs.command }}
+
+      - name: Post-targets
+        if: inputs.post-targets != ''
+        run: |
+          make ${{ inputs.post-targets }}

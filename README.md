@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   p2p:
-    uses: coreeng/reusable-p2p/.github/workflows/p2p.yaml@v0.0.1
+    uses: coreeng/p2p/.github/workflows/p2p.yaml@v0.0.2
     secrets:
       env_vars: |
         TEST_VARIABLE=value
@@ -58,4 +58,4 @@ p2p-dev:  ## Deploys to dev environment
 These will be your entrypoint. Any custom action you'd like the pipeline to do should be defined as dependencies on these ones.
 
 ## Versioning
-This pipeline uses semantic versioning. When creating your pipeline, check the latest version. (eg `uses: coreeng/reusable-p2p/.github/workflows/idp-p2p.yaml@v0.0.2`)
+This pipeline uses semantic versioning. When creating your pipeline, check the latest version. (eg `uses: coreeng/p2p/.github/workflows/p2p.yaml@v0.0.2`)

@@ -15,6 +15,12 @@ on:
       project-number:
         required: true
         type: string
+      project-id-promote:
+        required: false
+        type: string
+      project-number-promote:
+        required: false
+        type: string
       tenant-name:
         required: true
         type: string
@@ -40,9 +46,10 @@ on:
         default: ''
 
 env:
-  REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
   SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.project-id }}.iam.gserviceaccount.com
+  SERVICE_ACCOUNT_PROMOTE: p2p-${{ inputs.tenant-name }}@${{ inputs.project-id-promote }}.iam.gserviceaccount.com
   WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
+  WORKLOAD_IDENTITY_PROVIDER_PROMOTE: projects/${{ inputs.project-number-promote }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
 
 
 jobs:
@@ -51,12 +58,16 @@ jobs:
     outputs:
       workflow_identity_provider: ${{ steps.setup.outputs.workflow_identity_provider }}
       service_account: ${{ steps.setup.outputs.service_account }}
+      workflow_identity_provider_promote: ${{ steps.setup.outputs.workflow_identity_provider_promote }}
+      service_account_promote: ${{ steps.setup.outputs.service_account_promote }}
     steps:
       - name: Setup inputs passed to the reusable workflow
         id: setup
         run: |
           echo "workflow_identity_provider=$WORKLOAD_IDENTITY_PROVIDER" >> $GITHUB_OUTPUT
+          echo "workflow_identity_provider_promote=$WORKLOAD_IDENTITY_PROVIDER_PROMOTE" >> $GITHUB_OUTPUT
           echo "service_account=$SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
+          echo "service_account_prod=$SERVICE_ACCOUNT_PROD" >> $GITHUB_OUTPUT
   build:
     needs: [setup]
     uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
@@ -116,6 +127,25 @@ jobs:
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
       service-account: ${{ needs.setup.outputs.service_account }}
       project-id: ${{ inputs.project-id }}
+      dry-run: ${{ inputs.dry-run }}
+      pre-targets: ${{ inputs.pre-targets }}
+      post-targets: ${{ inputs.post-targets }}
+
+  promote:
+    name: promote-build
+    needs: [dev-deploy]
+    if: input.project-id-promote != '' && github.ref == 'refs/heads/main'
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    uses: coreeng/p2p/.github/workflows/promote-image@main
+    with:
+      command: p2p-nft
+      workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
+      workload-identity-provider-promote: ${{ needs.setup.outputs.workflow_identity_provider_promote }}
+      service-account: ${{ needs.setup.outputs.service_account }}
+      service-account-promote: ${{ needs.setup.outputs.service_account_promote }}
+      registry-from: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
+      registry-to: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id-promote }}/tenant
       dry-run: ${{ inputs.dry-run }}
       pre-targets: ${{ inputs.pre-targets }}
       post-targets: ${{ inputs.post-targets }}
