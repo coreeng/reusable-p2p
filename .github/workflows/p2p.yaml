@@ -89,7 +89,7 @@ jobs:
     if: inputs.project-id-promote != '' 
     secrets:
       env_vars: ${{ secrets.env_vars }}
-    uses: coreeng/p2p/.github/workflows/promote-image@main
+    uses: coreeng/p2p/.github/workflows/promote-image.yaml@main
     with:
       command: promote-build
       workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
