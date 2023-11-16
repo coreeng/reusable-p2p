@@ -6,6 +6,12 @@ on:
       env_vars:
         required: false
     inputs:
+      registry-to:
+        required: true
+        type: string
+      registry-from:
+        required: true
+        type: string
       command:
         required: true
         type: string
