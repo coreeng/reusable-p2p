@@ -67,7 +67,7 @@ jobs:
           echo "workflow_identity_provider=$WORKLOAD_IDENTITY_PROVIDER" >> $GITHUB_OUTPUT
           echo "workflow_identity_provider_promote=$WORKLOAD_IDENTITY_PROVIDER_PROMOTE" >> $GITHUB_OUTPUT
           echo "service_account=$SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
-          echo "service_account_prod=$SERVICE_ACCOUNT_PROD" >> $GITHUB_OUTPUT
+          echo "service_account_promote=$SERVICE_ACCOUNT_PROMOTE" >> $GITHUB_OUTPUT
   build:
     needs: [setup]
     uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
