@@ -83,8 +83,27 @@ jobs:
       pre-targets: ${{ inputs.pre-targets }}
       post-targets: ${{ inputs.post-targets }}
 
-  functional-test:
+  promote:
+    name: promote
     needs: [build, setup]
+    if: inputs.project-id-promote != '' 
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    uses: coreeng/p2p/.github/workflows/promote-image@main
+    with:
+      command: promote-build
+      workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
+      workload-identity-provider-promote: ${{ needs.setup.outputs.workflow_identity_provider_promote }}
+      service-account: ${{ needs.setup.outputs.service_account }}
+      service-account-promote: ${{ needs.setup.outputs.service_account_promote }}
+      registry-from: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
+      registry-to: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id-promote }}/tenant
+      dry-run: ${{ inputs.dry-run }}
+      pre-targets: ${{ inputs.pre-targets }}
+      post-targets: ${{ inputs.post-targets }}
+
+  functional-test:
+    needs: [promote, setup]
     uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
     secrets:
       env_vars: ${{ secrets.env_vars }}
@@ -131,21 +150,3 @@ jobs:
       pre-targets: ${{ inputs.pre-targets }}
       post-targets: ${{ inputs.post-targets }}
 
-  promote:
-    name: promote-build
-    needs: [dev-deploy]
-    if: input.project-id-promote != '' && github.ref == 'refs/heads/main'
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    uses: coreeng/p2p/.github/workflows/promote-image@main
-    with:
-      command: p2p-nft
-      workload-identity-provider: ${{ needs.setup.outputs.workflow_identity_provider }}
-      workload-identity-provider-promote: ${{ needs.setup.outputs.workflow_identity_provider_promote }}
-      service-account: ${{ needs.setup.outputs.service_account }}
-      service-account-promote: ${{ needs.setup.outputs.service_account_promote }}
-      registry-from: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
-      registry-to: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id-promote }}/tenant
-      dry-run: ${{ inputs.dry-run }}
-      pre-targets: ${{ inputs.pre-targets }}
-      post-targets: ${{ inputs.post-targets }}
