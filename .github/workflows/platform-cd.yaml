@@ -45,6 +45,8 @@ jobs:
             environments:
               - 'environments/**'
 
+            
+
   tenants:
     name: tenants
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
@@ -86,3 +88,23 @@ jobs:
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
+
+  tenants-apply:
+    name: tenants-yaml
+    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
+    needs: [tenants, changes]
+    if: ${{ inputs.release_build == false && needs.changes.outputs.environments == 'false' && needs.changes.outputs.tenants == 'true' }}
+    secrets:
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
+    with:
+      action: features-apply
+      feature: tenants-yaml
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
+      
