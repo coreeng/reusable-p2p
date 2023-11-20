@@ -89,11 +89,17 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.auth-dev.outputs.access_token }}
 
-      - name: Run Prepare Promotion
+      - name: Check if prepare promotion task exists
         if: inputs.promotion-stage == 'prod'
+        id: run-check-prepare-promotion
+        run: |
+          echo "prepare-promotion-task=$(make | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }'})" >> $GITHUB_OUTPUT
+
+      - name: Run Prepare Promotion
+        if: inputs.promotion-stage == 'prod' && ${{ steps.run-check-prepare-promotion.outputs.prepare-promotion-task }} != ''
         id: run-prepare-promotion
         run: |
-          [[ -n $(make | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}' ) ]] && make p2p-prepare-promotion-${{ inputs.promotion-stage }} || echo "Prepare promotion step does not exist. Skipping..."
+          make p2p-prepare-promotion-${{ inputs.promotion-stage }}
           
 
       - name: Authenticate to Google Cloud Prod
