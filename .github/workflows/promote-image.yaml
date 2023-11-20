@@ -91,7 +91,7 @@ jobs:
 
       - name: Run Prepare Promotion
         if: inputs.promotion.stage == 'prod'
-        id: run-prepare-promotion-${{ inpus.promotion-stage}}
+        id: run-prepare-promotion-${{ inputs.promotion-stage}}
         run: |
           task=$(make help | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}')
           if [ -n "$task" ]; then
@@ -118,8 +118,8 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.auth-prod.outputs.access_token }}
 
-      - name: Run Prepare Promition
-        id: run-promotion-${{ inpus.promotion-stage}}
+      - name: Run Promotion
+        id: run-promotion-${{ inputs.promotion-stage}}
         run: |
           make p2p-promote-${{ inputs.promotion-stage }}
           
