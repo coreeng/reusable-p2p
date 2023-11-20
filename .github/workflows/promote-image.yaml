@@ -48,8 +48,8 @@ env:
   REGISTRY_PROD: ${{ inputs.prod_registry }}
 
 jobs:
-  p2p:
-    name: ${{ inputs.command }}
+  promote-image:
+    name: promote-${{ inputs.promotion-stage }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -119,9 +119,7 @@ jobs:
           password: ${{ steps.auth-prod.outputs.access_token }}
 
       - name: Run Promotion
-        id: run-promotion-${{ inputs.promotion-stage}}
+        id: run-promotion-${{ inputs.promotion-stage }}
         run: |
           make p2p-promote-${{ inputs.promotion-stage }}
-          
-          
-
+      
