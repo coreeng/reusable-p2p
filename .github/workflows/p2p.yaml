@@ -102,7 +102,7 @@ jobs:
       prod-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.prod-project-id }}/tenant
       dry-run: ${{ inputs.dry-run }}
 
-    promote-prod:
+  promote-prod:
     name: promote-prod
     needs: [promote-extended-tests, setup]
     secrets:
