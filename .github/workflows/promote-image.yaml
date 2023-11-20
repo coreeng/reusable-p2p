@@ -95,7 +95,7 @@ jobs:
         run: |
           task=$(make | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}')
           if [ -n "$task" ]; then
-            make p2p-prepare-promotion-${{ inputs.promotion-stage }}
+              make p2p-prepare-promotion-${{ inputs.promotion-stage }}
           else
               echo "Prepare promotion step does not exist. Skipping..."
           fi
