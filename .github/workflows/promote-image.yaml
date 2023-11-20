@@ -91,7 +91,7 @@ jobs:
 
       - name: Run Prepare Promotion
         if: inputs.promotion.stage == 'prod'
-        id: run-prepare-promotion-${{ inputs.promotion-stage}}
+        id: run-prepare-promotion
         run: |
           task=$(make help | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}')
           if [ -n "$task" ]; then
