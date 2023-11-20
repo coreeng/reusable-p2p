@@ -24,7 +24,7 @@ p2p-dev:  ## Deploys to dev environment
 	echo "##### EXECUTING P2P-DEV #####"
 
 .PHONY: p2p-promote-extended-tests
-p2p-build: ## Promote to extended-tests phase
+p2p-promote-extended-tests: ## Promote to extended-tests phase
 	echo "##### EXECUTING P2P-PROMOTE-EXTENDED-TESTS #####"
 
 .PHONY: p2p-promote-prod
