@@ -96,7 +96,7 @@ jobs:
           echo "prepare-promotion-task=$(make | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }'})" >> $GITHUB_OUTPUT
 
       - name: Run Prepare Promotion
-        if: inputs.promotion-stage == 'prod' && ${{ steps.run-check-prepare-promotion.outputs.prepare-promotion-task }} != ''
+        if: inputs.promotion-stage == 'prod' && steps.run-check-prepare-promotion.outputs.prepare-promotion-task  != ''
         id: run-prepare-promotion
         run: |
           make p2p-prepare-promotion-${{ inputs.promotion-stage }}
