@@ -116,7 +116,6 @@ jobs:
       prod-service-account: ${{ needs.setup.outputs.prod_service_account }}
       dev-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.dev-project-id }}/tenant
       prod-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.prod-project-id }}/tenant
-      promotion-stage: prod
       dry-run: ${{ inputs.dry-run }}
 
   functional-test:
