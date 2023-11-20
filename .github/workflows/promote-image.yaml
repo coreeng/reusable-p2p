@@ -93,7 +93,7 @@ jobs:
         if: inputs.promotion-stage == 'prod'
         id: run-check-prepare-promotion
         run: |
-          echo "prepare-promotion-task=$(make | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }'})" >> $GITHUB_OUTPUT
+          echo "prepare-promotion-task=$(make | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}')" >> $GITHUB_OUTPUT
 
       - name: Run Prepare Promotion
         if: inputs.promotion-stage == 'prod' && steps.run-check-prepare-promotion.outputs.prepare-promotion-task  != ''
