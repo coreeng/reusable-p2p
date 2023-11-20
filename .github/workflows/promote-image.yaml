@@ -44,8 +44,8 @@ on:
         type: string
         default: ''
 env:
-  REGISTRY_DEV: ${{ inputs.dev_registry }}
-  REGISTRY_PROD: ${{ inputs.prod_registry }}
+  REGISTRY_DEV: ${{ inputs.dev-registry }}
+  REGISTRY_PROD: ${{ inputs.prod-registry }}
 
 jobs:
   promote-image:

@@ -23,6 +23,14 @@ p2p-nft:  ## Execute non-functional tests
 p2p-dev:  ## Deploys to dev environment
 	echo "##### EXECUTING P2P-DEV #####"
 
+.PHONY: p2p-promote-extended-tests
+p2p-build: ## Promote to extended-tests phase
+	echo "##### EXECUTING P2P-PROMOTE-EXTENDED-TESTS #####"
+
+.PHONY: p2p-promote-prod
+p2p-promote-prod: ## Promote to prod phase
+	echo "##### EXECUTING P2P-PROMOTE_PROD #####"
+
 .PHONY: test-var-print
 test-var-print :## Test task
 	echo $${TEST_VARIABLE}
