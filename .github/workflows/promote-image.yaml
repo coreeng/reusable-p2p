@@ -90,7 +90,7 @@ jobs:
           password: ${{ steps.auth-dev.outputs.access_token }}
 
       - name: Run Prepare Promotion
-        if: inputs.promotion.stage == 'prod'
+        if: inputs.promotion-stage == 'prod'
         id: run-prepare-promotion
         run: |
           task=$(make help | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}')
@@ -102,7 +102,7 @@ jobs:
 
       - name: Authenticate to Google Cloud Prod
         id: auth-prod
-        if: inputs.dry-run == false && inputs.promotion.stage == 'prod'
+        if: inputs.dry-run == false && inputs.promotion-stage == 'prod'
         uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ inputs.prod-workload-identity-provider }}
@@ -112,7 +112,7 @@ jobs:
     
       - name: Login to Artifact Registry Prod
         uses: docker/login-action@v2
-        if: inputs.dry-run == false && inputs.promotion.stage == 'prod'
+        if: inputs.dry-run == false && inputs.promotion-stage == 'prod'
         with:
           registry: europe-west2-docker.pkg.dev
           username: oauth2accesstoken
