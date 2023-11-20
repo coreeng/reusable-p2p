@@ -92,6 +92,7 @@ jobs:
       - name: Check if prepare promotion task exists
         id: run-check-prepare-promotion
         run: |
+          make
           echo "prepare_promotion_task=$(make | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}')" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
 
