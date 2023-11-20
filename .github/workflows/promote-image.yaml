@@ -6,25 +6,25 @@ on:
       env_vars:
         required: false
     inputs:
-      registry-to:
+      dev-registry:
         required: true
         type: string
-      registry-from:
+      prod-registry:
         required: true
         type: string
-      command:
+      promotion-stage:
         required: true
         type: string
-      workload-identity-provider:
+      dev-workload-identity-provider:
         required: true
         type: string
-      service-account:
+      dev-service-account:
         required: true
         type: string
-      workload-identity-provider-promote:
+      prod-workload-identity-provider:
         required: true
         type: string
-      service-account-promote:
+      prod-service-account:
         required: true
         type: string
       dry-run:
@@ -44,8 +44,8 @@ on:
         type: string
         default: ''
 env:
-  REGISTRY_PROMOTE_FROM: ${{ inputs.registry-from }}
-  REGISTRY_PROMOTE_TO: ${{ inputs.registry-to }}
+  REGISTRY_DEV: ${{ inputs.dev_registry }}
+  REGISTRY_PROD: ${{ inputs.prod_registry }}
 
 jobs:
   p2p:
@@ -63,23 +63,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Authenticate to Google Cloud
-        id: auth
-        if: inputs.dry-run == false
-        uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: ${{ inputs.workload-identity-provider }}
-          service_account: ${{ inputs.service-account }}
-          token_format: access_token
-          access_token_lifetime: 600s
+      - name: Decode environment variables
+        run: |
+          for i in $env_vars; do
+            i=$(echo $i | sed 's/=.*//g')=$(echo ${i#*=})
+            echo ::add-mask::${i#*=}
+            printf '%s\n' $i >> $GITHUB_ENV
+          done
 
-      - name: Authenticate to Google Cloud Promote
-        id: auth-promote
+      - name: Authenticate to Google Cloud
+        id: auth-dev
         if: inputs.dry-run == false
         uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: ${{ inputs.workload-identity-provider-promote }}
-          service_account: ${{ inputs.service-account-promote }}
+          workload_identity_provider: ${{ inputs.dev-workload-identity-provider }}
+          service_account: ${{ inputs.dev-service-account }}
           token_format: access_token
           access_token_lifetime: 600s
     
@@ -89,35 +87,41 @@ jobs:
         with:
           registry: europe-west2-docker.pkg.dev
           username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.access_token }}
+          password: ${{ steps.auth-dev.outputs.access_token }}
 
-      - name: Login to Artifact Registry Promote
+      - name: Run Prepare Promotion
+        if: inputs.promotion.stage == 'prod'
+        id: run-prepare-promotion-${{ inpus.promotion-stage}}
+        run: |
+          task=$(make help | grep -E 'p2p-prepare-promotion-${{ inputs.promotion-stage }}')
+          if [ -n "$task" ]; then
+            make p2p-prepare-promotion-${{ inputs.promotion-stage }}
+          else
+              echo "Prepare promotion step does not exist. Skipping..."
+          fi
+
+      - name: Authenticate to Google Cloud Prod
+        id: auth-prod
+        if: inputs.dry-run == false && inputs.promotion.stage == 'prod'
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ inputs.prod-workload-identity-provider }}
+          service_account: ${{ inputs.prod-service-account }}
+          token_format: access_token
+          access_token_lifetime: 600s
+    
+      - name: Login to Artifact Registry Prod
         uses: docker/login-action@v2
-        if: inputs.dry-run == false
+        if: inputs.dry-run == false && inputs.promotion.stage == 'prod'
         with:
           registry: europe-west2-docker.pkg.dev
           username: oauth2accesstoken
-          password: ${{ steps.auth-promote.outputs.access_token }}
+          password: ${{ steps.auth-prod.outputs.access_token }}
 
-      - name: Decode environment variables
+      - name: Run Prepare Promition
+        id: run-promotion-${{ inpus.promotion-stage}}
         run: |
-          for i in $env_vars; do
-            i=$(echo $i | sed 's/=.*//g')=$(echo ${i#*=})
-            echo ::add-mask::${i#*=}
-            printf '%s\n' $i >> $GITHUB_ENV
-          done
+          make p2p-promote-${{ inputs.promotion-stage }}
+          
+          
 
-      - name: Pre-targets
-        if: inputs.pre-targets != ''
-        run: |
-          make ${{ inputs.pre-targets }}
-
-      - name: Run Command
-        id: run-command
-        run: |
-          make ${{ inputs.command }}
-
-      - name: Post-targets
-        if: inputs.post-targets != ''
-        run: |
-          make ${{ inputs.post-targets }}

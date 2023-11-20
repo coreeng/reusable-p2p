@@ -11,9 +11,12 @@ jobs:
   p2p:
     uses: ./.github/workflows/p2p.yaml
     with:
-      env-name: test-env
-      project-id: PROJECT-ID
-      project-number: PROJECT-NUMBER
+      dev-env-name: test-env
+      prod-env-name: test-env
+      dev-project-id: PROJECT-ID
+      prod-project-id: PROJECT-ID
+      dev-project-number: PROJECT-NUMBER
+      prod-project-number: PROJECT-NUMBER
       tenant-name: TEST-TENANT
       dry-run: true
       pre-targets: test-pre-step
