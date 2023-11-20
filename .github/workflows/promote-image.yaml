@@ -119,7 +119,7 @@ jobs:
           password: ${{ steps.auth-prod.outputs.access_token }}
 
       - name: Run Promotion
-        id: run-promotion-${{ inputs.promotion-stage }}
+        id: run-promotion
         run: |
           make p2p-promote-${{ inputs.promotion-stage }}
       
