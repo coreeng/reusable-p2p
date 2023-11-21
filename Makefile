@@ -33,7 +33,15 @@ p2p-prepare-promotion-extended-tests: ## Prepare promotion to extended tests
 
 .PHONY: p2p-promote-prod
 p2p-promote-prod: ## Promote to prod phase
-	echo "##### EXECUTING P2P-PROMOTE_PROD #####"
+	echo "##### EXECUTING P2P-PROMOTE-PROD #####"
+
+.PHONY: p2p-extended-tests
+p2p-extended-tests: ## Run Extended Tests
+	echo "##### EXECUTING P2P-EXTENDED-TESTS #####"
+
+.PHONY: p2p-prod
+p2p-prod: ## Deploys to production
+	echo "##### EXECUTING P2P-PROD #####"
 
 .PHONY: test-var-print
 test-var-print :## Test task

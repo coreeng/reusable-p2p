@@ -12,16 +12,13 @@ jobs:
     uses: ./.github/workflows/p2p.yaml
     with:
       dev-env-name: test-env
-      prod-env-name: test-env
       dev-project-id: PROJECT-ID
-      prod-project-id: PROJECT-ID
       dev-project-number: PROJECT-NUMBER
-      prod-project-number: PROJECT-NUMBER
       tenant-name: TEST-TENANT
       dry-run: true
       pre-targets: test-pre-step
       post-targets: test-post-step
-      
+
   extended-tests:
     uses: ./.github/workflows/extended-tests.yaml
     secrets:

@@ -27,10 +27,10 @@ jobs:
       env_vars: |
         TEST_VARIABLE=value
     with:
-      project-id: ${{ vars.PROJECT_ID }}
-      project-number: ${{ vars.PROJECT_NUMBER }}
+      dev-env-name: ${{ vars.DEV_ENV }}
+      dev-project-id: ${{ vars.DEV_PROJECT_ID }}
+      dev-project-number: ${{ vars.DEV_PROJECT_NUMBER }}
       tenant-name: ${{ vars.TENANT_NAME }}
-
 ```
 
 The `env_vars` secret will be use to propagate env vars to your Makefile calls. They will be redacted from the output so you can pass sensitive information like credentials as they're coming in as `secrets`.
@@ -50,9 +50,26 @@ p2p-functional: ## Execute functional tests
 p2p-nft:  ## Execute functional tests
 	echo "##### EXECUTING P2P-NFT #####"
 
-.PHONY: p2p-dev
-p2p-dev:  ## Deploys to dev environment
-	echo "##### EXECUTING P2P-DEV #####"
+.PHONY: p2p-promote-extended-tests
+p2p-promote-extended-tests: ## Promote to extended-tests phase
+	echo "##### EXECUTING P2P-PROMOTE-EXTENDED-TESTS #####"
+
+.PHONY: p2p-prepare-promotion-extended-tests
+p2p-prepare-promotion-extended-tests: ## Prepare promotion to extended tests
+	echo "##### EXECUTING P2P-PREPARE-PROMOTION-EXTENDED-TESTS #####"
+
+.PHONY: p2p-promote-prod
+p2p-promote-prod: ## Promote to prod phase
+	echo "##### EXECUTING P2P-PROMOTE-PROD #####"
+
+.PHONY: p2p-extended-tests
+p2p-extended-tests: ## Run Extended Tests
+	echo "##### EXECUTING P2P-EXTENDED-TESTS #####"
+
+.PHONY: p2p-prod
+p2p-prod: ## Deploys to production
+	echo "##### EXECUTING P2P-PROD #####"
+
 ```
 
 These will be your entrypoint. Any custom action you'd like the pipeline to do should be defined as dependencies on these ones.
