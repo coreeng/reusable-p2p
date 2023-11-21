@@ -18,6 +18,10 @@ on:
       tenant-name:
         required: true
         type: string
+      region:
+        required: false
+        type: string
+        default: europe-west2
       dry-run:
         required: false
         type: boolean
@@ -97,6 +101,23 @@ jobs:
       dry-run: ${{ inputs.dry-run }}
       pre-targets: ${{ inputs.pre-targets }}
       post-targets: ${{ inputs.post-targets }}
+
+  promote-extended-tests:
+    name: promote-extended-tests
+    if: github.ref == 'refs/heads/main'
+    needs: [nft-test, setup]
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    uses: coreeng/p2p/.github/workflows/promote-image.yaml@promote
+    with:
+      promotion-stage: extended-tests
+      dev-workload-identity-provider: ${{ needs.setup.outputs.dev_workflow_identity_provider }}
+      prod-workload-identity-provider: 'not_necessary'
+      dev-service-account: ${{ needs.setup.outputs.dev_service_account }}
+      prod-service-account: 'not_necessary'
+      dev-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.dev-project-id }}/tenant
+      prod-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.prod-project-id }}/tenant
+      dry-run: ${{ inputs.dry-run }}
 
   dev-deploy:
     name: dev-deploy
