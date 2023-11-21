@@ -89,7 +89,7 @@ jobs:
 
   promote-prod:
     name: promote-prod
-    needs: [build, setup]
+    needs: [extended-tests, setup]
     secrets:
       env_vars: ${{ secrets.env_vars }}
     uses: coreeng/p2p/.github/workflows/promote-image.yaml@promote
