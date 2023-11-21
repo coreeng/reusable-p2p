@@ -42,7 +42,7 @@ on:
 env:
   DEV_SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.dev-project-id }}.iam.gserviceaccount.com
   DEV_WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.dev-project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
-
+  DEV_ENVIRONMENT: ${{ inputs.dev-env-name }}
 
 jobs:
   setup:

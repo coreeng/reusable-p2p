@@ -53,6 +53,8 @@ env:
   PROD_SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.prod-project-id }}.iam.gserviceaccount.com
   DEV_WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.dev-project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
   PROD_WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.prod-project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
+  DEV_ENVIRONMENT: ${{ inputs.dev-env-name }}
+  PROD_ENVIRONMENT: ${{ inputs.prod-env-name }}
 
 
 jobs:

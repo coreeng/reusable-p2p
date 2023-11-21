@@ -47,6 +47,7 @@ on:
         default: ''
 env:
   REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/tenant
+  ENVIRONMENT: ${{ inputs.env-name }}
 
 jobs:
   p2p:
