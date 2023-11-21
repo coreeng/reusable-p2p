@@ -21,6 +21,37 @@ jobs:
       dry-run: true
       pre-targets: test-pre-step
       post-targets: test-post-step
+      
+  extended-tests:
+    uses: ./.github/workflows/extended-tests.yaml
+    secrets:
+      env_vars: |
+        TEST_VARIABLE=value
+    with:
+      dev-env-name: test-env
+      prod-env-name: test-env
+      dev-project-id: PROJECT-ID
+      prod-project-id: PROJECT-ID
+      dev-project-number: PROJECT-NUMBER
+      prod-project-number: PROJECT-NUMBER
+      tenant-name: TEST-TENANT
+      dry-run: true
+      pre-targets: test-pre-step
+      post-targets: test-post-step
+
+  prod:
+    uses: ./.github/workflows/prod.yaml
+    secrets:
+      env_vars: |
+        TEST_VARIABLE=value
+    with:
+      prod-env-name: test-env
+      prod-project-id: PROJECT-ID
+      prod-project-number: PROJECT-NUMBER
+      tenant-name: TEST-TENANT
+      dry-run: true
+      pre-targets: test-pre-step
+      post-targets: test-post-step
 
   increment-version:
     uses: ./.github/workflows/increment-version.yaml

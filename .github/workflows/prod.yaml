@@ -1,0 +1,70 @@
+name: Developer Platform Prod Deployment
+
+on:
+  workflow_call:
+    secrets:
+      env_vars:
+        required: false
+    inputs:
+      prod-env-name:
+        required: true
+        type: string
+      prod-project-id:
+        required: true
+        type: string
+      prod-project-number:
+        required: true
+        type: string
+      tenant-name:
+        required: true
+        type: string
+      dry-run:
+        required: false
+        type: boolean
+        default: false
+      pre-targets:
+        description: |
+          Make targets to run before each p2p command
+        required: false
+        type: string
+        default: ''
+      post-targets:
+        description: |
+          Make targets to run after each p2p command
+        required: false
+        type: string
+        default: ''
+
+env:
+  PROD_SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.prod-project-id }}.iam.gserviceaccount.com
+  PROD_WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.prod-project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
+
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      prod_workflow_identity_provider: ${{ steps.setup.outputs.prod_workflow_identity_provider }}
+      prod_service_account: ${{ steps.setup.outputs.prod_service_account }}
+    steps:
+      - name: Setup inputs passed to the reusable workflow
+        id: setup
+        run: |
+          echo "prod_workflow_identity_provider=$PROD_WORKLOAD_IDENTITY_PROVIDER" >> $GITHUB_OUTPUT
+          echo "prod_service_account=$PROD_SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
+  
+  p2p-prod:
+    needs: [setup]
+    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    with:
+      command: p2p-prod
+      env-name: ${{ inputs.prod-env-name }}
+      workload-identity-provider: ${{ needs.setup.outputs.prod_workflow_identity_provider }}
+      service-account: ${{ needs.setup.outputs.prod_service_account }}
+      project-id: ${{ inputs.prod-project-id }}
+      dry-run: ${{ inputs.dry-run }}
+      pre-targets: ${{ inputs.pre-targets }}
+      post-targets: ${{ inputs.post-targets }}
+

@@ -1,4 +1,4 @@
-name: Developer Platform P2P
+name: Developer Platform Extended Tests
 
 on:
   workflow_call:
@@ -15,9 +15,22 @@ on:
       dev-project-number:
         required: true
         type: string
+      prod-env-name:
+        required: true
+        type: string
+      prod-project-id:
+        required: true
+        type: string
+      prod-project-number:
+        required: true
+        type: string
       tenant-name:
         required: true
         type: string
+      region:
+        required: false
+        type: string
+        default: europe-west2
       dry-run:
         required: false
         type: boolean
@@ -37,7 +50,9 @@ on:
 
 env:
   DEV_SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.dev-project-id }}.iam.gserviceaccount.com
+  PROD_SERVICE_ACCOUNT: p2p-${{ inputs.tenant-name }}@${{ inputs.prod-project-id }}.iam.gserviceaccount.com
   DEV_WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.dev-project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
+  PROD_WORKLOAD_IDENTITY_PROVIDER: projects/${{ inputs.prod-project-number }}/locations/global/workloadIdentityPools/p2p-${{ inputs.tenant-name }}/providers/p2p-${{ inputs.tenant-name }}
 
 
 jobs:
@@ -45,20 +60,25 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       dev_workflow_identity_provider: ${{ steps.setup.outputs.dev_workflow_identity_provider }}
+      prod_workflow_identity_provider: ${{ steps.setup.outputs.prod_workflow_identity_provider }}
       dev_service_account: ${{ steps.setup.outputs.dev_service_account }}
+      prod_service_account: ${{ steps.setup.outputs.prod_service_account }}
     steps:
       - name: Setup inputs passed to the reusable workflow
         id: setup
         run: |
           echo "dev_workflow_identity_provider=$DEV_WORKLOAD_IDENTITY_PROVIDER" >> $GITHUB_OUTPUT
+          echo "prod_workflow_identity_provider=$PROD_WORKLOAD_IDENTITY_PROVIDER" >> $GITHUB_OUTPUT
           echo "dev_service_account=$DEV_SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
-  build:
+          echo "prod_service_account=$PROD_SERVICE_ACCOUNT" >> $GITHUB_OUTPUT
+  
+  extended-tests:
     needs: [setup]
     uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
     secrets:
       env_vars: ${{ secrets.env_vars }}
     with:
-      command: p2p-build
+      command: p2p-extended-tests
       env-name: ${{ inputs.dev-env-name }}
       workload-identity-provider: ${{ needs.setup.outputs.dev_workflow_identity_provider }}
       service-account: ${{ needs.setup.outputs.dev_service_account }}
@@ -67,51 +87,19 @@ jobs:
       pre-targets: ${{ inputs.pre-targets }}
       post-targets: ${{ inputs.post-targets }}
 
-  functional-test:
+  promote-prod:
+    name: promote-prod
     needs: [build, setup]
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
     secrets:
       env_vars: ${{ secrets.env_vars }}
+    uses: coreeng/p2p/.github/workflows/promote-image.yaml@promote
     with:
-      command: p2p-functional
-      env-name: ${{ inputs.dev-env-name }}
-      workload-identity-provider: ${{ needs.setup.outputs.dev_workflow_identity_provider }}
-      service-account: ${{ needs.setup.outputs.dev_service_account }}
-      project-id: ${{ inputs.dev-project-id }}
+      promotion-stage: prod
+      dev-workload-identity-provider: ${{ needs.setup.outputs.dev_workflow_identity_provider }}
+      prod-workload-identity-provider: ${{ needs.setup.outputs.prod_workflow_identity_provider }}
+      dev-service-account: ${{ needs.setup.outputs.dev_service_account }}
+      prod-service-account: ${{ needs.setup.outputs.prod_service_account }}
+      dev-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.dev-project-id }}/tenant
+      prod-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.prod-project-id }}/tenant
       dry-run: ${{ inputs.dry-run }}
-      pre-targets: ${{ inputs.pre-targets }}
-      post-targets: ${{ inputs.post-targets }}
-
-  nft-test:
-    name: nft-test
-    needs: [functional-test, setup]
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
-    with:
-      command: p2p-nft
-      env-name: ${{ inputs.dev-env-name }}
-      workload-identity-provider: ${{ needs.setup.outputs.dev_workflow_identity_provider }}
-      service-account: ${{ needs.setup.outputs.dev_service_account }}
-      project-id: ${{ inputs.dev-project-id }}
-      dry-run: ${{ inputs.dry-run }}
-      pre-targets: ${{ inputs.pre-targets }}
-      post-targets: ${{ inputs.post-targets }}
-
-  dev-deploy:
-    name: dev-deploy
-    if: github.ref == 'refs/heads/main'
-    needs: [promote-extended-tests, setup]
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
-    with:
-      command: p2p-dev
-      env-name: ${{ inputs.dev-env-name }}
-      workload-identity-provider: ${{ needs.setup.outputs.dev_workflow_identity_provider }}
-      service-account: ${{ needs.setup.outputs.dev_service_account }}
-      project-id: ${{ inputs.dev-project-id }}
-      dry-run: ${{ inputs.dry-run }}
-      pre-targets: ${{ inputs.pre-targets }}
-      post-targets: ${{ inputs.post-targets }}
 
