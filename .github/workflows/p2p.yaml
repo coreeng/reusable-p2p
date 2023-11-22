@@ -118,21 +118,3 @@ jobs:
       dev-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.dev-project-id }}/tenant
       prod-registry: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.prod-project-id }}/tenant
       dry-run: ${{ inputs.dry-run }}
-
-  dev-deploy:
-    name: dev-deploy
-    if: github.ref == 'refs/heads/main'
-    needs: [promote-extended-tests, setup]
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    uses: coreeng/p2p/.github/workflows/execute-command.yaml@main
-    with:
-      command: p2p-dev
-      env-name: ${{ inputs.dev-env-name }}
-      workload-identity-provider: ${{ needs.setup.outputs.dev_workflow_identity_provider }}
-      service-account: ${{ needs.setup.outputs.dev_service_account }}
-      project-id: ${{ inputs.dev-project-id }}
-      dry-run: ${{ inputs.dry-run }}
-      pre-targets: ${{ inputs.pre-targets }}
-      post-targets: ${{ inputs.post-targets }}
-
