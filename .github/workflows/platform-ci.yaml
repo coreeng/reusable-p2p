@@ -89,15 +89,11 @@ jobs:
   tenants-plan:
     name: tenants-yaml
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [tenants-validate, changes, matrix]
+    needs: [tenants-validate, changes]
     if: ${{  inputs.release_build == false && needs.changes.outputs.environments != 'true' && needs.changes.outputs.tenants == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
-    strategy:
-      fail-fast: true
-      max-parallel: 1
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     with:
       action: features-plan
       feature: tenants-yaml
