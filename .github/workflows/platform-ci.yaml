@@ -64,7 +64,7 @@ jobs:
     name: Matrix
     needs: [changes]
     uses: ./.github/workflows/platform-environment-feature-matrix.yaml
-    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
+    if: ${{ inputs.release_build == true }}
     with:
       environment: ${{ inputs.environment }}
 
