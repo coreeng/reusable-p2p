@@ -1,0 +1,87 @@
+
+on:
+  workflow_call:
+    inputs:
+      stage-dev:
+        required: false
+        type: string
+        default: ${{ vars.STAGE_DEV }}
+      dry-run:
+        required: false
+        type: boolean
+        default: false
+      pre-targets:
+        description: |
+          Make targets to run before each p2p command
+        required: false
+        type: string
+        default: ''
+      post-targets:
+        description: |
+          Make targets to run after each p2p command
+        required: false
+        type: string
+        default: ''
+      use-semver-as-image-tag:
+        description: |
+          Use semver as image tag instead of the git describe tag
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      image_tag:
+        value: ${{ jobs.version.outputs.image_tag }}
+      semver:
+        value: ${{ jobs.version.outputs.semver }}
+
+env:
+  REGION: europe-west2
+
+jobs:
+  version:
+    uses: ./.github/workflows/p2p-workflow-version.yaml
+    with:
+        use-semver-as-image-tag: ${{ inputs.use-semver-as-image-tag }}
+
+  build:
+    needs: [version]
+    if: inputs.stage-dev != ''
+    uses: ./.github/workflows/p2p-execute-command.yaml
+    strategy:
+      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      fail-fast: false
+    with:
+      command: p2p-build
+      github_env: ${{ matrix.deploy_env }}
+      image_tag: ${{ needs.version.outputs.image_tag }}
+      semver: ${{ needs.version.outputs.semver }}
+
+  functional-test:
+    needs: [version, build]
+    if: inputs.stage-dev != ''
+    uses: ./.github/workflows/p2p-execute-command.yaml
+    strategy:
+      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      fail-fast: false
+    with:
+      command: p2p-functional
+      github_env: ${{ matrix.deploy_env }}
+      image_tag: ${{ needs.version.outputs.image_tag }}
+      semver: ${{ needs.version.outputs.semver }}
+
+
+  nft-test:
+    needs: [version, functional-test]
+    if: inputs.stage-dev != ''
+    uses: ./.github/workflows/p2p-execute-command.yaml
+    strategy:
+      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      fail-fast: false
+    with:
+      command: p2p-nft
+      github_env: ${{ matrix.deploy_env }}
+      image_tag: ${{ needs.version.outputs.image_tag }}
+      semver: ${{ needs.version.outputs.semver }}
+
+
+

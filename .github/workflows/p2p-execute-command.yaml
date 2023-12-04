@@ -1,0 +1,138 @@
+on:
+  workflow_call:
+    inputs:
+      command:
+        required: true
+        type: string
+      github_env:
+        required: false
+        type: string
+        default: ''
+      dry-run:
+        required: false
+        type: boolean
+        default: false
+      region:
+        required: false
+        type: string
+        default: europe-west2
+      image_tag:
+        required: false
+        type: string
+        default: ''
+      semver:
+        required: false
+        type: string
+        default: ''
+      zone:
+        required: false
+        type: string
+        default: europe-west2-a
+      pre-targets:
+        description: |
+          Make targets to run before the command
+        required: false
+        type: string
+        default: ''
+      post-targets:
+        description: |
+          Make targets to run after the command
+        required: false
+        type: string
+        default: ''
+
+
+jobs:
+  exec:
+    name: '${{ inputs.command }} (${{ inputs.github_env }})'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.github_env }}
+    env:
+      BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+      DPLATFORM: ${{ vars.DPLATFORM }}
+      PROJECT_ID: ${{ vars.PROJECT_ID }}
+      PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+      REGION: ${{ inputs.region }}
+      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
+      SEMVER: ${{ inputs.semver }}
+      SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
+      TAG_VERSION: ${{ inputs.image_tag }}
+      TENANT_NAME: ${{ vars.TENANT_NAME }}
+      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
+    steps:
+      - name: print env context
+        run: |
+          yq -p=json -C <<EOT
+          ${{ toJSON(env) }}
+          EOT
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        if: inputs.dry-run == false
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_lifetime: 600s
+
+      - name: Setup Google Cloud SDK
+        id: setup-gcloud
+        if: inputs.dry-run == false
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          install_components: beta,gke-gcloud-auth-plugin
+
+      - name: Setup NumPy
+        id: setup-numpy
+        if: inputs.dry-run == false
+        shell: bash
+        # https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
+        run: $(gcloud info --format="value(basic.python_location)") -m pip install numpy
+
+      - name: Setup IAP tunnel
+        id: setup-iap-tunnel
+        if: inputs.dry-run == false
+        shell: bash
+        run: |
+          nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
+          sleep 4
+
+      - name: Setup kubeconfig
+        id: setup-kubeconfig
+        if: inputs.dry-run == false
+        shell: bash
+        run: |
+          gcloud container clusters get-credentials --project $PROJECT_ID --zone $REGION --internal-ip ${{ env.DPLATFORM }}
+          kubectl config set clusters.gke_${{ env.PROJECT_ID }}_${{ inputs.region }}_${{ env.DPLATFORM }}.proxy-url http://localhost:57755
+
+      - name: Test kubectl
+        id: test-kubectl
+        if: inputs.dry-run == false
+        shell: bash
+        run: kubectl cluster-info
+
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v2
+        if: inputs.dry-run == false
+        with:
+          registry: europe-west2-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      - name: Pre-targets
+        if: inputs.pre-targets != ''
+        run: |
+          make ${{ inputs.pre-targets }}
+
+      - name: Run Command
+        id: run-command
+        run: |
+          make ${{ inputs.command }}
+
+      - name: Post-targets
+        if: inputs.post-targets != ''
+        run: |
+          make ${{ inputs.post-targets }}

@@ -1,0 +1,55 @@
+name: version
+
+on:
+  workflow_call:
+    inputs:
+      use-semver-as-image-tag:
+        required: false
+        type: string
+        default: "false"
+    outputs:
+      image_tag:
+        value: ${{ jobs.version.outputs.image_tag }}
+      semver:
+        value: ${{ jobs.version.outputs.semver }}
+      git_branch:
+        value: ${{ jobs.version.outputs.git_branch }}
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    env:
+      USE_SEMVER_AS_IMAGE_TAG: ${{ inputs.use-semver-as-image-tag }}
+    outputs:
+      image_tag: ${{ steps.version.outputs.image_tag }}
+      semver: ${{ steps.version.outputs.semver }}
+      git_branch: ${{ steps.version.outputs.git_branch }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # fetch-tags is currently broken so we need fetch them manually in the
+          # next step
+          fetch-tags: true
+
+      - name: Get version
+        id: version
+        shell: bash
+        run: |
+          git fetch --prune --unshallow --tags
+          DESCRIBE="$(git describe --match 'prefix_*' --abbrev=7)"
+          CLEANED_DESCRIBE="$(echo $DESCRIBE | tr '-' '.')"
+          GIT_BRANCH_PRE="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          GIT_BRANCH="${GIT_BRANCH_PRE//\//-}"
+          IMAGE_TAG="$GIT_BRANCH-$(echo $DESCRIBE | sed 's/prefix_/v/')"
+          SEMVER="${CLEANED_DESCRIBE:7:-9}"
+          echo "DESCRIBE=$DESCRIBE CLEANED_DESCRIBE=$CLEANED_DESCRIBE"
+          echo "IMAGE_TAG=$IMAGE_TAG SEMVER=$SEMVER"
+          echo "GITHUB_BRANCH=${GITHUB_BRANCH}"
+          echo "semver=$SEMVER" >> $GITHUB_OUTPUT
+          echo "GITHUB_BRANCH=${GITHUB_BRANCH}" >> $GITHUB_OUTPUT
+          if [[ "$USE_SEMVER_AS_IMAGE_TAG" == "true" ]]; then
+            echo "image_tag=$SEMVER" >> $GITHUB_OUTPUT
+          else
+            echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+          fi

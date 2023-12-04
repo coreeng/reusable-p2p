@@ -1,0 +1,52 @@
+
+on:
+  workflow_call:
+    secrets:
+      env_vars:
+        required: false
+    inputs:
+      stage-prod:
+        required: false
+        type: string
+        default: ${{ vars.STAGE_PROD }}
+      dry-run:
+        required: false
+        type: boolean
+        default: false
+      image_tag:
+        required: false
+        type: string
+        default: ''
+      semver:
+        required: false
+        type: string
+        default: ''
+      pre-targets:
+        description: |
+          Make targets to run before each p2p command
+        required: false
+        type: string
+        default: ''
+      post-targets:
+        description: |
+          Make targets to run after each p2p command
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  prod-deploy:
+    name: prod-deploy
+    if: inputs.stage-prod != ''
+    #if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/p2p-execute-command.yaml
+    strategy:
+      matrix: ${{ fromJSON(inputs.stage-prod) }}
+      fail-fast: false
+    with:
+      command: p2p-prod
+      github_env: ${{ matrix.deploy_env }}
+      image_tag: ${{ inputs.image_tag }}
+      semver: ${{ inputs.semver }}
+
+
