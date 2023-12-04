@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from argparse import ArgumentParser, RawTextHelpFormatter
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import sys
 import subprocess
 import json
@@ -49,10 +49,12 @@ class CheckRelease:
     @classmethod
     def setup_args(cls, arguments):
         parser = ArgumentParser(
-            formatter_class=RawTextHelpFormatter,
+            formatter_class=RawDescriptionHelpFormatter,
             description='''
 
-Generate a set of github environment variables for specific dplatform environments
+Generate a set of github environment variables for specific DPLATFORM environments
+from the available projects to the given user.
+
 
 '''
         )
@@ -63,19 +65,37 @@ Generate a set of github environment variables for specific dplatform environmen
         subparsers = parser.add_subparsers(dest='mode', help='sub-command help')
         subparsers.required = True
 
-        show_parser = subparsers.add_parser('show', help='show github environments')
+        show_parser = subparsers.add_parser('show', formatter_class=RawDescriptionHelpFormatter,
+                                            help='show github environments')
+        show_parser.description = '''
+Show the current github environments and their associated variables.
+        
+This obtains currently defined DPLATFORMs and STAGEs for a given repository.
+'''
         show_parser.add_argument('--repo', help="Github Repo")
         show_parser.add_argument('--show-perms', '-p', help="Show permissions", action="store_true")
 
-        list_parser = subparsers.add_parser('list', help='list gcloud dplatform environments')
+        list_parser = subparsers.add_parser('list', formatter_class=RawDescriptionHelpFormatter,
+                                            help='list gcloud dplatform environments')
+        list_parser.description = '''
+Shows the available dplatform environments for the given user.
+'''
 
-        trigger_parser = subparsers.add_parser('trigger', help='trigger a github environment')
+        trigger_parser = subparsers.add_parser('trigger', formatter_class=RawDescriptionHelpFormatter,
+                                               help='trigger a github environment')
+        trigger_parser.description = '''
+Trigger a github workflow for the given environments.
+'''
         trigger_parser.add_argument('env', nargs='+', help="envs to trigger")
         trigger_parser.add_argument('--repo', help="Github Repo")
         trigger_parser.add_argument('--workflow', '-w', help="Workflow filename", default="dispatch.yaml")
         trigger_parser.add_argument('--ref', '-r', help="Workflow git reference", default="main")
 
-        set_parser = subparsers.add_parser('set', help='configure github environment')
+        set_parser = subparsers.add_parser('set', formatter_class=RawDescriptionHelpFormatter,
+                                           help='configure github environment')
+        set_parser.description = '''
+Configure github environment variables for the given environments.
+'''
         set_parser.add_argument('env', nargs='+', help="stage definition in form <stage>=<env>,<env>")
         set_parser.add_argument('--repo', help="Github Repo")
         set_parser.add_argument('--show-only', help="Show the environment variables that would be set", action="store_true")
