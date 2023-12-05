@@ -57,10 +57,18 @@ jobs:
       id: setversion
       shell: bash
       run: |
-        echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
+        echo "patch=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
         echo "minor=${{ steps.semvers.outputs.patch }}" | cut -d. -f1,2 >> "$GITHUB_OUTPUT"
         echo "major=${{ steps.semvers.outputs.patch }}" | cut -d. -f1 >> "$GITHUB_OUTPUT"
         
+
+    - name: Set bumped version in output
+      shell: bash
+      run: |
+        echo "version=${{ steps.setversion.outputs.patch }}"
+        echo "minor=${{ steps.setversion.outputs.minor }}"
+        echo "major=${{ steps.serversion.outputs.major }}"
+    
 
     - name: Create vA.B.C tag
       uses: rickstaa/action-create-tag@v1
