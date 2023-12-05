@@ -53,7 +53,16 @@ jobs:
       with:
         version: ${{ steps.previousversion.outputs.version }} 
 
-    - name: Create tag
+    - name: Set bumped version in output
+      id: setversion
+      shell: bash
+      run: |
+        echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
+        echo "minor=${{ steps.semvers.outputs.patch }}" | cut -d. -f1,2" >> "$GITHUB_OUTPUT"
+        echo "major=${{ steps.semvers.outputs.patch }}" | cut -d. -f1" >> "$GITHUB_OUTPUT"
+        
+
+    - name: Create vA.B.C tag
       uses: rickstaa/action-create-tag@v1
       if: inputs.dry-run == false
       id: create_tag
@@ -61,7 +70,7 @@ jobs:
         tag: v${{ steps.semvers.outputs.minor }}
         tag_exists_error: true
 
-    - name: Set bumped version in ourput
+    - name: Set bumped version in output
       id: setversion
       shell: bash
       run: |
