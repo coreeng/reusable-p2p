@@ -60,16 +60,3 @@ jobs:
       pre-targets: test-pre-step
       post-targets: test-post-step
 
-  p2p:
-    uses: ./.github/workflows/p2p.yaml
-    secrets:
-      env_vars: |
-        TEST_VARIABLE=value
-    with:
-      env-name: test-env
-      project-id: PROJECT-ID
-      project-number: PROJECT-NUMBER
-      tenant-name: TEST-TENANT
-      dry-run: true
-      pre-targets: test-pre-step
-      post-targets: test-post-step
