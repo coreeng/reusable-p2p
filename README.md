@@ -7,11 +7,7 @@ This is a reusable Github Actions P2P for CECG's Developer Platform
 Create a workflow on your repository to use the p2p.yaml workflow
 
 ```
-name: P2P
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
@@ -21,19 +17,24 @@ permissions:
   id-token: write
 
 jobs:
-  p2p:
-    uses: coreeng/reusable-p2p/.github/workflows/p2p.yaml@v0.0.1
-    secrets:
-      env_vars: |
-        TEST_VARIABLE=value
+  fastfeedback:
+    uses: coreeng/p2p/.github/workflows/p2p-workflow-fastfeedback.yaml@p2p-testing
+  extendedtests:
+    uses: coreeng/p2p/.github/workflows/p2p-workflow-exttests.yaml@p2p-testing
+    needs: [fastfeedback]
     with:
-      project-id: ${{ vars.PROJECT_ID }}
-      project-number: ${{ vars.PROJECT_NUMBER }}
-      tenant-name: ${{ vars.TENANT_NAME }}
-
+      image_tag: ${{ needs.fastfeedback.outputs.image_tag }}
+      semver: ${{ needs.fastfeedback.outputs.semver }}
+  prod:
+    uses: coreeng/p2p/.github/workflows/p2p-workflow-prod.yaml@p2p-testing
+    needs: [fastfeedback, extendedtests]
+    with:
+      image_tag: ${{ needs.fastfeedback.outputs.image_tag }}
+      semver: ${{ needs.fastfeedback.outputs.semver }}
 ```
 
-The `env_vars` secret will be use to propagate env vars to your Makefile calls. They will be redacted from the output so you can pass sensitive information like credentials as they're coming in as `secrets`.
+
+
 ### Makefile
 The P2P pipeline assumes you have the following tasks on your makefile:
 

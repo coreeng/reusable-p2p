@@ -58,8 +58,8 @@ jobs:
       shell: bash
       run: |
         echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
-        echo "minor=${{ steps.semvers.outputs.patch }}" | cut -d. -f1,2" >> "$GITHUB_OUTPUT"
-        echo "major=${{ steps.semvers.outputs.patch }}" | cut -d. -f1" >> "$GITHUB_OUTPUT"
+        echo "minor=${{ steps.semvers.outputs.patch }}" | cut -d. -f1,2 >> "$GITHUB_OUTPUT"
+        echo "major=${{ steps.semvers.outputs.patch }}" | cut -d. -f1 >> "$GITHUB_OUTPUT"
         
 
     - name: Create vA.B.C tag
