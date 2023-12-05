@@ -69,9 +69,3 @@ jobs:
       with:
         tag: v${{ steps.semvers.outputs.minor }}
         tag_exists_error: true
-
-    - name: Set bumped version in output
-      id: setversion
-      shell: bash
-      run: |
-        echo "version=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
