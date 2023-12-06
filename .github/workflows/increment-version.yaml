@@ -57,14 +57,22 @@ jobs:
       id: setversion
       shell: bash
       run: |
-        echo "patch=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
-        echo "minor=${{ steps.semvers.outputs.patch }}" | cut -d. -f1,2 >> "$GITHUB_OUTPUT"
-        echo "major=${{ steps.semvers.outputs.patch }}" | cut -d. -f1 >> "$GITHUB_OUTPUT"
+        echo "generate the following tags"
+        PATCH=$(echo ${{ steps.semvers.outputs.patch }})
+        MINOR=$(echo ${{ steps.semvers.outputs.patch }} | cut -d. -f 1,2)
+        MAJOR=$(echo ${{ steps.semvers.outputs.patch }} | cut -d. -f 1)
+        echo "tags={ "include": [ { "tag": "v$PATCH" }, { "tag": v$MINOR }, { "tag": v$MAJOR } ]}" >> "$GITHUB_OUTPUT"
+        EOT
+        echo "patch=$PATCH" >> "$GITHUB_OUTPUT"
+        echo "minor=$MINOR" >> "$GITHUB_OUTPUT"
+        echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
         
 
-    - name: Set bumped version in output
-      shell: bash
+    - name: Show tags
+      strategy:
+        matrix: ${{ fromJSON(steps.setversion.outputs.tags) }}
       run: |
+        echo "tag=${{ matrix.tag }}"
         echo "version=${{ steps.setversion.outputs.patch }}"
         echo "minor=${{ steps.setversion.outputs.minor }}"
         echo "major=${{ steps.setversion.outputs.major }}"
