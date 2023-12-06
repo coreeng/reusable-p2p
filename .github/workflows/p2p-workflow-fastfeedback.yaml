@@ -85,6 +85,7 @@ jobs:
 
   promote-pre-extended-tests:
     name: promote-extended-tests
+    needs: [nft-test, functional-test]
     if: inputs.stage-dev != ''
     #if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/p2p-promote-image.yaml
