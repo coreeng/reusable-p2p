@@ -83,9 +83,9 @@ jobs:
       image_tag: ${{ needs.version.outputs.image_tag }}
       semver: ${{ needs.version.outputs.semver }}
 
-  promote-pre-extended-tests:
-    name: promote-extended-tests
-    needs: [nft-test, functional-test]
+  promote:
+    name: promote
+    needs: [nft-test, functional-test, version]
     if: inputs.stage-dev != ''
     #if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/p2p-promote-image.yaml

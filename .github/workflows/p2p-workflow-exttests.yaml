@@ -53,7 +53,7 @@ jobs:
       image_tag: ${{ inputs.image_tag }}
       semver: ${{ inputs.semver }}
 
-  promote-post-extended-tests:
+  promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
     needs: [run-tests]
     if: inputs.stage-prod != ''
