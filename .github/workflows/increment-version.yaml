@@ -68,7 +68,6 @@ jobs:
         echo "version=${{ steps.setversion.outputs.patch }}"
         echo "minor=${{ steps.setversion.outputs.minor }}"
         echo "major=${{ steps.setversion.outputs.major }}"
-    
 
     - name: Create vA.B.C tag
       uses: rickstaa/action-create-tag@v1
