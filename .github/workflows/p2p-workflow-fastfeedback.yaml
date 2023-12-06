@@ -96,7 +96,7 @@ jobs:
       source_matrix: ${{ inputs.stage-dev }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: extended-tests
-      image_tag: ${{ inputs.image_tag }}
-      semver: ${{ inputs.semver }}
+      image_tag: ${{ needs.version.outputs.image_tag }}
+      semver: ${{ needs.version.outputs.semver }}
 
 

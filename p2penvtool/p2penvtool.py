@@ -26,6 +26,7 @@ if os.path.isfile("/opt/homebrew/etc/ca-certificates/cert.pem"):
 BEARER_TOKEN = os.environ.get("GITHUB_BEARER_TOKEN", None)
 # using an access token
 
+VALID_STAGES = ['dev', 'test', 'staging', 'prod']
 
 class CheckRelease:
     def __init__(self, arguments):
@@ -97,6 +98,7 @@ Trigger a github workflow for the given environments.
 Configure github environment variables for the given environments.
 '''
         set_parser.add_argument('env', nargs='+', help="stage definition in form <stage>=<env>,<env>")
+        set_parser.add_argument('--force', help="Force setting up unknown stages", action="store_true")
         set_parser.add_argument('--repo', help="Github Repo")
         set_parser.add_argument('--show-only', help="Show the environment variables that would be set", action="store_true")
 
@@ -226,14 +228,15 @@ Configure github environment variables for the given environments.
         stage = context['stage']
         envs = context['envs'].split(',')
 
+        if stage not in VALID_STAGES and stage is not None and self.args.get('force', False) is False
+            raise RuntimeError(f"Invalid stage {stage}. Must be one of {VALID_STAGES} or set `--force` to override")
+
         protection_rules = {
             'prevent_self_review': True,
             'reviewers': [
                 {'type': 'User', 'id': 'withnale'},
             ]
         }
-
-
 
         for project in ProjectsClient().search_projects():
             varlist = {}
