@@ -67,7 +67,7 @@ jobs:
       run: |
         echo "version=${{ steps.setversion.outputs.patch }}"
         echo "minor=${{ steps.setversion.outputs.minor }}"
-        echo "major=${{ steps.serversion.outputs.major }}"
+        echo "major=${{ steps.setversion.outputs.major }}"
     
 
     - name: Create vA.B.C tag
