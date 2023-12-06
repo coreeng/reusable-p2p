@@ -83,5 +83,19 @@ jobs:
       image_tag: ${{ needs.version.outputs.image_tag }}
       semver: ${{ needs.version.outputs.semver }}
 
+  promote-pre-extended-tests:
+    name: promote-extended-tests
+    if: inputs.stage-dev != ''
+    #if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/p2p-promote-image.yaml
+    strategy:
+      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      fail-fast: false
+    with:
+      source_matrix: ${{ inputs.stage-dev }}
+      dest_github_env: ${{ matrix.deploy_env }}
+      promotion-stage: extended-tests
+      image_tag: ${{ inputs.image_tag }}
+      semver: ${{ inputs.semver }}
 
 
