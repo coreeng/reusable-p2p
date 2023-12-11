@@ -14,6 +14,10 @@ on:
         required: false
         type: boolean
         default: false
+      main-branch:
+        required: false
+        type: string
+        default: 'refs/heads/main'
       use-semver-as-image-tag:
         description: |
           Use semver as image tag instead of the git describe tag
@@ -75,7 +79,7 @@ jobs:
   promote:
     name: promote
     needs: [nft-test, functional-test, version]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == ${{ inputs.main-branch }} 
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
