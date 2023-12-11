@@ -74,21 +74,21 @@ jobs:
       uses: rickstaa/action-create-tag@v1
       if: inputs.dry-run == false
       with:
-        tag: v${{ steps.semvers.outputs.patch }}
+        tag: v${{ steps.setversion.outputs.patch }}
         tag_exists_error: true
 
     - name: Create minor tag
       uses: rickstaa/action-create-tag@v1
       if: inputs.dry-run == false
       with:
-        tag: v${{ steps.semvers.outputs.minor }}
+        tag: v${{ steps.setversion.outputs.minor }}
         tag_exists_error: false
 
     - name: Create minor tag
       uses: rickstaa/action-create-tag@v1
       if: inputs.dry-run == false
       with:
-        tag: v${{ steps.semvers.outputs.minor }}
+        tag: v${{ steps.setversion.outputs.minor }}
         tag_exists_error: false
 
 
