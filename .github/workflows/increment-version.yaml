@@ -6,7 +6,7 @@ on:
     outputs:
       version:
         description: "The next semantic version"
-        value: ${{ jobs.increment-version.outputs.version }}
+        value: ${{ jobs.increment-version.outputs.patch }}
     secrets:
       git-token:
         required: true
