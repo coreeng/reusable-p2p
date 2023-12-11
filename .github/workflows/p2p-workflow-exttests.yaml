@@ -2,14 +2,14 @@
 on:
   workflow_call:
     inputs:
-      stage-dev:
+      source:
         required: false
         type: string
-        default: ${{ vars.STAGE_DEV }}
-      stage-prod:
+        default: ${{ vars.EXTENDED_TEST }}
+      destination:
         required: false
         type: string
-        default: ${{ vars.STAGE_PROD }}
+        default: ${{ vars.PROD }}
       dry-run:
         required: false
         type: boolean
@@ -22,30 +22,15 @@ on:
         required: false
         type: string
         default: ''
-      pre-targets:
-        description: |
-          Make targets to run before each p2p command
-        required: false
-        type: string
-        default: ''
-      post-targets:
-        description: |
-          Make targets to run after each p2p command
-        required: false
-        type: string
-        default: ''
 
 env:
   REGION: europe-west2
 
 jobs:
   run-tests:
-    needs: [promote-pre-extended-tests]
-    if: inputs.stage-dev != ''
-    #if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/p2p-execute-command.yaml
     strategy:
-      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      matrix: ${{ fromJSON(inputs.source ) }}
       fail-fast: false
     with:
       command: p2p-extended-tests
@@ -56,12 +41,11 @@ jobs:
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
     needs: [run-tests]
-    if: inputs.stage-prod != ''
     strategy:
-      matrix: ${{ fromJSON(inputs.stage-prod) }}
+      matrix: ${{ fromJSON(inputs.destination) }}
       fail-fast: false
     with:
-      source_matrix: ${{ inputs.stage-dev }}
+      source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: prod
       image_tag: ${{ inputs.image_tag }}

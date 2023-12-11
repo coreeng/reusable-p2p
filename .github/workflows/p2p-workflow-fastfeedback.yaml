@@ -75,7 +75,7 @@ jobs:
   promote:
     name: promote
     needs: [nft-test, functional-test, version]
-    # if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
