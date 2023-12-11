@@ -65,11 +65,10 @@ jobs:
     - name: Show the tags
       shell: bash
       run: |
-        echo "generate the following tags
+        echo "generate the following tags"
         echo "version=${{ steps.setversion.outputs.patch }}"
         echo "minor=${{ steps.setversion.outputs.minor }}"
         echo "major=${{ steps.setversion.outputs.major }}"
-        ecg
 
     - name: Create version tag
       uses: rickstaa/action-create-tag@v1
