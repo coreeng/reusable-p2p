@@ -5,10 +5,10 @@ on:
       env_vars:
         required: false
     inputs:
-      stage-prod:
+      source:
         required: false
         type: string
-        default: ${{ vars.STAGE_PROD }}
+        default: ${{ vars.PROD }}
       dry-run:
         required: false
         type: boolean
@@ -25,11 +25,9 @@ on:
 jobs:
   prod-deploy:
     name: prod-deploy
-    if: inputs.stage-prod != ''
-    #if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/p2p-execute-command.yaml
     strategy:
-      matrix: ${{ fromJSON(inputs.stage-prod) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-prod
