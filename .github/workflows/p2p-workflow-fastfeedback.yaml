@@ -82,7 +82,7 @@ jobs:
     if: github.ref == ${{ inputs.main-branch }} 
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
-      matrix: ${{ fromJSON(inputs.source) }}
+      matrix: ${{ fromJSON(inputs.destination) }}
       fail-fast: false
     with:
       source_matrix: ${{ inputs.source }}
