@@ -70,25 +70,24 @@ jobs:
         echo "minor=${{ steps.setversion.outputs.minor }}"
         echo "major=${{ steps.setversion.outputs.major }}"
 
+    - name: Create minor tag
+      uses: rickstaa/action-create-tag@v1
+      if: inputs.dry-run == false
+      with:
+        tag: v${{ steps.setversion.outputs.minor }}
+        tag_exists_error: false
+
+    - name: Create minor tag
+      uses: rickstaa/action-create-tag@v1
+      if: inputs.dry-run == false
+      with:
+        tag: v${{ steps.setversion.outputs.minor }}
+        tag_exists_error: false
+
     - name: Create version tag
       uses: rickstaa/action-create-tag@v1
       if: inputs.dry-run == false
       with:
         tag: v${{ steps.setversion.outputs.patch }}
         tag_exists_error: true
-
-    - name: Create minor tag
-      uses: rickstaa/action-create-tag@v1
-      if: inputs.dry-run == false
-      with:
-        tag: v${{ steps.setversion.outputs.minor }}
-        tag_exists_error: false
-
-    - name: Create minor tag
-      uses: rickstaa/action-create-tag@v1
-      if: inputs.dry-run == false
-      with:
-        tag: v${{ steps.setversion.outputs.minor }}
-        tag_exists_error: false
-
 
