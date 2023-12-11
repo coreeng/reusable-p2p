@@ -228,7 +228,7 @@ Configure github environment variables for the given environments.
         stage = context['stage']
         envs = context['envs'].split(',')
 
-        if stage not in VALID_STAGES and stage is not None and self.args.get('force', False) is False
+        if stage not in VALID_STAGES and stage is not None and self.args.get('force', False) is False:
             raise RuntimeError(f"Invalid stage {stage}. Must be one of {VALID_STAGES} or set `--force` to override")
 
         protection_rules = {

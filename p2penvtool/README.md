@@ -9,13 +9,13 @@ visible environments for a given user.
 ## P2P Overview
 
 As discussed in the ADR, it was felt beneficial to provide a looser coupling between
-the path to production workflow and the environments that it targetted. This allows for
+the path to production workflow and the environments that it targeted. This allows for
 a greater number of use cases to be supported.
 
 Most noteably:
 
 - a logical separation between the tasks that need to be achieved to get to production
-  and the environments that are targetted
+  and the environments that are targeted
 - the path to production workflow can target 1 or more developer platform environments
   (henceforth referred to as DPLATFORMs) for a given STAGE.
 

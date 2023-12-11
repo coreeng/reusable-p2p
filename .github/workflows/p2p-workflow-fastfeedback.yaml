@@ -2,26 +2,18 @@
 on:
   workflow_call:
     inputs:
-      stage-dev:
+      source:
         required: false
         type: string
-        default: ${{ vars.STAGE_DEV }}
+        default: ${{ vars.FAST_FEEDBACK}}
+      destination:
+        required: false
+        type: string
+        default: ${{ vars.EXTENDED_TEST }}
       dry-run:
         required: false
         type: boolean
         default: false
-      pre-targets:
-        description: |
-          Make targets to run before each p2p command
-        required: false
-        type: string
-        default: ''
-      post-targets:
-        description: |
-          Make targets to run after each p2p command
-        required: false
-        type: string
-        default: ''
       use-semver-as-image-tag:
         description: |
           Use semver as image tag instead of the git describe tag
@@ -45,10 +37,9 @@ jobs:
 
   build:
     needs: [version]
-    if: inputs.stage-dev != ''
     uses: ./.github/workflows/p2p-execute-command.yaml
     strategy:
-      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-build
@@ -58,10 +49,9 @@ jobs:
 
   functional-test:
     needs: [version, build]
-    if: inputs.stage-dev != ''
     uses: ./.github/workflows/p2p-execute-command.yaml
     strategy:
-      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-functional
@@ -72,10 +62,9 @@ jobs:
 
   nft-test:
     needs: [version, functional-test]
-    if: inputs.stage-dev != ''
     uses: ./.github/workflows/p2p-execute-command.yaml
     strategy:
-      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-nft
@@ -86,14 +75,13 @@ jobs:
   promote:
     name: promote
     needs: [nft-test, functional-test, version]
-    if: inputs.stage-dev != ''
-    #if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
-      matrix: ${{ fromJSON(inputs.stage-dev) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
-      source_matrix: ${{ inputs.stage-dev }}
+      source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: extended-tests
       image_tag: ${{ needs.version.outputs.image_tag }}
