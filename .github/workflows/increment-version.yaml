@@ -71,7 +71,7 @@ jobs:
         echo "major=${{ steps.setversion.outputs.major }}"
 
     - name: Create major tag
-      uses: rickstaa/action-create-tag@v1
+      uses: coreeng/action-create-tag@v1
       if: inputs.dry-run == false
       with:
         tag: v${{ steps.setversion.outputs.major }}
@@ -79,7 +79,7 @@ jobs:
         force_push_tag: true
 
     - name: Create minor tag
-      uses: rickstaa/action-create-tag@v1
+      uses: coreeng/action-create-tag@v1
       if: inputs.dry-run == false
       with:
         tag: v${{ steps.setversion.outputs.minor }}
@@ -87,7 +87,7 @@ jobs:
         force_push_tag: true
 
     - name: Create version tag
-      uses: rickstaa/action-create-tag@v1
+      uses: coreeng/action-create-tag@v1
       if: inputs.dry-run == false
       with:
         tag: v${{ steps.setversion.outputs.patch }}

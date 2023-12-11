@@ -21,18 +21,6 @@ on:
         required: false
         type: string
         default: ''
-      pre-targets:
-        description: |
-          Make targets to run before each p2p command
-        required: false
-        type: string
-        default: ''
-      post-targets:
-        description: |
-          Make targets to run after each p2p command
-        required: false
-        type: string
-        default: ''
 
 jobs:
   prod-deploy:
