@@ -76,6 +76,7 @@ jobs:
       with:
         tag: v${{ steps.setversion.outputs.major }}
         tag_exists_error: false
+        force_push_tag: true
 
     - name: Create minor tag
       uses: rickstaa/action-create-tag@v1
@@ -83,6 +84,7 @@ jobs:
       with:
         tag: v${{ steps.setversion.outputs.minor }}
         tag_exists_error: false
+        force_push_tag: true
 
     - name: Create version tag
       uses: rickstaa/action-create-tag@v1
