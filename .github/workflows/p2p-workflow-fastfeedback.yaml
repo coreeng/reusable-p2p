@@ -41,7 +41,7 @@ jobs:
   version:
     uses: ./.github/workflows/p2p-workflow-version.yaml
     with:
-        use-semver-as-image-tag: ${{ inputs.use-semver-as-image-tag }}
+      use-semver-as-image-tag: ${{ inputs.use-semver-as-image-tag }}
 
   build:
     needs: [version]

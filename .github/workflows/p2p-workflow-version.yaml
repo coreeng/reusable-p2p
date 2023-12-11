@@ -46,8 +46,9 @@ jobs:
           echo "DESCRIBE=$DESCRIBE CLEANED_DESCRIBE=$CLEANED_DESCRIBE"
           echo "IMAGE_TAG=$IMAGE_TAG SEMVER=$SEMVER"
           echo "GITHUB_BRANCH=${GITHUB_BRANCH}"
+
           echo "semver=$SEMVER" >> $GITHUB_OUTPUT
-          echo "GITHUB_BRANCH=${GITHUB_BRANCH}" >> $GITHUB_OUTPUT
+          echo "git_branch=${GITHUB_BRANCH}" >> $GITHUB_OUTPUT
           if [[ "$USE_SEMVER_AS_IMAGE_TAG" == "true" ]]; then
             echo "image_tag=$SEMVER" >> $GITHUB_OUTPUT
           else
