@@ -28,7 +28,6 @@ jobs:
       env_vars: |
         TEST_VARIABLE=value
     with:
-      env-name: test-env
       command: test-var-print
       workload-identity-provider: WORKLOAD_IP
       service-account: SERVICE_ACCOUNT
@@ -41,7 +40,6 @@ jobs:
         env_vars: |
           TEST_VARIABLE=value
       with:
-        env-name: test-env
         command: test-var-print
         workload-identity-provider: WORKLOAD_IP
         service-account: SERVICE_ACCOUNT
@@ -54,7 +52,6 @@ jobs:
         env_vars: |
           TEST_VARIABLE=value
       with:
-        env-name: test-env
         command: test-var-print
         workload-identity-provider: WORKLOAD_IP
         service-account: SERVICE_ACCOUNT
@@ -67,7 +64,6 @@ jobs:
         env_vars: |
           TEST_VARIABLE=value
       with:
-        env-name: test-env
         command: test-var-print
         workload-identity-provider: WORKLOAD_IP
         service-account: SERVICE_ACCOUNT
