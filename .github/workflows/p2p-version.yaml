@@ -40,7 +40,9 @@ jobs:
       shell: bash
       run: |
         git tag | sort -r --version-sort | head -n1 
-        echo "tag=$(git tag | sort -r --version-sort | head -n1)" >> "$GITHUB_OUTPUT" 
+        PREVIOUS_VERSION=$(git tag | sort -r --version-sort | head -n1 )
+        [ -z "$PREVIOUS_VERSION" ] && PREVIOUS_VERSION=v0.0.0
+        echo "tag=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT" 
       env:
         GITHUB_TOKEN: ${{ secrets.git-token }}
 

@@ -23,9 +23,29 @@ permissions:
   id-token: write
 
 jobs:
+  version:
+    uses: coreeng/p2p/.github/workflows/p2p-version.yaml@v1
+    secrets:
+      git-token: ${{ secrets.GITHUB_TOKEN }} 
+
   fastfeedback:
+    needs: [version]
     uses: coreeng/p2p/.github/workflows/p2p-workflow-fastfeedback.yaml@v1
+    with:
+      version: ${{ needs.version.outputs.version }}
 ```
+
+### Application Versioning
+
+The `p2p-version` workflow has the following behavior:
+
+* When on the main branch:
+  * If no versions exist, it starts with v0.0.0
+  * If the version exists, it tags the next patch version
+  * Always sets the output version
+* When not on the main build
+  * Never tags
+  * Uses the previous tagged version, defaulting to v0.0.0, and adds the git short hash to the end
 
 ### GitHub Variables
 
