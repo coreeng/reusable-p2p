@@ -24,6 +24,8 @@ jobs:
 
   test_version:
     uses: ./.github/workflows/p2p-version.yaml
+    secrets:
+      git-token: ${{ secrets.GITHUB_TOKEN }}
 
   test_execute_command:
     needs: [test_version]
