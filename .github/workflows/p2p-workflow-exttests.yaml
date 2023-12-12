@@ -22,9 +22,13 @@ on:
         required: false
         type: string
         default: ''
+      region:
+        required: false
+        type: string
+        default: europe-west2
 
 env:
-  REGION: europe-west2
+  REGION: ${{ inputs.region }} 
 
 jobs:
   run-tests:

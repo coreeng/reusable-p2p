@@ -24,6 +24,10 @@ on:
         required: false
         type: boolean
         default: false
+      region:
+        required: false
+        type: string
+        default: europe-west2
     outputs:
       image_tag:
         value: ${{ jobs.version.outputs.image_tag }}
@@ -31,7 +35,7 @@ on:
         value: ${{ jobs.version.outputs.semver }}
 
 env:
-  REGION: europe-west2
+  REGION: ${{ inputs.region }} 
 
 jobs:
   version:
