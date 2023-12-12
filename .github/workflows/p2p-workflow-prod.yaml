@@ -26,6 +26,8 @@ jobs:
   prod-deploy:
     name: prod-deploy
     uses: ./.github/workflows/p2p-execute-command.yaml
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false

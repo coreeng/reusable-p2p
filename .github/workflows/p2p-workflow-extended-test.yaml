@@ -33,6 +33,8 @@ env:
 jobs:
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
     strategy:
       matrix: ${{ fromJSON(inputs.source ) }}
       fail-fast: false
@@ -45,6 +47,8 @@ jobs:
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
     needs: [run-tests]
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
     strategy:
       matrix: ${{ fromJSON(inputs.destination) }}
       fail-fast: false

@@ -46,6 +46,8 @@ jobs:
   build:
     needs: [version]
     uses: ./.github/workflows/p2p-execute-command.yaml
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
@@ -58,6 +60,8 @@ jobs:
   functional-test:
     needs: [version, build]
     uses: ./.github/workflows/p2p-execute-command.yaml
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
@@ -71,6 +75,8 @@ jobs:
   nft-test:
     needs: [version, functional-test]
     uses: ./.github/workflows/p2p-execute-command.yaml
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
@@ -84,6 +90,8 @@ jobs:
     name: promote
     needs: [nft-test, functional-test, version]
     if: github.ref == ${{ inputs.main-branch }} 
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
       matrix: ${{ fromJSON(inputs.destination) }}
