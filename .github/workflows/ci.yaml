@@ -29,9 +29,6 @@ jobs:
         TEST_VARIABLE=value
     with:
       command: test-var-print
-      workload-identity-provider: WORKLOAD_IP
-      service-account: SERVICE_ACCOUNT
-      project-id: TEST-TENANT
       dry-run: true
 
   test_fastfeedback:
@@ -40,10 +37,6 @@ jobs:
         env_vars: |
           TEST_VARIABLE=value
       with:
-        command: test-var-print
-        workload-identity-provider: WORKLOAD_IP
-        service-account: SERVICE_ACCOUNT
-        project-id: TEST-TENANT
         dry-run: true
 
   test_extended_test:
@@ -52,10 +45,6 @@ jobs:
         env_vars: |
           TEST_VARIABLE=value
       with:
-        command: test-var-print
-        workload-identity-provider: WORKLOAD_IP
-        service-account: SERVICE_ACCOUNT
-        project-id: TEST-TENANT
         dry-run: true
 
   test_prod:
@@ -64,8 +53,4 @@ jobs:
         env_vars: |
           TEST_VARIABLE=value
       with:
-        command: test-var-print
-        workload-identity-provider: WORKLOAD_IP
-        service-account: SERVICE_ACCOUNT
-        project-id: TEST-TENANT
         dry-run: true
