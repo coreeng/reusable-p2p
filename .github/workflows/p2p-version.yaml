@@ -10,6 +10,10 @@ on:
       git-token:
         required: true
     inputs:
+      main-branch:
+        required: false
+        type: string
+        default: 'refs/heads/main'
       dry-run:
         type: boolean
         required: false
@@ -54,7 +58,7 @@ jobs:
 
     - name: Create tag
       uses: rickstaa/action-create-tag@v1
-      if: inputs.dry-run == false
+      if: inputs.dry-run == false && github.ref == ${{ inputs.main-branch }} 
       id: create_tag
       with:
         tag: v${{ steps.semvers.outputs.minor }}
