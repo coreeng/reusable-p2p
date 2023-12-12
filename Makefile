@@ -32,14 +32,14 @@ p2p-dev:  ## Deploys to dev environment
 	echo $(VERSION)
 
 .PHONY: p2p-promote-to-prod
-p2p-promote-to-extended-prod
+p2p-promote-to-extended-prod:
 	echo "##### EXECUTING P2P-PROMOTE-TO-PROD #####"
 	echo $(SOURCE_REGISTRY)
 	echo $(REGISTRY)
 	echo $(VERSION)
 
 .PHONY: p2p-promote-to-extended-test
-p2p-promote-to-extended-test
+p2p-promote-to-extended-test:
 	echo "##### EXECUTING P2P-PROMOTE-TO-EXTENDED-TEST #####"
 	echo $(SOURCE_REGISTRY)
 	echo $(REGISTRY)

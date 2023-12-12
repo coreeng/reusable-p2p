@@ -82,7 +82,7 @@ jobs:
       matrix: ${{ fromJSON(vars.EXTENDED_TEST) }}
       fail-fast: false
     with:
-      source_matrix: ${{ inputs.source }}
+      source_matrix: ${{ vars.FAST_FEEDBACK }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: extended-tests
       version: ${{ inputs.version }}
