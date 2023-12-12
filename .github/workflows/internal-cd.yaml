@@ -10,6 +10,6 @@ concurrency: cd-main
 
 jobs:
   increment-version:
-    uses: ./.github/workflows/increment-version.yaml
+    uses: ./.github/workflows/internal-version.yaml
     secrets:
       git-token: ${{ secrets.GITHUB_TOKEN }}

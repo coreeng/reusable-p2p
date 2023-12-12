@@ -19,11 +19,7 @@ on:
         required: false
         type: string
         default: europe-west2
-      image_tag:
-        required: false
-        type: string
-        default: ''
-      semver:
+      version:
         required: false
         type: string
         default: ''
@@ -58,9 +54,8 @@ jobs:
       PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
       REGION: ${{ inputs.region }}
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
-      SEMVER: ${{ inputs.semver }}
+      VERSION: ${{ inputs.version }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
-      TAG_VERSION: ${{ inputs.image_tag }}
       TENANT_NAME: ${{ vars.TENANT_NAME }}
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
     steps:

@@ -17,11 +17,7 @@ on:
         required: false
         type: boolean
         default: false
-      image_tag:
-        required: false
-        type: string
-        default: ''
-      semver:
+      version:
         required: false
         type: string
         default: ''
@@ -44,8 +40,7 @@ jobs:
     with:
       command: p2p-extended-test
       github_env: ${{ matrix.deploy_env }}
-      image_tag: ${{ inputs.image_tag }}
-      semver: ${{ inputs.semver }}
+      version: ${{ imputs.version }}
 
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
@@ -59,5 +54,4 @@ jobs:
       source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: prod
-      image_tag: ${{ inputs.image_tag }}
-      semver: ${{ inputs.semver }}
+      version: ${{ imputs.version }}

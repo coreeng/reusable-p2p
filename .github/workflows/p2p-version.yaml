@@ -1,0 +1,68 @@
+name: increment-version
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        description: "The next semantic version"
+        value: ${{ jobs.increment-version.outputs.version }}
+    secrets:
+      git-token:
+        required: true
+    inputs:
+      dry-run:
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  increment-version:
+    name: increment-version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.setversion.outputs.version }}
+      
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  
+    - name: Configure Git
+      run: |
+        git config user.name "$GITHUB_ACTOR"
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"    
+        
+    - name: Get Previous tag
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      with:
+        prefix: v
+        fallback: v0.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.git-token }}
+
+    - name: get previous version from tag
+      id: previousversion
+      shell: bash
+      run: |
+        echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d'v' -f 2)" >> "$GITHUB_OUTPUT"
+
+    - name: Get next minor version
+      id: semvers
+      uses: "WyriHaximus/github-action-next-semvers@v1"
+      with:
+        version: ${{ steps.previousversion.outputs.version }} 
+
+    - name: Create tag
+      uses: rickstaa/action-create-tag@v1
+      if: inputs.dry-run == false
+      id: create_tag
+      with:
+        tag: v${{ steps.semvers.outputs.minor }}
+        tag_exists_error: true
+
+    - name: Set bumped version in ourput
+      id: setversion
+      shell: bash
+      run: |
+        echo "version=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
+

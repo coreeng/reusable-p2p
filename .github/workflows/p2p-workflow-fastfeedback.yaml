@@ -21,33 +21,23 @@ on:
         required: false
         type: string
         default: 'refs/heads/main'
-      use-semver-as-image-tag:
-        description: |
-          Use semver as image tag instead of the git describe tag
-        required: false
-        type: boolean
-        default: false
+      version: 
+        required: true
+        type: string
       region:
         required: false
         type: string
         default: europe-west2
     outputs:
-      image_tag:
-        value: ${{ jobs.version.outputs.image_tag }}
-      semver:
-        value: ${{ jobs.version.outputs.semver }}
+      version:
+        value: ${{ inputs.version }}
+
 
 env:
   REGION: ${{ inputs.region }} 
 
 jobs:
-  version:
-    uses: ./.github/workflows/p2p-workflow-version.yaml
-    with:
-      use-semver-as-image-tag: ${{ inputs.use-semver-as-image-tag }}
-
   build:
-    needs: [version]
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
@@ -57,11 +47,10 @@ jobs:
     with:
       command: p2p-build
       github_env: ${{ matrix.deploy_env }}
-      image_tag: ${{ needs.version.outputs.image_tag }}
-      semver: ${{ needs.version.outputs.semver }}
+      version: $${{ inputs.version }}
 
   functional-test:
-    needs: [version, build]
+    needs: [build]
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
@@ -71,8 +60,7 @@ jobs:
     with:
       command: p2p-functional
       github_env: ${{ matrix.deploy_env }}
-      image_tag: ${{ needs.version.outputs.image_tag }}
-      semver: ${{ needs.version.outputs.semver }}
+      version: ${{ inputs.version }}
 
 
   nft-test:
@@ -86,12 +74,11 @@ jobs:
     with:
       command: p2p-nft
       github_env: ${{ matrix.deploy_env }}
-      image_tag: ${{ needs.version.outputs.image_tag }}
-      semver: ${{ needs.version.outputs.semver }}
+      version: ${{ inputs.version }}
 
   promote:
     name: promote
-    needs: [nft-test, functional-test, version]
+    needs: [nft-test, functional-test]
     if: github.ref == ${{ inputs.main-branch }} 
     secrets:
       env_vars: ${{ secrets.env_vars }}
@@ -103,7 +90,6 @@ jobs:
       source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: extended-tests
-      image_tag: ${{ needs.version.outputs.image_tag }}
-      semver: ${{ needs.version.outputs.semver }}
+      version: ${{ inputs.version }}
 
 
