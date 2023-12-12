@@ -42,11 +42,27 @@ Usuaully you need at least two environments e.g.
 * `gcp-dev`
 * `gcp-prod`
 
+
 For an instance of the CECG developer platform on GCP.
 
-To configure the quality 
+A single dev environment is enough for fastfeedback.
+
+Set the following repository variables (these may be set globally for your org):
+
+* `FAST_FEEDBACK` to {"include": [{"deploy_env": "gcp-dev"}]}
+* `EXTENDED_TEST` to {"include": [{"deploy_env": "gcp-dev"}]}
+
+And specifically for your app set:
+
+* `TENANT_NAME` as configured in your tenancy in platform environments
 
 ### Make tasks
+
+Available env vars for all envs:
+
+* `REGISTRY` that you're authenticated to
+
+Every task will have kubectl access as your tenant
 
 #### p2p-build
 #### p2p-functional
