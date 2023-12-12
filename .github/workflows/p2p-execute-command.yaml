@@ -48,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.github_env }}
     env:
+      env_vars: ${{ secrets.env_vars }}
       BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
       DPLATFORM: ${{ vars.DPLATFORM }}
       PROJECT_ID: ${{ vars.PROJECT_ID }}
