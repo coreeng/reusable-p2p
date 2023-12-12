@@ -71,10 +71,10 @@ jobs:
         set -x
         if [ "${{ inputs.main-branch }}" = "${{ github.ref }}" ]; then
           echo "On main branch, setting next version"
-          echo version=${{ steps.semvers.outputs.minor }} >> "$GITHUB_OUTPUT"
+          echo "version=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
         else
           echo "Not on main branch, setting previous version + hash"
           HASH=$(git rev-parse --short HEAD)
-          echo version=${{ steps.previoustag.outputs.minor }}-$HASH >> "$GITHUB_OUTPUT"
+          echo "version=${{ steps.previousversion.outputs.version }}-$HASH" >> "$GITHUB_OUTPUT"
         fi
 
