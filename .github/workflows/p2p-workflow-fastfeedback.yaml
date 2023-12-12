@@ -40,6 +40,7 @@ jobs:
       command: p2p-build
       github_env: ${{ matrix.deploy_env }}
       version: $${{ inputs.version }}
+      dry-run: $${{ inputs.dry-run }}
 
   functional-test:
     needs: [build]
@@ -53,6 +54,7 @@ jobs:
       command: p2p-functional
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
+      dry-run: $${{ inputs.dry-run }}
 
 
   nft-test:
@@ -83,5 +85,6 @@ jobs:
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: extended-tests
       version: ${{ inputs.version }}
+      dry-run: $${{ inputs.dry-run }}
 
 
