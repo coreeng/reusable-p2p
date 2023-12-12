@@ -38,7 +38,6 @@ jobs:
       run: |
         git tag | sort -r --version-sort | head -n1 
         echo "tag=$(git tag | sort -r --version-sort | head -n1)" >> "$GITHUB_OUTPUT" 
-
       env:
         GITHUB_TOKEN: ${{ secrets.git-token }}
 

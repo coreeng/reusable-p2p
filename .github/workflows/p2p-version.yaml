@@ -30,13 +30,13 @@ jobs:
       run: |
         git config user.name "$GITHUB_ACTOR"
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"    
-        
+
     - name: Get Previous tag
       id: previoustag
-      uses: "WyriHaximus/github-action-get-previous-tag@v1"
-      with:
-        prefix: v
-        fallback: v0.0.0
+      shell: bash
+      run: |
+        git tag | sort -r --version-sort | head -n1 
+        echo "tag=$(git tag | sort -r --version-sort | head -n1)" >> "$GITHUB_OUTPUT" 
       env:
         GITHUB_TOKEN: ${{ secrets.git-token }}
 
