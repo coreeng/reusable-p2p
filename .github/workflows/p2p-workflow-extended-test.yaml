@@ -25,6 +25,10 @@ on:
         required: false
         type: string
         default: europe-west2
+      main-branch:
+        required: false
+        type: string
+        default: 'refs/heads/main'
 
 env:
   REGION: ${{ inputs.region }} 
@@ -32,6 +36,7 @@ env:
 jobs:
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml
+    if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
@@ -45,6 +50,7 @@ jobs:
 
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
+    if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
     needs: [run-tests]
     secrets:
       env_vars: ${{ secrets.env_vars }}

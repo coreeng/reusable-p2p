@@ -17,11 +17,16 @@ on:
         required: false
         type: string
         default: ''
+      main-branch:
+          required: false
+          type: string
+          default: 'refs/heads/main'
 
 
 jobs:
   prod-deploy:
     name: prod-deploy
+    if: success() && github.ref == inputs.main-branch
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
