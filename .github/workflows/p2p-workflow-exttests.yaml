@@ -37,7 +37,7 @@ jobs:
       matrix: ${{ fromJSON(inputs.source ) }}
       fail-fast: false
     with:
-      command: p2p-extended-tests
+      command: p2p-extended-test
       github_env: ${{ matrix.deploy_env }}
       image_tag: ${{ inputs.image_tag }}
       semver: ${{ inputs.semver }}
