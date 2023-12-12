@@ -20,9 +20,8 @@ on:
         type: string
         default: europe-west2
       version:
-        required: false
+        required: true
         type: string
-        default: ''
       zone:
         required: false
         type: string
