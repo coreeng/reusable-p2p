@@ -28,6 +28,7 @@ jobs:
       git-token: ${{ secrets.GITHUB_TOKEN }}
     with:
       dry-run: true
+      main-branch: refs/pull/20/merge
 
   test_execute_command:
     needs: [test_version]
