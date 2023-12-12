@@ -23,7 +23,7 @@ jobs:
         run: echo "The Next Version is $VERSION"
 
   test_execute_command:
-    uses: ./.github/workflows/execute-command.yaml
+    uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: |
         TEST_VARIABLE=value
@@ -35,28 +35,41 @@ jobs:
       project-id: TEST-TENANT
       dry-run: true
 
-  test_execute_command_without_env_vars:
-    uses: ./.github/workflows/execute-command.yaml
-    with:
-      env-name: test-env
-      command: p2p-build
-      workload-identity-provider: WORKLOAD_IP
-      service-account: SERVICE_ACCOUNT
-      project-id: TEST-TENANT
-      dry-run: true
+  test_fastfeedback:
+      uses: ./.github/workflows/p2p-workflow-fastfeedback.yaml
+      secrets:
+        env_vars: |
+          TEST_VARIABLE=value
+      with:
+        env-name: test-env
+        command: test-var-print
+        workload-identity-provider: WORKLOAD_IP
+        service-account: SERVICE_ACCOUNT
+        project-id: TEST-TENANT
+        dry-run: true
 
-  test_execute_command_with_pre_post_steps:
-    uses: ./.github/workflows/execute-command.yaml
-    secrets:
-      env_vars: |
-        SOME_SECRET=123
-    with:
-      env-name: test-env
-      command: p2p-build
-      workload-identity-provider: WORKLOAD_IP
-      service-account: SERVICE_ACCOUNT
-      project-id: TEST-TENANT
-      dry-run: true
-      pre-targets: test-pre-step
-      post-targets: test-post-step
+  test_extended_test:
+      uses: ./.github/workflows/p2p-workflow-extended-test.yaml
+      secrets:
+        env_vars: |
+          TEST_VARIABLE=value
+      with:
+        env-name: test-env
+        command: test-var-print
+        workload-identity-provider: WORKLOAD_IP
+        service-account: SERVICE_ACCOUNT
+        project-id: TEST-TENANT
+        dry-run: true
 
+ test_prod:
+      uses: ./.github/workflows/p2p-workflow-prod.yaml
+      secrets:
+        env_vars: |
+          TEST_VARIABLE=value
+      with:
+        env-name: test-env
+        command: test-var-print
+        workload-identity-provider: WORKLOAD_IP
+        service-account: SERVICE_ACCOUNT
+        project-id: TEST-TENANT
+        dry-run: true
