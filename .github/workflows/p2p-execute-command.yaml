@@ -109,11 +109,6 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
 
-      - name: Pre-targets
-        if: inputs.pre-targets != ''
-        run: |
-          make ${{ inputs.pre-targets }}
-
       - name: Run Command
         id: run-command
         run: |
@@ -121,8 +116,3 @@ jobs:
           sleep 4
           kubectl cluster-info
           make ${{ inputs.command }}
-
-      - name: Post-targets
-        if: inputs.post-targets != ''
-        run: |
-          make ${{ inputs.post-targets }}

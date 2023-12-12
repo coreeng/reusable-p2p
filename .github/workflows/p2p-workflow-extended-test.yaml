@@ -1,6 +1,9 @@
 
 on:
   workflow_call:
+    secrets:
+      env_vars:
+        required: false
     inputs:
       source:
         required: false
