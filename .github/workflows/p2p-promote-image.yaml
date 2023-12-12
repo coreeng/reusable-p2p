@@ -19,11 +19,7 @@ on:
       dest_github_env:
         required: true
         type: string
-      image_tag:
-        required: false
-        type: string
-        default: ''
-      semver:
+      version:
         required: false
         type: string
         default: ''
@@ -31,18 +27,6 @@ on:
         required: false
         type: string
         default: europe-west2
-      pre-targets:
-        description: |
-          Make targets to run before the command
-        required: false
-        type: string
-        default: ''
-      post-targets:
-        description: |
-          Make targets to run after the command
-        required: false
-        type: string
-        default: ''
 
 
 jobs:
@@ -78,12 +62,11 @@ jobs:
       REGION: ${{ inputs.region }}
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
-      SEMVER: ${{ inputs.semver }}
+      VERSION: ${{ inputs.version }}
       SOURCE_GITHUB_ENV: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
       SOURCE_REGISTRY: ${{ needs.lookup.outputs.source_registry }}
       SOURCE_SERVICE_ACCOUNT: ${{ needs.lookup.outputs.source_service_account }}
       SOURCE_WORKLOAD_IDENTITY_PROVIDER: ${{ needs.lookup.outputs.source_workflow_identity_provider }}
-      TAG_VERSION: ${{ inputs.image_tag }}
       TENANT_NAME: ${{ vars.TENANT_NAME }}
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
     permissions:
