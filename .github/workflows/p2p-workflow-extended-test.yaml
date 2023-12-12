@@ -40,7 +40,7 @@ jobs:
     with:
       command: p2p-extended-test
       github_env: ${{ matrix.deploy_env }}
-      version: ${{ imputs.version }}
+      version: ${{ inputs.version }}
 
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
@@ -54,4 +54,4 @@ jobs:
       source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: prod
-      version: ${{ imputs.version }}
+      version: ${{ inputs.version }}
