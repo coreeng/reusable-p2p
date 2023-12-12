@@ -1,18 +1,20 @@
-# Reusable P2P
+# CECG Developer Platform P2P 
 
 This is a reusable Github Actions P2P for CECG's Developer Platform
 
-## Usage
+## Version 1
 
-Create a workflow on your repository to use the p2p.yaml workflow
+Supported quality dates:
+* fastfeedback
+
+
+Usage:
 
 ```
-name: P2P
-on:
-  pull_request:
+push:
     branches:
       - main
-  push:
+  pull_request:
     branches:
       - main
 
@@ -21,41 +23,52 @@ permissions:
   id-token: write
 
 jobs:
-  p2p:
-    uses: coreeng/reusable-p2p/.github/workflows/p2p.yaml@v0.0.1
-    secrets:
-      env_vars: |
-        TEST_VARIABLE=value
-    with:
-      project-id: ${{ vars.PROJECT_ID }}
-      project-number: ${{ vars.PROJECT_NUMBER }}
-      tenant-name: ${{ vars.TENANT_NAME }}
-
+  fastfeedback:
+    uses: coreeng/p2p/.github/workflows/p2p-workflow-fastfeedback.yaml@v1
 ```
 
-The `env_vars` secret will be use to propagate env vars to your Makefile calls. They will be redacted from the output so you can pass sensitive information like credentials as they're coming in as `secrets`.
-### Makefile
-The P2P pipeline assumes you have the following tasks on your makefile:
+### GitHub Variables
 
-```
-.PHONY: p2p-build 
-p2p-build: ## Build phase
-	echo "##### EXECUTING P2P-BUILD #####"
+#### Environments
 
-.PHONY: p2p-functional 
-p2p-functional: ## Execute functional tests
-	echo "##### EXECUTING P2P-FUNCTIONAL #####"
+Create your environments with the following variables:
+* BASE_DOMAIN e.g. gcp-dev.cecg.platform.cecg.io
+* DPLATFORM environment name from platform-environments e.g. gcp-dev
+* PROJECT_ID project id from platform environments e.g. core-platform-efb3c84c
+* PROJECT_NUMBER project number for the project id above
 
-.PHONY: p2p-nft
-p2p-nft:  ## Execute functional tests
-	echo "##### EXECUTING P2P-NFT #####"
+Usuaully you need at least two environments e.g.
 
-.PHONY: p2p-dev
-p2p-dev:  ## Deploys to dev environment
-	echo "##### EXECUTING P2P-DEV #####"
-```
+* `gcp-dev`
+* `gcp-prod`
 
-These will be your entrypoint. Any custom action you'd like the pipeline to do should be defined as dependencies on these ones.
 
-## Versioning
-This pipeline uses semantic versioning. When creating your pipeline, check the latest version. (eg `uses: coreeng/reusable-p2p/.github/workflows/idp-p2p.yaml@v0.0.2`)
+For an instance of the CECG developer platform on GCP.
+
+A single dev environment is enough for fastfeedback.
+
+Set the following repository variables (these may be set globally for your org):
+
+* `FAST_FEEDBACK` to {"include": [{"deploy_env": "gcp-dev"}]}
+* `EXTENDED_TEST` to {"include": [{"deploy_env": "gcp-dev"}]}
+
+And specifically for your app set:
+
+* `TENANT_NAME` as configured in your tenancy in platform environments
+
+### Make tasks
+
+Available env vars for all envs:
+
+* `REGISTRY` that you're authenticated to
+
+Every task will have kubectl access as your tenant
+
+#### p2p-build
+#### p2p-functional
+#### p2p-nft
+#### p2p-build
+#### p2p-promote-to-extended-test
+
+
+
