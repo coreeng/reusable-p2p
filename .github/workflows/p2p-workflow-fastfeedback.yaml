@@ -64,7 +64,7 @@ jobs:
 
 
   nft-test:
-    needs: [version, functional-test]
+    needs: [functional-test]
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
