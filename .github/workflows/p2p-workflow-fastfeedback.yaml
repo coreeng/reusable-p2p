@@ -74,7 +74,7 @@ jobs:
   promote:
     name: promote
     needs: [nft-test, functional-test]
-    if: github.ref == ${{ inputs.main-branch }} 
+    if: success() && github.ref == inputs.main-branch
     secrets:
       env_vars: ${{ secrets.env_vars }}
     uses: ./.github/workflows/p2p-promote-image.yaml
