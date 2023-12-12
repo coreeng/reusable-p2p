@@ -26,6 +26,8 @@ jobs:
     uses: ./.github/workflows/p2p-version.yaml
     secrets:
       git-token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      dry-run: true
 
   test_execute_command:
     needs: [test_version]
