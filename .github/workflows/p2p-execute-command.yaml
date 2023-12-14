@@ -41,7 +41,7 @@ on:
       working-directory:
         required: false
         type: string
-        default: .
+        default: '.'
 
 
 jobs:

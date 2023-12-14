@@ -23,7 +23,7 @@ on:
       working-directory:
         required: false
         type: string
-        default: .
+        default: '.'
     outputs:
       version:
         value: ${{ inputs.version }}
