@@ -62,6 +62,14 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
 
+      - id: auth-aws
+        if: inputs.platform == 'aws'
+        name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
       - id: auth-gcloud
         if: inputs.platform == 'gcp'
         name: Authenticate to GCP
