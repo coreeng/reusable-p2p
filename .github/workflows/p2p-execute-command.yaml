@@ -61,7 +61,6 @@ jobs:
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       TENANT_NAME: ${{ vars.TENANT_NAME }}
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
-      WORKING_DIRECTORY:  ${{ inputs.working-directory }}
     steps:
       - name: print env context
         run: |
@@ -122,7 +121,7 @@ jobs:
       - name: Run Command
         id: run-command
         if: inputs.dry-run == false
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+        working-directory: ${{ inputs.working-directory }}
         run: |
           nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
           sleep 4
