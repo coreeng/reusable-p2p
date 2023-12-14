@@ -29,6 +29,10 @@ on:
         required: false
         type: string
         default: 'refs/heads/main'
+      working-directory:
+        required: false
+        type: string
+        default: '.'
 
 env:
   REGION: ${{ inputs.region }} 
@@ -47,6 +51,7 @@ jobs:
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
 
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
@@ -63,3 +68,4 @@ jobs:
       promotion-stage: prod
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
