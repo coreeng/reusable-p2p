@@ -38,7 +38,16 @@ on:
         required: false
         type: string
         default: ''
+      working-directory:
+        description: |
+          The working directory of where to execute the p2p run commands
+        required: false
+        type: string
+        default: .
 
+defaults:
+  run:
+    working-directory: ${{inputs.working-directory}}
 
 jobs:
   exec:
