@@ -57,7 +57,7 @@ Create your environments with the following variables:
 * PROJECT_ID project id from platform environments e.g. core-platform-efb3c84c
 * PROJECT_NUMBER project number for the project id above
 
-Usuaully you need at least two environments e.g.
+Usually you need at least two environments e.g.
 
 * `gcp-dev`
 * `gcp-prod`
@@ -90,5 +90,14 @@ Every task will have kubectl access as your tenant
 #### p2p-build
 #### p2p-promote-to-extended-test
 
+### Inputs
 
+#### Inputs: Miscellaneous
+-   `working-directory`: (Optional) Relative directory where workflow will run. For example:
 
+    ```text
+    working-directory: ./dir_1/subdir_2
+    ```
+
+    Without this input, the workflow will run on the root directory of your repository. 
+     > **⚠️ NOTE!** Changing the working-directory, instructs the workflow to search for a Makefile in that directory. All subsequent commands within the `Makefile` will subsequently need to be relative to the specified `working-directory`.
