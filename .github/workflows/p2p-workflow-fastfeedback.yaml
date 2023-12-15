@@ -20,6 +20,10 @@ on:
         required: false
         type: string
         default: europe-west2
+      working-directory:
+        required: false
+        type: string
+        default: '.'
     outputs:
       version:
         value: ${{ inputs.version }}
@@ -41,6 +45,7 @@ jobs:
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
 
   functional-test:
     needs: [build]
@@ -55,6 +60,7 @@ jobs:
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
 
 
   nft-test:
@@ -70,6 +76,7 @@ jobs:
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
 
   promote:
     name: promote
@@ -87,5 +94,6 @@ jobs:
       promotion-stage: extended-test
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
 
 

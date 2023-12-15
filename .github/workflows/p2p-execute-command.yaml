@@ -38,6 +38,10 @@ on:
         required: false
         type: string
         default: ''
+      working-directory:
+        required: false
+        type: string
+        default: '.'
 
 
 jobs:
@@ -117,6 +121,7 @@ jobs:
       - name: Run Command
         id: run-command
         if: inputs.dry-run == false
+        working-directory: ${{ inputs.working-directory }}
         run: |
           nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
           sleep 4

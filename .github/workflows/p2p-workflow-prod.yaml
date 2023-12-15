@@ -21,6 +21,10 @@ on:
           required: false
           type: string
           default: 'refs/heads/main'
+      working-directory:
+        required: false
+        type: string
+        default: '.'
 
 
 jobs:
@@ -38,5 +42,6 @@ jobs:
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
 
 
