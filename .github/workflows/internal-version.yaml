@@ -15,6 +15,14 @@ on:
         type: boolean
         required: false
         default: false
+      generate-minor:
+        type: boolean
+        required: false
+        default: true
+      override:
+        type: string
+        required: false
+        default: ""
 
 jobs:
   increment-version:
@@ -51,7 +59,7 @@ jobs:
       id: semvers
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
-        version: ${{ steps.previousversion.outputs.version }} 
+        version: ${{ inputs.override != ""  && inputs.override || steps.previousversion.outputs.version }} 
 
     - name: Set bumped version in output
       id: setversion
@@ -88,7 +96,7 @@ jobs:
 
     - name: Create version tag
       uses: coreeng/action-create-tag@v1
-      if: inputs.dry-run == false
+      if: inputs.dry-run == false && inputs.generate-minor
       with:
         tag: v${{ steps.setversion.outputs.patch }}
         tag_exists_error: true
