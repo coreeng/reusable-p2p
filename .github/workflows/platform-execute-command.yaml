@@ -33,7 +33,7 @@ jobs:
   developer-platform:
     name: ${{ inputs.feature }}
     runs-on: ubuntu-latest
-    concurrency: ${{ inputs.environment }}
+    concurrency: ${{ inputs.environment }}-${{ github.ref }}
     environment: ${{ inputs.environment }}
 
     env:
