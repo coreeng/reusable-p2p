@@ -51,23 +51,21 @@ jobs:
       version: ${{ needs.test_version.outputs.version }}
 
   test_extended_test:
-    needs: [test_version]
     uses: ./.github/workflows/p2p-workflow-extended-test.yaml
     secrets:
       env_vars: |
         TEST_VARIABLE=value
     with:
       dry-run: true
+      main-branch: ${{ github.ref }}
       image-name: p2p
-      version: ${{ needs.test_version.outputs.version }}
 
   test_prod:
-    needs: [test_version]
     uses: ./.github/workflows/p2p-workflow-prod.yaml
     secrets:
       env_vars: |
         TEST_VARIABLE=value
     with:
       dry-run: true
+      main-branch: ${{ github.ref }}
       image-name: p2p
-      version: ${{ needs.test_version.outputs.version }}
