@@ -8,7 +8,7 @@ on:
     outputs:
       version:
         description: "The latest image in the registry"
-        value: ${{ jobs.get-latest-image.version }}
+        value: ${{ jobs.get-latest-image.outputs.version }}
     inputs:
       registry-path:
         required: true
