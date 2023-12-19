@@ -47,7 +47,7 @@ env:
 jobs:
   get-latest-version:
     uses: ./.github/workflows/p2p-get-latest-image.yaml
-    if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
+    if: success() && (github.ref == inputs.main-branch)
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
@@ -62,7 +62,7 @@ jobs:
 
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml
-    if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
+    if: success() && (github.ref == inputs.main-branch )
     needs: [get-latest-version]
     secrets:
       env_vars: ${{ secrets.env_vars }}
@@ -78,7 +78,7 @@ jobs:
 
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
-    if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
+    if: success() && (github.ref == inputs.main-branch)
     needs: [run-tests]
     secrets:
       env_vars: ${{ secrets.env_vars }}
