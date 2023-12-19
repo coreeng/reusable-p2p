@@ -13,10 +13,6 @@ on:
         required: false
         type: boolean
         default: false
-      version:
-        required: false
-        type: string
-        default: ''
       main-branch:
           required: false
           type: string
@@ -52,6 +48,7 @@ jobs:
 
   prod-deploy:
     name: prod-deploy
+    needs: [get-latest-version]
     if: success() && github.ref == inputs.main-branch
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
@@ -62,7 +59,7 @@ jobs:
     with:
       command: p2p-prod
       github_env: ${{ matrix.deploy_env }}
-      version: ${{ inputs.version }}
+      version: ${{ needs.get-latest-version.outputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 

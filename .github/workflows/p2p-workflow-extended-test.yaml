@@ -17,10 +17,6 @@ on:
         required: false
         type: boolean
         default: false
-      version:
-        required: false
-        type: string
-        default: ''
       region:
         required: false
         type: string
@@ -79,7 +75,7 @@ jobs:
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
     if: success() && (github.ref == inputs.main-branch)
-    needs: [run-tests]
+    needs: [run-tests, get-latest-version]
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
@@ -89,6 +85,6 @@ jobs:
       source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: prod
-      version: ${{ inputs.version }}
+      version: ${{ needs.get-latest-version.outputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
