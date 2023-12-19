@@ -103,6 +103,6 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: |
             echo "Adding version"
-            echo "version=$([ $DRY_RUN == false ] && gcloud container images list-tags $(REGISTRY)/$(REGISTRY_PATH)/$(IMAGE_NAME) --limit=1 --format=json | jq -r '.[0].tags[0]' || echo "v0.0.0")" >> "$GITHUB_OUTPUT"
+            echo "version=$([ $DRY_RUN == false ] && gcloud container images list-tags ${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME} --limit=1 --format=json | jq -r '.[0].tags[0]' || echo "v0.0.0")" >> "$GITHUB_OUTPUT"
             cat $GITHUB_OUTPUT
 
