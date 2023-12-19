@@ -54,6 +54,7 @@ jobs:
 
   get-latest-image:
     name: get-latest-image-${{ inputs.registry-path }}
+    id: get-latest-image
     runs-on: ubuntu-latest
     needs: [lookup]
     outputs:
