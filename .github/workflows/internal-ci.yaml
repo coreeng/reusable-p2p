@@ -58,6 +58,7 @@ jobs:
         TEST_VARIABLE=value
     with:
       dry-run: true
+      image-name: p2p
       version: ${{ needs.test_version.outputs.version }}
 
   test_prod:
@@ -68,4 +69,5 @@ jobs:
         TEST_VARIABLE=value
     with:
       dry-run: true
+      image-name: p2p
       version: ${{ needs.test_version.outputs.version }}

@@ -25,9 +25,31 @@ on:
         required: false
         type: string
         default: '.'
+      registry-path:
+        required: false
+        type: string
+        default: 'prod'
+      image-name:
+        required: true
+        type: string
 
 
 jobs:
+  get-latest-version:
+    uses: ./.github/workflows/p2p-get-latest-image.yaml
+    if: success() && github.ref == inputs.main-branch
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    strategy:
+      matrix: ${{ fromJSON(inputs.destination) }}
+      fail-fast: false
+    with:
+      source_matrix: ${{ inputs.source }}
+      registry-path: ${{ inputs.registry-path }}
+      image-name: ${{ inputs.image-name }}
+      dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
+
   prod-deploy:
     name: prod-deploy
     if: success() && github.ref == inputs.main-branch

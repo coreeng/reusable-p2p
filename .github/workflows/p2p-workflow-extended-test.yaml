@@ -33,14 +33,37 @@ on:
         required: false
         type: string
         default: '.'
+      registry-path:
+        required: false
+        type: string
+        default: 'extended-test'
+      image-name:
+        required: true
+        type: string
 
 env:
   REGION: ${{ inputs.region }} 
 
 jobs:
+  get-latest-version:
+    uses: ./.github/workflows/p2p-get-latest-image.yaml
+    if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    strategy:
+      matrix: ${{ fromJSON(inputs.destination) }}
+      fail-fast: false
+    with:
+      source_matrix: ${{ inputs.source }}
+      registry-path: ${{ inputs.registry-path }}
+      image-name: ${{ inputs.image-name }}
+      dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
+
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml
     if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
+    needs: [get-latest-version]
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
@@ -49,7 +72,7 @@ jobs:
     with:
       command: p2p-extended-test
       github_env: ${{ matrix.deploy_env }}
-      version: ${{ inputs.version }}
+      version: ${{ needs.get-latest-version.outputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
