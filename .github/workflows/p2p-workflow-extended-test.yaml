@@ -47,7 +47,7 @@ env:
 jobs:
   get-latest-version:
     uses: ./.github/workflows/p2p-get-latest-image.yaml
-    if: success() && (github.ref == inputs.main-branch) && inputs.version == ''
+    if: success() && (github.ref == inputs.main-branch)
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
@@ -59,6 +59,7 @@ jobs:
       image-name: ${{ inputs.image-name }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
+      version: ${{ inputs.version }}
 
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml

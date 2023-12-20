@@ -8,7 +8,7 @@ on:
     outputs:
       version:
         description: "The latest image in the registry"
-        value: ${{ jobs.get-latest-image.outputs.version }}
+        value: ${{ inputs.version != '' && inputs.version || jobs.get-latest-image.outputs.version }}
     inputs:
       registry-path:
         required: true
@@ -31,6 +31,10 @@ on:
         required: false
         type: string
         default: '.'
+      version:
+        required: false
+        type: string
+        default: ''
 
 
 jobs:
@@ -55,6 +59,7 @@ jobs:
   get-latest-image:
     name: get-latest-image
     runs-on: ubuntu-latest
+    if: inputs.version == ''
     needs: [lookup]
     outputs:
       version: ${{ steps.get-latest-image.outputs.version }}
