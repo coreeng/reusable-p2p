@@ -40,7 +40,6 @@ jobs:
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml
     if: success() && (github.ref == inputs.main-branch )
-    needs: [get-latest-version]
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
