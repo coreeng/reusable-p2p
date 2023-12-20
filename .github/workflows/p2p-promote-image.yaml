@@ -120,6 +120,13 @@ jobs:
         # https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
         run: $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
+      - name: Setup Google Cloud SDK
+        id: setup-gcloud
+        if: inputs.dry-run == false
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          install_components: beta,gke-gcloud-auth-plugin
+          
       - name: Setup kubeconfig
         id: setup-kubeconfig
         if: inputs.dry-run == false
