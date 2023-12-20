@@ -27,6 +27,10 @@ on:
         required: false
         type: string
         default: europe-west2
+      zone:
+        required: false
+        type: string
+        default: europe-west2-a
       working-directory:
         required: false
         type: string
