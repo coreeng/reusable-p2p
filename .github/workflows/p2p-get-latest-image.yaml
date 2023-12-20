@@ -30,15 +30,14 @@ on:
         type: string
         default: '.'
       environment:
-        required: false
+        required: true
         type: string
-        default: ${{ vars.PROD }}
 
 
 jobs:
   lookup:
     runs-on: ubuntu-latest
-    environment: ${{ fromJson(inputs.environments).include[0]['deploy_env'] }}
+    environment: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
     env:
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
