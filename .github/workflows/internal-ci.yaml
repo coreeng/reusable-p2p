@@ -69,7 +69,6 @@ jobs:
     with:
       dry-run: true
       main-branch: ${{ github.ref }}
-      image-name: p2p
       version: ${{ needs.get_image_extended_test.outputs.version }}
 
   get_image_prod:
@@ -91,5 +90,4 @@ jobs:
     with:
       dry-run: true
       main-branch: ${{ github.ref }}
-      image-name: p2p
       version: ${{ needs.get_image_prod.outputs.version }}
