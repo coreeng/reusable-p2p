@@ -1,0 +1,113 @@
+name: p2p-command
+
+on:
+  workflow_call:
+    secrets:
+      env_vars:
+        required: false
+    outputs:
+      version:
+        description: "The latest image in the registry"
+        value: ${{ inputs.version != '' && inputs.version || jobs.get-latest-image.outputs.version }}
+    inputs:
+      registry-path:
+        required: true
+        type: string
+      image-name:
+        required: true
+        type: string
+      source_matrix:
+        required: true
+        type: string
+      dry-run:
+        required: false
+        type: boolean
+        default: false
+      region:
+        required: false
+        type: string
+        default: europe-west2
+      working-directory:
+        required: false
+        type: string
+        default: '.'
+      version:
+        required: false
+        type: string
+        default: ''
+
+
+jobs:
+  lookup:
+    runs-on: ubuntu-latest
+    environment: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
+    env:
+      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
+      SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
+      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
+    outputs:
+      registry: ${{ env.REGISTRY }}
+      service_account: ${{ env.SERVICE_ACCOUNT }}
+      workflow_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+    steps:
+      - name: print env context
+        run: |
+          yq -p=json -C <<EOT
+          ${{ toJSON(env) }}
+          EOT
+
+  get-latest-image:
+    name: get-latest-image
+    runs-on: ubuntu-latest
+    if: inputs.version == ''
+    needs: [lookup]
+    outputs:
+      version: ${{ steps.get-latest-image.outputs.version }}
+    environment: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
+    env:
+      BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+      DPLATFORM: ${{ vars.DPLATFORM }}
+      PROJECT_ID: ${{ vars.PROJECT_ID }}
+      PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+      REGION: ${{ inputs.region }}
+      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
+      SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
+      GITHUB_ENV: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
+      TENANT_NAME: ${{ vars.TENANT_NAME }}
+      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
+      REGISTRY_PATH: ${{ inputs.registry-path }}
+      IMAGE_NAME: ${{ inputs.image-name }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: print env context
+        run: |
+          yq -p=json -C <<EOT
+          ${{ toJSON(env) }}
+          EOT
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        if: inputs.dry-run == false
+        uses: google-github-actions/auth@v1
+        with:
+          export_environment_variables: true
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_lifetime: 600s
+
+      - name: Get latest image
+        id: get-latest-image
+        env:
+          DRY_RUN: ${{ inputs.dry-run }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+            [ $DRY_RUN == false ] && version=$(gcloud container images list-tags ${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME} --limit=1 --format=json )
+            [  $? -gt 0 ] && [ $DRY_RUN == false ] && echo "exiting" && exit 1
+            [ $DRY_RUN == true ] && version="[{\"tags\": [\"0.0.0\"]}]"
+            echo "version=$(echo ${version} | jq -r '.[0].tags[0]')" >> "$GITHUB_OUTPUT"

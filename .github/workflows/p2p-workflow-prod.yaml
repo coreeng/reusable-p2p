@@ -13,10 +13,6 @@ on:
         required: false
         type: boolean
         default: false
-      version:
-        required: false
-        type: string
-        default: ''
       main-branch:
           required: false
           type: string
@@ -25,11 +21,39 @@ on:
         required: false
         type: string
         default: '.'
+      registry-path:
+        required: false
+        type: string
+        default: 'prod'
+      version:
+        required: false
+        type: string
+        default: ''
+      image-name:
+        required: true
+        type: string
 
 
 jobs:
+  get-latest-version:
+    uses: ./.github/workflows/p2p-get-latest-image.yaml
+    if: success() && github.ref == inputs.main-branch
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    strategy:
+      matrix: ${{ fromJSON(vars.PROD) }}
+      fail-fast: false
+    with:
+      source_matrix: ${{ inputs.source }}
+      registry-path: ${{ inputs.registry-path }}
+      image-name: ${{ inputs.image-name }}
+      dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
+      version: ${{ inputs.version }}
+
   prod-deploy:
     name: prod-deploy
+    needs: [get-latest-version]
     if: success() && github.ref == inputs.main-branch
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
@@ -40,7 +64,7 @@ jobs:
     with:
       command: p2p-prod
       github_env: ${{ matrix.deploy_env }}
-      version: ${{ inputs.version }}
+      version: ${{ needs.get-latest-version.outputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
