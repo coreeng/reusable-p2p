@@ -59,6 +59,7 @@ jobs:
       dry-run: true
       main-branch: ${{ github.ref }}
       image-name: p2p
+      verion: '0.0.1'
 
   test_prod:
     uses: ./.github/workflows/p2p-workflow-prod.yaml

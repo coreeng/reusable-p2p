@@ -47,7 +47,7 @@ env:
 jobs:
   get-latest-version:
     uses: ./.github/workflows/p2p-get-latest-image.yaml
-    if: success() && (github.ref == inputs.main-branch)
+    if: success() && (github.ref == inputs.main-branch) && inputs.version != ''
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
@@ -72,7 +72,7 @@ jobs:
     with:
       command: p2p-extended-test
       github_env: ${{ matrix.deploy_env }}
-      version: ${{ needs.get-latest-version.outputs.version }}
+      version: ${{ inputs.version != '' && inputs.version || needs.get-latest-version.outputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
