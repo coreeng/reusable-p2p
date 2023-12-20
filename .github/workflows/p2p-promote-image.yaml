@@ -123,7 +123,7 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth-source.outputs.credentials_file_path }}
         shell: bash
         run: |
-          gcloud container clusters get-credentials --project $PROJECT_ID --zone $REGION --internal-ip ${{ env.DPLATFORM }}
+          gcloud container clusters get-credentials --project $PROJECT_ID --zone ${{ inputs.region }} --internal-ip ${{ env.DPLATFORM }}
           kubectl config set clusters.gke_${{ env.PROJECT_ID }}_${{ inputs.region }}_${{ env.DPLATFORM }}.proxy-url http://localhost:57755
 
       - name: Decode environment variables
