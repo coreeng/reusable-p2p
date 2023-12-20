@@ -28,22 +28,6 @@ on:
 
 
 jobs:
-  get-latest-version:
-    uses: ./.github/workflows/p2p-get-latest-image.yaml
-    if: success() && github.ref == inputs.main-branch
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    strategy:
-      matrix: ${{ fromJSON(vars.PROD) }}
-      fail-fast: false
-    with:
-      source_matrix: ${{ inputs.source }}
-      registry-path: ${{ inputs.registry-path }}
-      image-name: ${{ inputs.image-name }}
-      dry-run: ${{ inputs.dry-run }}
-      working-directory: ${{ inputs.working-directory }}
-      version: ${{ inputs.version }}
-
   prod-deploy:
     name: prod-deploy
     if: success() && github.ref == inputs.main-branch
@@ -56,7 +40,7 @@ jobs:
     with:
       command: p2p-prod
       github_env: ${{ matrix.deploy_env }}
-      version: ${{ needs.get-latest-version.outputs.version }}
+      version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
