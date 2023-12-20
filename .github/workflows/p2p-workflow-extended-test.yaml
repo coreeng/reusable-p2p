@@ -36,7 +36,7 @@ on:
       version:
         required: false
         type: string
-        default: ""
+        default: ''
       image-name:
         required: true
         type: string
@@ -89,6 +89,6 @@ jobs:
       source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: prod
-      version: ${{ inputs.version != "" && inputs.version || needs.get-latest-version.outputs.version }}
+      version: ${{ inputs.version != '' && inputs.version || needs.get-latest-version.outputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
