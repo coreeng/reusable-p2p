@@ -95,8 +95,6 @@ If you want to execute task after the `extended-test` or `prod` promotion, you c
 p2p-promote-to-extended-test: promote-image-to-extended-tests deploy-to-dev
 ...
 
-```
-
 ### Inputs
 
 #### Inputs: Miscellaneous
