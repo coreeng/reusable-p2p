@@ -141,5 +141,6 @@ jobs:
           DEST_AUTH_OVERRIDE: ${{ steps.auth-dest.outputs.credentials_file_path }}
           DEST_ACCESS_TOKEN: ${{ steps.auth-dest.outputs.access_token }}
         run: |
+            nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
             make p2p-promote-to-${{ inputs.promotion-stage }}
 

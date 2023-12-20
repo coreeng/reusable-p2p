@@ -89,6 +89,14 @@ Every task will have kubectl access as your tenant
 #### p2p-nft
 #### p2p-promote-to-extended-test
 
+If you want to execute task after the `extended-test` or `prod` promotion, you can, by setting a depedency on your promotion task, for example:
+```
+.PHONY: p2p-promote-to-extended-test
+p2p-promote-to-extended-test: promote-image-to-extended-tests deploy-to-dev
+...
+
+```
+
 ### Inputs
 
 #### Inputs: Miscellaneous
