@@ -29,15 +29,7 @@ on:
         required: false
         type: string
         default: '.'
-      registry-path:
-        required: false
-        type: string
-        default: 'extended-test'
       version:
-        required: false
-        type: string
-        default: ''
-      image-name:
         required: true
         type: string
 
@@ -45,22 +37,6 @@ env:
   REGION: ${{ inputs.region }} 
 
 jobs:
-  get-latest-version:
-    uses: ./.github/workflows/p2p-get-latest-image.yaml
-    if: success() && (github.ref == inputs.main-branch)
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    strategy:
-      matrix: ${{ fromJSON(vars.EXTENDED_TEST) }}
-      fail-fast: false
-    with:
-      source_matrix: ${{ inputs.source }}
-      registry-path: ${{ inputs.registry-path }}
-      image-name: ${{ inputs.image-name }}
-      dry-run: ${{ inputs.dry-run }}
-      working-directory: ${{ inputs.working-directory }}
-      version: ${{ inputs.version }}
-
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml
     if: success() && (github.ref == inputs.main-branch )
@@ -73,7 +49,7 @@ jobs:
     with:
       command: p2p-extended-test
       github_env: ${{ matrix.deploy_env }}
-      version: ${{ inputs.version != '' && inputs.version || needs.get-latest-version.outputs.version }}
+      version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
@@ -90,6 +66,6 @@ jobs:
       source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: prod
-      version: ${{ needs.get-latest-version.outputs.version }}
+      version: ${{ inputs.version  }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}

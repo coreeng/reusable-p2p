@@ -8,15 +8,13 @@ on:
     outputs:
       version:
         description: "The latest image in the registry"
-        value: ${{ inputs.version != '' && inputs.version || jobs.get-latest-image.outputs.version }}
+        value: ${{ jobs.get-latest-image.outputs.version }}
     inputs:
       registry-path:
-        required: true
+        required: false
         type: string
+        default: 'extended-test'
       image-name:
-        required: true
-        type: string
-      source_matrix:
         required: true
         type: string
       dry-run:
@@ -35,12 +33,16 @@ on:
         required: false
         type: string
         default: ''
+      environment:
+        required: false
+        type: string
+        default: ${{ vars.PROD }}
 
 
 jobs:
   lookup:
     runs-on: ubuntu-latest
-    environment: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
+    environment: ${{ fromJson(inputs.environments).include[0]['deploy_env'] }}
     env:
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
@@ -63,7 +65,7 @@ jobs:
     needs: [lookup]
     outputs:
       version: ${{ steps.get-latest-image.outputs.version }}
-    environment: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
+    environment: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
     env:
       BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
       DPLATFORM: ${{ vars.DPLATFORM }}
@@ -72,7 +74,7 @@ jobs:
       REGION: ${{ inputs.region }}
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
-      GITHUB_ENV: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
+      GITHUB_ENV: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
       TENANT_NAME: ${{ vars.TENANT_NAME }}
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
       REGISTRY_PATH: ${{ inputs.registry-path }}
