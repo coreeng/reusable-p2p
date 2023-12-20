@@ -47,7 +47,7 @@ env:
 jobs:
   get-latest-version:
     uses: ./.github/workflows/p2p-get-latest-image.yaml
-    if: success() && (github.ref == inputs.main-branch) && inputs.version != ''
+    if: success() && (github.ref == inputs.main-branch) && inputs.version == ''
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
