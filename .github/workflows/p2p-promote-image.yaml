@@ -148,5 +148,7 @@ jobs:
           DEST_ACCESS_TOKEN: ${{ steps.auth-dest.outputs.access_token }}
         run: |
             nohup sh -c "while true ; do export CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=$SOURCE_AUTH_OVERRIDE ;  gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
+            sleep 4
+            kubectl cluster-info
             make p2p-promote-to-${{ inputs.promotion-stage }}
 
