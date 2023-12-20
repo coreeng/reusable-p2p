@@ -119,6 +119,8 @@ jobs:
       - name: Setup kubeconfig
         id: setup-kubeconfig
         if: inputs.dry-run == false
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth-source.outputs.credentials_file_path }}
         shell: bash
         run: |
           gcloud container clusters get-credentials --project $PROJECT_ID --zone $REGION --internal-ip ${{ env.DPLATFORM }}
