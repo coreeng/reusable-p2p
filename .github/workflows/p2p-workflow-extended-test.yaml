@@ -55,7 +55,7 @@ jobs:
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
     if: success() && (github.ref == inputs.main-branch)
-    needs: [run-tests, get-latest-version]
+    needs: [run-tests]
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
