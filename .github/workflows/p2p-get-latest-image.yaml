@@ -29,10 +29,6 @@ on:
         required: false
         type: string
         default: '.'
-      version:
-        required: false
-        type: string
-        default: ''
       environment:
         required: false
         type: string
@@ -61,7 +57,6 @@ jobs:
   get-latest-image:
     name: get-latest-image
     runs-on: ubuntu-latest
-    if: inputs.version == ''
     needs: [lookup]
     outputs:
       version: ${{ steps.get-latest-image.outputs.version }}
