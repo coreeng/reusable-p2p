@@ -25,6 +25,10 @@ on:
         required: false
         type: string
         default: 'prod'
+      version:
+        required: false
+        type: string
+        default: ''
       image-name:
         required: true
         type: string
@@ -45,6 +49,7 @@ jobs:
       image-name: ${{ inputs.image-name }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
+      version: ${{ inputs.version }}
 
   prod-deploy:
     name: prod-deploy
