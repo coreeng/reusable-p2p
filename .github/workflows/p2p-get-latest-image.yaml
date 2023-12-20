@@ -102,8 +102,7 @@ jobs:
           DRY_RUN: ${{ inputs.dry-run }}
         working-directory: ${{ inputs.working-directory }}
         run: |
-            echo "version=$([ $DRY_RUN == false ] && gcloud container images list-tags ${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME} --limit=1 --format=json | jq -r '.[0].tags[0]' || echo "v0.0.0")" >> "$GITHUB_OUTPUT"
-            VERSION_V0=$(echo "v0.0.0")
-            echo $VERSION_V0
-            VERSION_GCLOUD=$(gcloud container images list-tags ${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME} --limit=1 --format=json | jq -r '.[0].tags[0]')
-            echo $VERSION_GCLOUD
+            [ $DRY_RUN == false ] && version=$(gcloud container images list-tags ${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME} --limit=1 --format=json )
+            [  $? -gt 0 ] && [ $DRY_RUN == false ] && echo "exiting" && exit 1
+            [ $DRY_RUN == true ] && version="[{\"tags\": [\"0.0.0\"]}]"
+            echo "version=$(echo ${version} | jq -r '.[0].tags[0]')" >> "$GITHUB_OUTPUT"
