@@ -1,0 +1,50 @@
+
+on:
+  workflow_call:
+    secrets:
+      env_vars:
+        required: false
+    outputs:
+      version:
+        description: "The latest image in the registry"
+        value: ${{ jobs.get-latest-version.outputs.version }}
+    inputs:
+      environment:
+        required: false
+        type: string
+        default: ${{ vars.EXTENDED_TEST }}
+      dry-run:
+        required: false
+        type: boolean
+        default: false
+      main-branch:
+        required: false
+        type: string
+        default: 'refs/heads/main'
+      working-directory:
+        required: false
+        type: string
+        default: '.'
+      registry-path:
+        required: false
+        type: string
+        default: 'extended-test'
+      image-name:
+        required: true
+        type: string
+
+jobs:
+  get-latest-version:
+    uses: ./.github/workflows/p2p-get-latest-image.yaml
+    if: success() && (github.ref == inputs.main-branch )
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    strategy:
+      matrix: ${{ fromJSON(vars.EXTENDED_TEST) }}
+      fail-fast: false
+    with:
+      environment: ${{ inputs.environment }}
+      registry-path: ${{ inputs.registry-path }}
+      image-name: ${{ inputs.image-name }}
+      dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
