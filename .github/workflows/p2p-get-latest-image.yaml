@@ -35,28 +35,9 @@ on:
 
 
 jobs:
-  lookup:
-    runs-on: ubuntu-latest
-    environment: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
-    env:
-      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
-      SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
-      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
-    outputs:
-      registry: ${{ env.REGISTRY }}
-      service_account: ${{ env.SERVICE_ACCOUNT }}
-      workflow_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
-    steps:
-      - name: print env context
-        run: |
-          yq -p=json -C <<EOT
-          ${{ toJSON(env) }}
-          EOT
-
   get-latest-image:
     name: get-latest-image
     runs-on: ubuntu-latest
-    needs: [lookup]
     outputs:
       version: ${{ steps.get-latest-image.outputs.version }}
     environment: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
@@ -66,7 +47,7 @@ jobs:
       PROJECT_ID: ${{ vars.PROJECT_ID }}
       PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
       REGION: ${{ inputs.region }}
-      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
+      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       GITHUB_ENV: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
       TENANT_NAME: ${{ vars.TENANT_NAME }}
