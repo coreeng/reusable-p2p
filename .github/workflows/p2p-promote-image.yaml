@@ -90,8 +90,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.checkout-version }}
-          fetch-tags: true
+          ref: ${{ inputs.dry-run == false && inputs.checkout-version || '' }}
+
 
       - name: Authenticate to Google Cloud (Source)
         id: auth-source
