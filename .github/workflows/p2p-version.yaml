@@ -18,6 +18,11 @@ on:
         type: boolean
         required: false
         default: false
+      version-prefix:
+        required: false
+        type: string
+        default: 'v'
+      
 
 jobs:
   increment-version:
@@ -49,8 +54,10 @@ jobs:
     - name: get previous version from tag
       id: previousversion
       shell: bash
+      env:
+        VERSION_PREFIX: ${{ inputs.version-prefix }}
       run: |
-        echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d'v' -f 2)" >> "$GITHUB_OUTPUT"
+        echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d${VERSION_PREFIX} -f 2)" >> "$GITHUB_OUTPUT"
 
     - name: Get next minor version
       id: semvers
@@ -63,7 +70,7 @@ jobs:
       if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
       id: create_tag
       with:
-        tag: v${{ steps.semvers.outputs.minor }}
+        tag: ${{ inputs.version-prefix }}${{ steps.semvers.outputs.minor }}
         tag_exists_error: true
 
     - name: Set bumped version in ourput
