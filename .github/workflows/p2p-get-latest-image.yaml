@@ -32,9 +32,6 @@ on:
       environment:
         required: true
         type: string
-      checkout-version:
-        required: false
-        type: string
 
 
 jobs:
@@ -70,8 +67,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.dry-run == false && inputs.checkout-version || '' }}
 
       - name: Authenticate to Google Cloud
         id: auth
