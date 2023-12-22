@@ -33,7 +33,7 @@ on:
         required: true
         type: string
       checkout-version:
-        required: true
+        required: false
         type: string
 
 
