@@ -32,6 +32,10 @@ on:
       version:
         required: true
         type: string
+      version-prefix:
+        required: false
+        type: string
+        defualt: 'v'
 
 env:
   REGION: ${{ inputs.region }} 
@@ -51,6 +55,7 @@ jobs:
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
+      checkout-version: ${{ inputs.version-prefix }}${{ inputs.version }}
 
   promote:
     uses: ./.github/workflows/p2p-promote-image.yaml
@@ -68,3 +73,4 @@ jobs:
       version: ${{ inputs.version  }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
+      checkout-version: ${{ inputs.version-prefix }}${{ inputs.version }}

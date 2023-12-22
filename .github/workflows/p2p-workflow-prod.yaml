@@ -25,6 +25,10 @@ on:
         required: false
         type: string
         default: ''
+      version-prefix:
+        required: false
+        type: string
+        defualt: 'v'
 
 
 jobs:
@@ -43,5 +47,6 @@ jobs:
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
+      checkout-version: ${{ inputs.version-prefix }}${{ inputs.version }}
 
 

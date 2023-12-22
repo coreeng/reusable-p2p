@@ -22,6 +22,9 @@ on:
       version:
         required: true
         type: string
+      checkout-version:
+        required: false
+        type: string
       zone:
         required: false
         type: string
@@ -67,8 +70,12 @@ jobs:
           yq -p=json -C <<EOT
           ${{ toJSON(env) }}
           EOT
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout-version }}
+          fetch-tags: true
 
       - name: Authenticate to Google Cloud
         id: auth
