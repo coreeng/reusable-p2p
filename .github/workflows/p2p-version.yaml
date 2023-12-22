@@ -21,7 +21,7 @@ on:
       version-prefix:
         required: false
         type: string
-        defualt: 'v'
+        default: 'v'
       
 
 jobs:
