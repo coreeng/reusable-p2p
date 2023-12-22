@@ -65,9 +65,6 @@ jobs:
           ${{ toJSON(env) }}
           EOT
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Authenticate to Google Cloud
         id: auth
         if: inputs.dry-run == false
