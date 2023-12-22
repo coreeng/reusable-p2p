@@ -71,7 +71,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.checkout-version }}
+          ref: ${{ inputs.dry-run == false && inputs.checkout-version || '' }}
           fetch-tags: true
 
       - name: Authenticate to Google Cloud

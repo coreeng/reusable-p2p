@@ -21,7 +21,7 @@ on:
       version-prefix:
         required: false
         type: string
-        default: 'v'
+        defualt: 'v'
       
 
 jobs:
@@ -57,7 +57,7 @@ jobs:
       env:
         VERSION_PREFIX: ${{ inputs.version-prefix }}
       run: |
-        echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d'${VERSION_PREFIX}' -f 2)" >> "$GITHUB_OUTPUT"
+        echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d${VERSION_PREFIX} -f 2)"" >> "$GITHUB_OUTPUT"
 
     - name: Get next minor version
       id: semvers
