@@ -54,8 +54,8 @@ jobs:
     - name: get previous version from tag
       id: previousversion
       shell: bash
-        env:
-          VERSION_PREFIX: ${{ inputs.version-prefix }}
+      env:
+        VERSION_PREFIX: ${{ inputs.version-prefix }}
       run: |
         echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d'${VERSION_PREFIX}' -f 2)" >> "$GITHUB_OUTPUT"
 
