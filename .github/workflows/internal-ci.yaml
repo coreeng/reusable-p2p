@@ -50,8 +50,8 @@ jobs:
       dry-run: true
       version: ${{ needs.test_version.outputs.version }}
 
-  test_extended_test:
-    uses: ./.github/workflows/p2p-workflow-extended-test.yaml
+  get_image_extended_test:
+    uses: ./.github/workflows/p2p-get-latest-image-extended-test.yaml
     secrets:
       env_vars: |
         TEST_VARIABLE=value
@@ -59,14 +59,35 @@ jobs:
       dry-run: true
       main-branch: ${{ github.ref }}
       image-name: p2p
-      version: '0.0.1'
+
+  test_extended_test:
+    uses: ./.github/workflows/p2p-workflow-extended-test.yaml
+    needs: [get_image_extended_test] 
+    secrets:
+      env_vars: |
+        TEST_VARIABLE=value
+    with:
+      dry-run: true
+      main-branch: ${{ github.ref }}
+      version: ${{ needs.get_image_extended_test.outputs.version }}
+
+  get_image_prod:
+    uses: ./.github/workflows/p2p-get-latest-image-prod.yaml
+    secrets:
+      env_vars: |
+        TEST_VARIABLE=value
+    with:
+      dry-run: true
+      main-branch: ${{ github.ref }}
+      image-name: p2p
 
   test_prod:
     uses: ./.github/workflows/p2p-workflow-prod.yaml
+    needs: [get_image_prod]
     secrets:
       env_vars: |
         TEST_VARIABLE=value
     with:
       dry-run: true
       main-branch: ${{ github.ref }}
-      image-name: p2p
+      version: ${{ needs.get_image_prod.outputs.version }}

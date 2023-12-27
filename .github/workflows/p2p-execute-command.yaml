@@ -22,6 +22,9 @@ on:
       version:
         required: true
         type: string
+      checkout-version:
+        required: false
+        type: string
       zone:
         required: false
         type: string
@@ -56,7 +59,7 @@ jobs:
       PROJECT_ID: ${{ vars.PROJECT_ID }}
       PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
       REGION: ${{ inputs.region }}
-      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant
+      REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
       VERSION: ${{ inputs.version }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       TENANT_NAME: ${{ vars.TENANT_NAME }}
@@ -67,8 +70,11 @@ jobs:
           yq -p=json -C <<EOT
           ${{ toJSON(env) }}
           EOT
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.dry-run == false && inputs.checkout-version || '' }}
 
       - name: Authenticate to Google Cloud
         id: auth
