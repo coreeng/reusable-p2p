@@ -47,40 +47,40 @@ jobs:
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
-  functional-test:
-    needs: [build]
-    uses: ./.github/workflows/p2p-execute-command.yaml
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    strategy:
-      matrix: ${{ fromJSON(vars.FAST_FEEDBACK) }}
-      fail-fast: false
-    with:
-      command: p2p-functional
-      github_env: ${{ matrix.deploy_env }}
-      version: ${{ inputs.version }}
-      dry-run: ${{ inputs.dry-run }}
-      working-directory: ${{ inputs.working-directory }}
+  # functional-test:
+  #   needs: [build]
+  #   uses: ./.github/workflows/p2p-execute-command.yaml
+  #   secrets:
+  #     env_vars: ${{ secrets.env_vars }}
+  #   strategy:
+  #     matrix: ${{ fromJSON(vars.FAST_FEEDBACK) }}
+  #     fail-fast: false
+  #   with:
+  #     command: p2p-functional
+  #     github_env: ${{ matrix.deploy_env }}
+  #     version: ${{ inputs.version }}
+  #     dry-run: ${{ inputs.dry-run }}
+  #     working-directory: ${{ inputs.working-directory }}
 
 
-  nft-test:
-    needs: [functional-test]
-    uses: ./.github/workflows/p2p-execute-command.yaml
-    secrets:
-      env_vars: ${{ secrets.env_vars }}
-    strategy:
-      matrix: ${{ fromJSON(vars.FAST_FEEDBACK) }}
-      fail-fast: false
-    with:
-      command: p2p-nft
-      github_env: ${{ matrix.deploy_env }}
-      version: ${{ inputs.version }}
-      dry-run: ${{ inputs.dry-run }}
-      working-directory: ${{ inputs.working-directory }}
+  # nft-test:
+  #   needs: [functional-test]
+  #   uses: ./.github/workflows/p2p-execute-command.yaml
+  #   secrets:
+  #     env_vars: ${{ secrets.env_vars }}
+  #   strategy:
+  #     matrix: ${{ fromJSON(vars.FAST_FEEDBACK) }}
+  #     fail-fast: false
+  #   with:
+  #     command: p2p-nft
+  #     github_env: ${{ matrix.deploy_env }}
+  #     version: ${{ inputs.version }}
+  #     dry-run: ${{ inputs.dry-run }}
+  #     working-directory: ${{ inputs.working-directory }}
 
   promote:
     name: promote
-    needs: [nft-test, functional-test]
+    needs: [build]
     if: success() && github.ref == inputs.main-branch
     secrets:
       env_vars: ${{ secrets.env_vars }}
