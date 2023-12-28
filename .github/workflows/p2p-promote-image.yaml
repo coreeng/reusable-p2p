@@ -154,6 +154,7 @@ jobs:
 
       - name: Promote
         id: run-promotion
+        if: inputs.dry-run == false
         working-directory: ${{ inputs.working-directory }}
         env:
           SOURCE_AUTH_OVERRIDE: ${{ steps.auth-source.outputs.credentials_file_path }}
