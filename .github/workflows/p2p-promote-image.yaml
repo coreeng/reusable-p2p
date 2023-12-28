@@ -13,6 +13,10 @@ on:
         required: false
         type: boolean
         default: false
+      connect-to-k8s:
+        required: false
+        type: boolean
+        default: false
       source_matrix:
         required: true
         type: string
@@ -122,21 +126,21 @@ jobs:
 
       - name: Setup NumPy
         id: setup-numpy
-        if: inputs.dry-run == false
+        if: inputs.dry-run == false && inputs.connect-to-k8s == true
         shell: bash
         # https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
         run: $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
       - name: Setup Google Cloud SDK
         id: setup-gcloud
-        if: inputs.dry-run == false
+        if: inputs.dry-run == false && inputs.connect-to-k8s == true
         uses: google-github-actions/setup-gcloud@v1
         with:
           install_components: beta,gke-gcloud-auth-plugin
           
       - name: Setup kubeconfig
         id: setup-kubeconfig
-        if: inputs.dry-run == false
+        if: inputs.dry-run == false && inputs.connect-to-k8s == true
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth-source.outputs.credentials_file_path }}
         shell: bash
@@ -152,6 +156,16 @@ jobs:
             printf '%s\n' $i >> $GITHUB_ENV
           done
 
+      - name: Tunnel
+        id: start-tunnel
+        if: inputs.dry-run == false && inputs.connect-to-k8s == true
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth-source.outputs.credentials_file_path }}
+        run: |
+          nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
+          sleep 4
+          kubectl cluster-info
+
       - name: Promote
         id: run-promotion
         if: inputs.dry-run == false
@@ -161,10 +175,6 @@ jobs:
           SOURCE_ACCESS_TOKEN: ${{ steps.auth-source.outputs.access_token }}
           DEST_AUTH_OVERRIDE: ${{ steps.auth-dest.outputs.credentials_file_path }}
           DEST_ACCESS_TOKEN: ${{ steps.auth-dest.outputs.access_token }}
-          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth-source.outputs.credentials_file_path }}
         run: |
-          nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
-          sleep 4
-          kubectl cluster-info
           make p2p-promote-to-${{ inputs.promotion-stage }}
 
