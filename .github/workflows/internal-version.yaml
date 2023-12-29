@@ -22,7 +22,7 @@ on:
       override:
         type: string
         required: false
-        default: ""
+        default: ''
 
 jobs:
   increment-version:
@@ -59,7 +59,7 @@ jobs:
       id: semvers
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
-        version: ${{ inputs.override != ""  && inputs.override || steps.previousversion.outputs.version }} 
+        version: ${{ inputs.override != ''  && inputs.override || steps.previousversion.outputs.version }} 
 
     - name: Set bumped version in output
       id: setversion
