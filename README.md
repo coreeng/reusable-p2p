@@ -71,7 +71,7 @@ Set the following repository variables (these may be set globally for your org):
 
 * `FAST_FEEDBACK` to {"include": [{"deploy_env": "gcp-dev"}]}
 * `EXTENDED_TEST` to {"include": [{"deploy_env": "gcp-dev"}]}
-
+* `PROD` to {"include": [{"deploy_env": "gcp-prod"}]}
 And specifically for your app set:
 
 * `TENANT_NAME` as configured in your tenancy in platform environments
