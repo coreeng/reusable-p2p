@@ -20,6 +20,14 @@ on:
         required: false
         type: string
         default: europe-west2
+      source:
+        required: false
+        type: string
+        default: ${{ vars.FAST_FEEDBACK }}
+      destination:
+        required: false
+        type: string
+        default: ${{ vars.EXTENDED_TEST }}
       working-directory:
         required: false
         type: string
@@ -38,7 +46,7 @@ jobs:
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
-      matrix: ${{ fromJSON(vars.FAST_FEEDBACK) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-build
@@ -53,7 +61,7 @@ jobs:
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
-      matrix: ${{ fromJSON(vars.FAST_FEEDBACK) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-functional
@@ -69,7 +77,7 @@ jobs:
     secrets:
       env_vars: ${{ secrets.env_vars }}
     strategy:
-      matrix: ${{ fromJSON(vars.FAST_FEEDBACK) }}
+      matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-nft
@@ -86,10 +94,10 @@ jobs:
       env_vars: ${{ secrets.env_vars }}
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
-      matrix: ${{ fromJSON(vars.EXTENDED_TEST) }}
+      matrix: ${{ fromJSON(inputs.destination) }}
       fail-fast: false
     with:
-      source_matrix: ${{ vars.FAST_FEEDBACK }}
+      source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: extended-test
       version: ${{ inputs.version }}
