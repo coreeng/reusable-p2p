@@ -59,7 +59,7 @@ jobs:
       run: |
         echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d${VERSION_PREFIX} -f 2)" >> "$GITHUB_OUTPUT"
 
-    - name: Get next minor version
+    - name: Get next patch version
       id: semvers
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
@@ -70,7 +70,7 @@ jobs:
       if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
       id: create_tag
       with:
-        tag: ${{ inputs.version-prefix }}${{ steps.semvers.outputs.minor }}
+        tag: ${{ inputs.version-prefix }}${{ steps.semvers.outputs.patch }}
         tag_exists_error: true
 
     - name: Set bumped version in ourput
@@ -80,7 +80,7 @@ jobs:
         set -x
         if [ "${{ inputs.main-branch }}" = "${{ github.ref }}" ]; then
           echo "On main branch, setting next version"
-          echo "version=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
+          echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
         else
           echo "Not on main branch, setting previous version + hash"
           HASH=$(git rev-parse --short HEAD)
