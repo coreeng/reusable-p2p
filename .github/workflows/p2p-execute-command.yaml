@@ -79,7 +79,7 @@ jobs:
       - name: Authenticate to Google Cloud
         id: auth
         if: inputs.dry-run == false
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
@@ -89,7 +89,7 @@ jobs:
       - name: Setup Google Cloud SDK
         id: setup-gcloud
         if: inputs.dry-run == false
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2
         with:
           install_components: beta,gke-gcloud-auth-plugin
 
@@ -109,7 +109,7 @@ jobs:
           kubectl config set clusters.gke_${{ env.PROJECT_ID }}_${{ inputs.region }}_${{ env.DPLATFORM }}.proxy-url http://localhost:57755
 
       - name: Login to Artifact Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         if: inputs.dry-run == false
         with:
           registry: europe-west2-docker.pkg.dev
