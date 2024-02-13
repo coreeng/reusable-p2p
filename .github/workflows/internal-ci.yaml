@@ -28,6 +28,7 @@ jobs:
       git-token: ${{ secrets.GITHUB_TOKEN }}
     with:
       dry-run: true
+      version-prefix: app-tag
 
   test_execute_command:
     needs: [test_version]
