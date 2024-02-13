@@ -84,13 +84,13 @@ jobs:
       shell: bash
       run: |
         set -x
-        env
         if [ "${{ inputs.main-branch }}" = "${{ github.ref }}" ]; then
           echo "On main branch, setting next version"
           echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
         else
           echo "Not on main branch, setting previous version + hash"
-          HASH=$(git rev-parse --short HEAD)
+          git fetch --all
+          HASH=$(git rev-parse --short $GITHUB_HEAD_REF)
           echo "version=${{ steps.previousversion.outputs.version }}-$HASH" >> "$GITHUB_OUTPUT"
         fi
         echo "previous_version=${{ steps.previousversion.outputs.version }}" >> "$GITHUB_OUTPUT"
