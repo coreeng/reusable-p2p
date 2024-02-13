@@ -90,7 +90,7 @@ jobs:
         else
           echo "Not on main branch, setting previous version + hash"
           git fetch --all
-          HASH=$(git rev-parse --short $GITHUB_HEAD_REF)
+          HASH=$(git rev-parse --short origin/$GITHUB_HEAD_REF)
           echo "version=${{ steps.previousversion.outputs.version }}-$HASH" >> "$GITHUB_OUTPUT"
         fi
         echo "previous_version=${{ steps.previousversion.outputs.version }}" >> "$GITHUB_OUTPUT"
