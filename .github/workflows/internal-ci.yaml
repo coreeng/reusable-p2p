@@ -23,12 +23,13 @@ jobs:
         run: echo "The Next Version is $VERSION"
 
   test_version:
-    uses: ./.github/workflows/p2p-version.yaml
     secrets:
       git-token: ${{ secrets.GITHUB_TOKEN }}
     with:
       dry-run: true
       version-prefix: app-tag
+    uses: ./.github/workflows/p2p-version.yaml
+
 
   test_execute_command:
     needs: [test_version]
