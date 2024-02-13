@@ -85,7 +85,6 @@ jobs:
       shell: bash
       run: |
         set -x
-        env
         if [ "${{ inputs.main-branch }}" = "${{ github.ref }}" ]; then
           echo "On main branch, setting next version"
           echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
