@@ -52,7 +52,7 @@ jobs:
         VERSION_PREFIX: ${{ inputs.version-prefix }}
       run: |
         REGEX=$(echo "^${VERSION_PREFIX}([0-9]+)\.([0-9]+)\.([0-9]+)$")
-        PREVIOUS_VERSION=$(git tag | sort -r --version-sort | grep -E ${REGEX} || echo "" | head -n1 )
+        PREVIOUS_VERSION=$(git tag | sort -r --version-sort | (grep -E ${REGEX} || echo "") | head -n1 )
         [ -z "$PREVIOUS_VERSION" ] && PREVIOUS_VERSION=${VERSION_PREFIX}0.0.0
         echo "tag=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT" 
       
