@@ -6,6 +6,9 @@ on:
       version:
         description: "The next semantic version"
         value: ${{ jobs.increment-version.outputs.version }}
+      previous_version:
+        description: "The previous version"
+        value: ${{ jobs.increment-version.outputs.previous_version }}
     secrets:
       git-token:
         required: true
@@ -30,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.setversion.outputs.version }}
+      previous_version: ${{ steps.setversion.outputs.previous_version }}
       
     steps:
     - uses: actions/checkout@v4
@@ -43,13 +47,15 @@ jobs:
     - name: Get Previous tag
       id: previoustag
       shell: bash
-      run: |
-        git tag | sort -r --version-sort | head -n1 
-        PREVIOUS_VERSION=$(git tag | sort -r --version-sort | head -n1 )
-        [ -z "$PREVIOUS_VERSION" ] && PREVIOUS_VERSION=v0.0.0
-        echo "tag=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT" 
       env:
         GITHUB_TOKEN: ${{ secrets.git-token }}
+        VERSION_PREFIX: ${{ inputs.version-prefix }}
+      run: |
+        REGEX=$(echo "^${VERSION_PREFIX}([0-9]+)\.([0-9]+)\.([0-9]+)$")
+        PREVIOUS_VERSION=$(git tag | sort -r --version-sort | grep -E ${REGEX} || echo "" | head -n1 )
+        [ -z "$PREVIOUS_VERSION" ] && PREVIOUS_VERSION=${VERSION_PREFIX}0.0.0
+        echo "tag=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT" 
+      
 
     - name: get previous version from tag
       id: previousversion
@@ -57,7 +63,7 @@ jobs:
       env:
         VERSION_PREFIX: ${{ inputs.version-prefix }}
       run: |
-        echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | cut -d${VERSION_PREFIX} -f 2)" >> "$GITHUB_OUTPUT"
+        echo "version=$(echo ${{ steps.previoustag.outputs.tag }} | awk -F ${VERSION_PREFIX} '{print $2}')" >> "$GITHUB_OUTPUT"
 
     - name: Get next patch version
       id: semvers
@@ -73,7 +79,7 @@ jobs:
         tag: ${{ inputs.version-prefix }}${{ steps.semvers.outputs.patch }}
         tag_exists_error: true
 
-    - name: Set bumped version in ourput
+    - name: Set bumped version in output
       id: setversion
       shell: bash
       run: |
@@ -83,7 +89,8 @@ jobs:
           echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
         else
           echo "Not on main branch, setting previous version + hash"
-          HASH=$(git rev-parse --short HEAD)
+          HASH=$(git rev-parse --short origin/$GITHUB_HEAD_REF)
           echo "version=${{ steps.previousversion.outputs.version }}-$HASH" >> "$GITHUB_OUTPUT"
         fi
+        echo "previous_version=${{ steps.previousversion.outputs.version }}" >> "$GITHUB_OUTPUT"
 
