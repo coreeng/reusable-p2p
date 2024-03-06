@@ -30,7 +30,13 @@ jobs:
       version-prefix: app-tag
     uses: ./.github/workflows/p2p-version.yaml
 
-
+  test_version_default :
+    secrets:
+      git-token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      dry-run: true
+    uses: ./.github/workflows/p2p-version.yaml
+    
   test_execute_command:
     needs: [test_version]
     uses: ./.github/workflows/p2p-execute-command.yaml
