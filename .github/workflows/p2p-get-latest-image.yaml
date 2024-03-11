@@ -45,13 +45,11 @@ jobs:
       BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
       DPLATFORM: ${{ vars.DPLATFORM }}
       PROJECT_ID: ${{ vars.PROJECT_ID }}
-      PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
       REGION: ${{ inputs.region }}
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       GITHUB_ENV: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
       TENANT_NAME: ${{ vars.TENANT_NAME }}
-      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
       REGISTRY_PATH: ${{ inputs.registry-path }}
       IMAGE_NAME: ${{ inputs.image-name }}
     permissions:
@@ -64,6 +62,11 @@ jobs:
           yq -p=json -C <<EOT
           ${{ toJSON(env) }}
           EOT
+
+      - name: Calculate Workload Identity Provider ID
+        run: |
+          PROJECT_NUMBER=$(gcloud projects list --filter="projectId='${{ env.PROJECT_ID }}'" --format="value(projectNumber)")
+          echo "WORKLOAD_IDENTITY_PROVIDER=projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}" >> "$GITHUB_ENV"
 
       - name: Authenticate to Google Cloud
         id: auth
