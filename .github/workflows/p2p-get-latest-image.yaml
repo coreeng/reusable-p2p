@@ -64,7 +64,6 @@ jobs:
           EOT
 
       - name: Calculate Workload Identity Provider ID
-        if: inputs.dry-run == false
         run: |
           PROJECT_NUMBER=$(gcloud projects list --filter="projectId='${{ env.PROJECT_ID }}'" --format="value(projectNumber)")
           echo "WORKLOAD_IDENTITY_PROVIDER=projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}" >> "$GITHUB_ENV"
