@@ -51,17 +51,23 @@ jobs:
     env:
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
-      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
     outputs:
       source_registry: ${{ env.REGISTRY }}
       source_service_account: ${{ env.SERVICE_ACCOUNT }}
-      source_workflow_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+      source_workflow_identity_provider: ${{ steps.wip-id.outputs.WORKLOAD_IDENTITY_PROVIDER }}
     steps:
       - name: print env context
         run: |
           yq -p=json -C <<EOT
           ${{ toJSON(env) }}
           EOT
+
+      - name: Calculate Workload Identity Provider ID (Source)
+        if: inputs.dry-run == false
+        id: wip-id
+        run: |
+          PROJECT_NUMBER=$(gcloud projects list --filter="projectId='${{ env.PROJECT_ID }}'" --format="value(projectNumber)")
+          echo "WORKLOAD_IDENTITY_PROVIDER=projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}" >> "$GITHUB_OUTPUT"
 
   promote-image:
     name: promote-to-${{ inputs.promotion-stage }}
@@ -74,7 +80,6 @@ jobs:
       DEST_GITHUB_ENV: ${{ inputs.dest_github_env }}
       DPLATFORM: ${{ vars.DPLATFORM }}
       PROJECT_ID: ${{ vars.PROJECT_ID }}
-      PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
       REGION: ${{ inputs.region }}
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
@@ -84,7 +89,6 @@ jobs:
       SOURCE_SERVICE_ACCOUNT: ${{ needs.lookup.outputs.source_service_account }}
       SOURCE_WORKLOAD_IDENTITY_PROVIDER: ${{ needs.lookup.outputs.source_workflow_identity_provider }}
       TENANT_NAME: ${{ vars.TENANT_NAME }}
-      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
     permissions:
       contents: read
       id-token: write
@@ -101,6 +105,12 @@ jobs:
         with:
           ref: ${{ inputs.dry-run == false && inputs.checkout-version || '' }}
 
+      - name: Calculate Workload Identity Provider ID (Dest)
+        if: inputs.dry-run == false
+        run: |
+          PROJECT_NUMBER=$(gcloud projects list --filter="projectId='${{ env.PROJECT_ID }}'" --format="value(projectNumber)")
+          echo "PROJECT_NUMBER=$PROJECT_NUMBER" >> "$GITHUB_ENV"
+          echo "WORKLOAD_IDENTITY_PROVIDER=projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}" >> "$GITHUB_ENV"
 
       - name: Authenticate to Google Cloud (Source)
         id: auth-source
@@ -112,7 +122,6 @@ jobs:
           service_account: ${{ env.SOURCE_SERVICE_ACCOUNT }}
           token_format: access_token
           access_token_lifetime: 600s
-
 
       - name: Authenticate to Google Cloud (Dest)
         id: auth-dest

@@ -57,13 +57,11 @@ jobs:
       BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
       DPLATFORM: ${{ vars.DPLATFORM }}
       PROJECT_ID: ${{ vars.PROJECT_ID }}
-      PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
       REGION: ${{ inputs.region }}
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
       VERSION: ${{ inputs.version }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       TENANT_NAME: ${{ vars.TENANT_NAME }}
-      WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
     steps:
       - name: print env context
         run: |
@@ -75,6 +73,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.dry-run == false && inputs.checkout-version || '' }}
+
+      - name: Calculate Workload Identity Provider ID
+        if: inputs.dry-run == false
+        run: |
+          PROJECT_NUMBER=$(gcloud projects list --filter="projectId='${{ env.PROJECT_ID }}'" --format="value(projectNumber)")
+          echo "PROJECT_NUMBER=$PROJECT_NUMBER" >> "$GITHUB_ENV"
+          echo "WORKLOAD_IDENTITY_PROVIDER=projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}" >> "$GITHUB_ENV"
 
       - name: Authenticate to Google Cloud
         id: auth

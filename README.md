@@ -55,7 +55,6 @@ Create your environments with the following variables:
 * BASE_DOMAIN e.g. gcp-dev.cecg.platform.cecg.io
 * DPLATFORM environment name from platform-environments e.g. gcp-dev
 * PROJECT_ID project id from platform environments e.g. core-platform-efb3c84c
-* PROJECT_NUMBER project number for the project id above
 
 Usually you need at least two environments e.g.
 
