@@ -71,6 +71,7 @@ jobs:
     env:
       env_vars: ${{ secrets.env_vars }}
       BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+      INTERNAL_DOMAIN: ${{ vars.INTERNAL_DOMAIN }}
       DEST_GITHUB_ENV: ${{ inputs.dest_github_env }}
       DPLATFORM: ${{ vars.DPLATFORM }}
       PROJECT_ID: ${{ vars.PROJECT_ID }}

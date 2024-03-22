@@ -55,6 +55,7 @@ jobs:
     env:
       env_vars: ${{ secrets.env_vars }}
       BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+      INTERNAL_DOMAIN: ${{ vars.INTERNAL_DOMAIN }}
       DPLATFORM: ${{ vars.DPLATFORM }}
       PROJECT_ID: ${{ vars.PROJECT_ID }}
       PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
