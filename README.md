@@ -53,7 +53,7 @@ The `p2p-version` workflow has the following behavior:
 
 Create your environments with the following variables:
 * BASE_DOMAIN e.g. gcp-dev.cecg.platform.cecg.io
-* INTERNAL_DOMAIN e.g. gcp-dev-internal.cecg.platform.cecg.io
+* INTERNAL_SERVICES_DOMAIN e.g. gcp-dev-internal.cecg.platform.cecg.io
 * DPLATFORM environment name from platform-environments e.g. gcp-dev
 * PROJECT_ID project id from platform environments e.g. core-platform-efb3c84c
 * PROJECT_NUMBER project number for the project id above
@@ -82,7 +82,7 @@ And specifically for your app set:
 Available env vars for all envs:
 
 * `REGISTRY` that you're authenticated to
-* `INTERNAL_DOMAIN` to access internal services like Grafana
+* `INTERNAL_SERVICES_DOMAIN` to access internal services like Grafana
 
 Every task will have kubectl access as your tenant
 
