@@ -43,6 +43,7 @@ jobs:
     environment: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
     env:
       BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+      INTERNAL_SERVICES_DOMAIN: ${{ vars.INTERNAL_SERVICES_DOMAIN }}
       DPLATFORM: ${{ vars.DPLATFORM }}
       PROJECT_ID: ${{ vars.PROJECT_ID }}
       PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
