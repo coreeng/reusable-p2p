@@ -48,8 +48,6 @@ jobs:
   tenants-validate:
     name: tenants
     uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
-    needs: [changes]
-    if: ${{ inputs.release_build == true || needs.changes.outputs.tenants == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
