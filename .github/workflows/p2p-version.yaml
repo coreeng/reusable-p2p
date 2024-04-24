@@ -91,9 +91,9 @@ jobs:
           echo "Not on main branch, setting previous version + hash"
           GIT_REF="HEAD"
           if [ -n "$GITHUB_HEAD_REF" ]; then
-              HEAD="origin/$GITHUB_HEAD_REF"
+              GIT_REF="origin/$GITHUB_HEAD_REF"
           fi
-          HASH=$(git rev-parse --short $HEAD)
+          HASH=$(git rev-parse --short $GIT_REF)
           echo "version=${{ steps.previousversion.outputs.version }}-$HASH" >> "$GITHUB_OUTPUT"
         fi
         echo "previous_version=${{ steps.previousversion.outputs.version }}" >> "$GITHUB_OUTPUT"
