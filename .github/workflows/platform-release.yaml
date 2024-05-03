@@ -1,0 +1,122 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      registry:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+      image_description:
+        required: true
+        type: string
+    outputs:
+      version:
+        value: ${{ jobs.generate.outputs.version }}
+      imageid:
+        value: ${{ jobs.generate.outputs.imageid }}
+      digest:
+        value: ${{ jobs.generate.outputs.digest }}
+
+jobs:
+  publish-pkg:
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: write
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v4
+
+      - id: publish-pkg
+        name: Publish go pkg
+        run: |
+          git tag "pkg/${{ github.ref_name }}"
+          git push origin "pkg/${{ github.ref_name }}"
+
+  generate:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v4
+
+      - id: source-date-epoch
+        name: Source date epoch
+        run: |
+          # generate source date epoch timestamp
+          echo "timestamp=$(git log -1 --pretty=%ct)" >> "${GITHUB_OUTPUT}"
+
+      - id: docker-setup-buildx
+        name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - id: docker-login
+        name: Login to the registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: metadata
+        name: Metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ inputs.registry }}/${{ inputs.image_name }}
+          labels: |
+            org.opencontainers.image.description=${{ inputs.image_description }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - id: go-build-cache
+        name: Go build cache
+        uses: actions/cache@v4
+        with:
+          path: go-build-cache
+          key: ${{ runner.os }}-go-build-cache-${{ hashFiles('**/go.sum') }}
+
+      - id: go-build-cache-inject
+        name: Go build cache inject into docker
+        uses: reproducible-containers/buildkit-cache-dance@v2.1.4
+        with:
+          cache-source: go-build-cache
+          cache-target: /root/.cache/go-build
+
+      - id: build-push
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: Dockerfile
+          push: true
+          build-args: |
+            SOURCE_DATE_EPOCH=${{ steps.source-date-epoch.outputs.timestamp }}
+            RELEASE_BUILDTIME=${{ fromJSON(steps.metadata.outputs.json).labels['org.opencontainers.image.created'] }}
+            RELEASE_VERSION=${{ fromJSON(steps.metadata.outputs.json).labels['org.opencontainers.image.version'] }}
+            RELEASE_REVISION=${{ fromJSON(steps.metadata.outputs.json).labels['org.opencontainers.image.revision'] }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          # publish for amd64 only
+          platforms: linux/amd64
+          # https://github.com/orgs/community/discussions/45969
+          provenance: false
+          sbom: false
+
+    outputs:
+      version: ${{ steps.metadata.outputs.version }}
+      imageid: ${{ steps.build-push.outputs.imageid }}
+      digest: ${{ steps.build-push.outputs.digest }}
