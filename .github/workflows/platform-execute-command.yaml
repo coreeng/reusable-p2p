@@ -73,7 +73,7 @@ jobs:
       - id: auth-azure
         if: inputs.platform == 'azure'
         name: Authenticate to Azure
-        uses: azure/login@v2
+        uses: azure/login@v1.5.1
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
