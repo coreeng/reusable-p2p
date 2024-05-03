@@ -9,14 +9,6 @@ on:
         value: ${{ jobs.generate.outputs.imageid }}
       digest:
         value: ${{ jobs.generate.outputs.digest }}
-  push:
-    tags:
-      - 'v*'
-
-# only allow one Release workflow at a time per ref to be running
-concurrency:
-  group: actions-release-${{ github.ref }}
-  cancel-in-progress: true
 
 env:
   REGISTRY: ghcr.io
