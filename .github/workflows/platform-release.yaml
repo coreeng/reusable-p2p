@@ -2,6 +2,16 @@ name: Release
 
 on:
   workflow_call:
+    inputs:
+      registry:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+      image_description:
+        required: true
+        type: string
     outputs:
       version:
         value: ${{ jobs.generate.outputs.version }}
@@ -9,11 +19,6 @@ on:
         value: ${{ jobs.generate.outputs.imageid }}
       digest:
         value: ${{ jobs.generate.outputs.digest }}
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  IMAGE_DESCRIPTION: "Developer Platform"
 
 jobs:
   publish-pkg:
@@ -58,7 +63,7 @@ jobs:
         name: Login to the registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ inputs.registry }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -66,9 +71,9 @@ jobs:
         name: Metadata
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ inputs.registry }}/${{ inputs.image_name }}
           labels: |
-            org.opencontainers.image.description=${{ env.IMAGE_DESCRIPTION }}
+            org.opencontainers.image.description=${{ inputs.image_description }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
