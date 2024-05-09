@@ -89,7 +89,7 @@ jobs:
   promote:
     name: promote
     needs: [nft-test, functional-test]
-    if: success() && (github.ref == inputs.main-branch || github.ref_type == 'tag' ))
+    if: success() && ( github.ref == inputs.main-branch || github.ref_type == 'tag' )
     secrets:
       env_vars: ${{ secrets.env_vars }}
     uses: ./.github/workflows/p2p-promote-image.yaml
