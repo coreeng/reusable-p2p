@@ -89,10 +89,12 @@ jobs:
 
       - id: go-build-cache-inject
         name: Go build cache inject into docker
-        uses: reproducible-containers/buildkit-cache-dance@v2.1.4
+        uses: reproducible-containers/buildkit-cache-dance@v3
         with:
-          cache-source: go-build-cache
-          cache-target: /root/.cache/go-build
+          cache-map: |
+            {
+              "go-build-cache": "/root/.cache/go-build"
+            }
 
       - id: build-push
         name: Build and push
