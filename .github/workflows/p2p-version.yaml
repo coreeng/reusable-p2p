@@ -108,14 +108,14 @@ jobs:
 
         if [ "${HASH}" = "${LAST_TAG_HASH}" ]; then
             echo "Tag already exists on this commit, setting previous version"
-            echo "version=${PREVIOUS_TAG}"
+            echo "version=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
         else
             if ["${{ inputs.main-branch }}" = "${{ github.ref }}" ]; then
                 echo "On main branch, setting next version"
-                echo "version=${TAG}"
+                echo "version=${TAG}" >> "$GITHUB_OUTPUT"
             else
                 echo "Not on main branch, setting previous version + hash"
-                echo "version=${PREVIOUS_TAG}-${HASH}" 
+                echo "version=${PREVIOUS_TAG}-${HASH}" >> "$GITHUB_OUTPUT"
             fi
         fi
-        echo "previous_version=${PREVIOUS_TAG}"
+        echo "previous_version=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
