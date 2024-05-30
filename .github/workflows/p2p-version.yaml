@@ -83,10 +83,11 @@ jobs:
             GIT_REF="origin/$GITHUB_HEAD_REF"
         fi
         HASH=$(git rev-parse --short ${GIT_REF})
-        LAST_TAG_HASH=$(git rev-parse --short ${VERSION_PREFIX}${PREVIOUS_TAG})
+        LAST_TAG_HASH=$(git rev-parse --short ${VERSION_PREFIX}${PREVIOUS_TAG} || echo "does-not-exist" )
 
         echo "current_hash=${HASH}" >> "$GITHUB_OUTPUT"
         echo "previous_tag_hash=${LAST_TAG_HASH}" >> "$GITHUB_OUTPUT"
+       
 
     - name: Create tag
       uses: rickstaa/action-create-tag@v1
