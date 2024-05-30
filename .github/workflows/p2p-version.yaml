@@ -74,6 +74,8 @@ jobs:
     - name: get git hashes
       id: githashes
       shell: bash
+      env:
+        VERSION_PREFIX: ${{ inputs.version-prefix }}
       run: |
         GIT_REF="HEAD"
         PREVIOUS_TAG=${{ steps.previousversion.outputs.version }}
@@ -81,7 +83,7 @@ jobs:
             GIT_REF="origin/$GITHUB_HEAD_REF"
         fi
         HASH=$(git rev-parse --short ${GIT_REF})
-        LAST_TAG_HASH=$(git rev-parse --short ${PREVIOUS_TAG})
+        LAST_TAG_HASH=$(git rev-parse --short ${VERSION_PREFIX}${PREVIOUS_TAG})
 
         echo "current_hash=${HASH}" >> "$GITHUB_OUTPUT"
         echo "previous_tag_hash=${LAST_TAG_HASH}" >> "$GITHUB_OUTPUT"
