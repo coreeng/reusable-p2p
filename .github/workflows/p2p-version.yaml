@@ -71,9 +71,24 @@ jobs:
       with:
         version: ${{ steps.previousversion.outputs.version }} 
 
+    - name: get git hashes
+      id: githashes
+      shell: bash
+      run: |
+        GIT_REF="HEAD"
+        PREVIOUS_TAG=${{ steps.previousversion.outputs.version }}
+        if [ -n "$GITHUB_HEAD_REF" ]; then
+            GIT_REF="origin/$GITHUB_HEAD_REF"
+        fi
+        HASH=$(git rev-parse --short ${GIT_REF})
+        LAST_TAG_HASH=$(git rev-parse --short ${PREVIOUS_TAG})
+
+        echo "current_hash=${HASH}" >> "$GITHUB_OUTPUT"
+        echo "previous_tag_hash=${LAST_TAG_HASH}" >> "$GITHUB_OUTPUT"
+
     - name: Create tag
       uses: rickstaa/action-create-tag@v1
-      if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false)
+      if: success() && (github.ref == inputs.main-branch && inputs.dry-run == false) && (steps.githashes.outputs.current_hash != steps.githashes.outputs.previous_tag_hash)
       id: create_tag
       with:
         tag: ${{ inputs.version-prefix }}${{ steps.semvers.outputs.patch }}
@@ -84,17 +99,23 @@ jobs:
       shell: bash
       run: |
         set -x
-        if [ "${{ inputs.main-branch }}" = "${{ github.ref }}" ]; then
-          echo "On main branch, setting next version"
-          echo "version=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
-        else
-          echo "Not on main branch, setting previous version + hash"
-          GIT_REF="HEAD"
-          if [ -n "$GITHUB_HEAD_REF" ]; then
-              GIT_REF="origin/$GITHUB_HEAD_REF"
-          fi
-          HASH=$(git rev-parse --short $GIT_REF)
-          echo "version=${{ steps.previousversion.outputs.version }}-$HASH" >> "$GITHUB_OUTPUT"
-        fi
-        echo "previous_version=${{ steps.previousversion.outputs.version }}" >> "$GITHUB_OUTPUT"
 
+        TAG=${{ steps.semvers.outputs.patch }}
+        PREVIOUS_TAG=${{ steps.previousversion.outputs.version }}
+ 
+        HASH=${{ steps.githashes.outputs.current_hash }}
+        LAST_TAG_HASH=${{ steps.githashes.outputs.previous_tag_hash }}
+
+        if [ "${HASH}" = "${LAST_TAG_HASH}" ]; then
+            echo "Tag already exists on this commit, setting previous version"
+            echo "version=${PREVIOUS_TAG}"
+        else
+            if ["${{ inputs.main-branch }}" = "${{ github.ref }}" ]; then
+                echo "On main branch, setting next version"
+                echo "version=${TAG}"
+            else
+                echo "Not on main branch, setting previous version + hash"
+                echo "version=${PREVIOUS_TAG}-${HASH}" 
+            fi
+        fi
+        echo "previous_version=${PREVIOUS_TAG}"
