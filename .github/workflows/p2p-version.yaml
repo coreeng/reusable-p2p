@@ -31,9 +31,6 @@ jobs:
   increment-version:
     name: increment-version
     runs-on: ubuntu-latest
-    concurrency:
-      group: version-concurrency
-      cancel-in-progress: false
     outputs:
       version: ${{ steps.setversion.outputs.version }}
       previous_version: ${{ steps.setversion.outputs.previous_version }}
@@ -86,7 +83,7 @@ jobs:
             GIT_REF="origin/$GITHUB_HEAD_REF"
         fi
         HASH=$(git rev-parse --short ${GIT_REF})
-        LAST_TAG_HASH=$(git rev-parse --short ${VERSION_PREFIX}${PREVIOUS_TAG} || echo "does-not-exist" )
+        LAST_TAG_HASH=$(git rev-parse --short ${VERSION_PREFIX}${PREVIOUS_TAG}^{} || echo "does-not-exist" )
 
         echo "current_hash=${HASH}" >> "$GITHUB_OUTPUT"
         echo "previous_tag_hash=${LAST_TAG_HASH}" >> "$GITHUB_OUTPUT"
