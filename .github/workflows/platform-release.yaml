@@ -12,6 +12,10 @@ on:
       image_description:
         required: true
         type: string
+      pre-targets:
+        type: string
+      post-targets:
+        type: string
     outputs:
       version:
         value: ${{ jobs.generate.outputs.version }}
@@ -96,6 +100,12 @@ jobs:
               "go-build-cache": "/root/.cache/go-build"
             }
 
+      - id: make-pre-targets
+        if: inputs.pre-targets != ''
+        name: Run make ${{ inputs.pre-targets }}
+        run: |
+          make ${{ inputs.pre-targets }}
+
       - id: build-push
         name: Build and push
         uses: docker/build-push-action@v5
@@ -117,6 +127,12 @@ jobs:
           # https://github.com/orgs/community/discussions/45969
           provenance: false
           sbom: false
+
+      - id: make-post-targets
+        if: inputs.post-targets != ''
+        name: Run make ${{ inputs.post-targets }}
+        run: |
+          make ${{ inputs.post-targets }}
 
     outputs:
       version: ${{ steps.metadata.outputs.version }}
