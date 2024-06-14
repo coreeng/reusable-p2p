@@ -47,7 +47,7 @@ jobs:
 
   tenants-validate:
     name: tenants
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
+    uses: ./.github/workflows/platform-execute-command.yaml
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
@@ -67,7 +67,7 @@ jobs:
 
   feature:
     name: Feature
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
+    uses: ./.github/workflows/platform-execute-command.yaml
     needs: [changes, matrix]
     if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     secrets:
@@ -86,7 +86,7 @@ jobs:
 
   tenants-plan:
     name: tenants-yaml
-    uses: coreeng/p2p/.github/workflows/platform-execute-command.yaml@main
+    uses: ./.github/workflows/platform-execute-command.yaml
     needs: [tenants-validate, changes]
     if: ${{  inputs.release_build == false && needs.changes.outputs.environments != 'true' && needs.changes.outputs.tenants == 'true' }}
     secrets:
