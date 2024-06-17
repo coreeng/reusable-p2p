@@ -101,6 +101,7 @@ jobs:
       with:
         tag: ${{ inputs.version-prefix }}${{ steps.semvers.outputs.patch }}
         tag_exists_error: true
+        commit_sha: ${{ steps.githashes.outputs.current_hash }}
 
     - name: Set bumped version in output
       id: setversion
