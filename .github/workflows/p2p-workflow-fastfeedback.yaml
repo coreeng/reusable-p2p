@@ -97,13 +97,13 @@ jobs:
     name: log
     needs: [nft-test, functional-test]
     runs-on: ubuntu-latest
+    if: success()
     steps:
       - run: |
-          echo "Success: ${{ success() }}"
           echo "GitHub.Ref: ${{ github.ref }}"
           echo "Github.RefType: ${{ github.ref_type }}"
           echo "Inputs.MainBranch: ${{ inputs.main-branch }}"
-          echo "Result: ${{ success() && ( github.ref == inputs.main-branch || github.ref_type == 'tag' ) }}"
+          echo "Result: ${{ ( github.ref == inputs.main-branch || github.ref_type == 'tag' ) }}"
   promote:
     name: promote
     needs: [nft-test, functional-test]
