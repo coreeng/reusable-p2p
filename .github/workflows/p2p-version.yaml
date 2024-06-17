@@ -25,7 +25,11 @@ on:
         required: false
         type: string
         default: 'v'
-      
+      checkout-version:
+        required: false
+        type: string
+        default: ''
+
 
 jobs:
   increment-version:
@@ -38,7 +42,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0  
+        fetch-depth: 0
+        ref: ${{ inputs.checkout-version }}
     - name: Configure Git
       run: |
         git config user.name "$GITHUB_ACTOR"

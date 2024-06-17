@@ -13,6 +13,10 @@ on:
         required: false
         type: string
         default: 'refs/heads/main'
+      checkout-version:
+        required: false
+        type: string
+        default: ''
       version: 
         required: true
         type: string
@@ -52,6 +56,7 @@ jobs:
       command: p2p-build
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
+      checkout-version: ${{ inputs.checkout-version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
@@ -67,6 +72,7 @@ jobs:
       command: p2p-functional
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
+      checkout-version: ${{ inputs.checkout-version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
@@ -83,6 +89,7 @@ jobs:
       command: p2p-nft
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
+      checkout-version: ${{ inputs.checkout-version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
@@ -101,6 +108,7 @@ jobs:
       dest_github_env: ${{ matrix.deploy_env }}
       promotion-stage: extended-test
       version: ${{ inputs.version }}
+      checkout-version: ${{ inputs.checkout-version }}
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
       connect-to-k8s: true
