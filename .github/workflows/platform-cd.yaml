@@ -60,6 +60,19 @@ jobs:
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
 
+  environments-validate:
+    name: environments
+    uses: ./.github/workflows/platform-execute-command.yaml
+    secrets:
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
+    with:
+      action: validate
+      targets: environments-validate
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
+
   matrix:
     name: Matrix
     needs: [changes]
