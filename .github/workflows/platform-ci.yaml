@@ -58,6 +58,19 @@ jobs:
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
 
+  environments-validate:
+    name: environments
+    uses: ./.github/workflows/platform-execute-command.yaml
+    secrets:
+      cecg-registry-username: ${{ secrets.cecg-registry-username }}
+      cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
+    with:
+      action: validate
+      targets: environments-validate
+      environment: ${{ inputs.environment }}
+      platform: ${{ inputs.platform }}
+      release: ${{ inputs.release }}
+
   matrix:
     name: Matrix
     needs: [changes]
@@ -68,7 +81,7 @@ jobs:
   feature:
     name: Feature
     uses: ./.github/workflows/platform-execute-command.yaml
-    needs: [changes, matrix]
+    needs: [changes, environments-validate, matrix]
     if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
