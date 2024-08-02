@@ -36,6 +36,9 @@ on:
         required: false
         type: string
         default: '.'
+      corectl-version:
+        required: false
+        type: string
     outputs:
       version:
         value: ${{ inputs.version }}
@@ -112,5 +115,6 @@ jobs:
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
       connect-to-k8s: true
+      corectl-version: ${{ inputs.corectl-version }}
 
 

@@ -42,6 +42,9 @@ on:
       checkout-version:
         required: false
         type: string
+      corectl-version:
+        required: false
+        type: string
 
 
 jobs:
@@ -149,6 +152,27 @@ jobs:
         run: |
           gcloud container clusters get-credentials --project $PROJECT_ID --zone ${{ inputs.region }} --internal-ip ${{ env.DPLATFORM }}
           kubectl config set clusters.gke_${{ env.PROJECT_ID }}_${{ inputs.region }}_${{ env.DPLATFORM }}.proxy-url http://localhost:57755
+
+      - name: Setup corectl
+        id: setup-corectl
+        if: inputs.dry-run == false
+        env:
+          CORECTL_VERSION: ${{ inputs.corectl-version }}
+        run: |
+          if [ -z "$CORECTL_VERSION" ]; then
+          echo "No version specified, finding latest release"
+            CORECTL_VERSION=$(curl -s https://api.github.com/repos/coreeng/corectl/releases/latest | grep '"tag_name":' | cut -d'"' -f4)
+          fi
+          echo "Downloading version $CORECTL_VERSION"
+          RELEASE_URL="https://github.com/coreeng/corectl/releases/download/${CORECTL_VERSION}/corectl_Linux_x86_64.tar.gz"
+
+          curl -L $RELEASE_URL -o corectl.tar.gz
+          tar -xzf corectl.tar.gz
+          chmod +x corectl
+          sudo mv corectl /usr/local/bin/
+          rm corectl.tar.gz
+          
+          corectl help
 
       - name: Decode environment variables
         run: |
