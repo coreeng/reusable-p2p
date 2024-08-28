@@ -19,6 +19,14 @@ p2p-functional: ## Execute functional tests
 	echo $(REGISTRY)
 	echo $(VERSION)
 
+# target commented out in purpose, currently we allow for integration-test in p2p-workflow-fastfeedback.yaml as optional,
+# meaning if the Makefile target doesn't exist it'll skip the job execution. This target is to test that functionality.
+#.PHONY: p2p-integration
+#p2p-integration: ## Execute integration tests
+#	echo "##### EXECUTING P2P-INTEGRATION #####"
+#	echo $(REGISTRY)
+#	echo $(VERSION)
+
 .PHONY: p2p-nft
 p2p-nft:  ## Execute non-functional tests
 	echo "##### EXECUTING P2P-NFT #####"

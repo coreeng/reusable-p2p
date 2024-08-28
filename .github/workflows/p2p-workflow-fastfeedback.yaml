@@ -79,7 +79,6 @@ jobs:
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
-
   nft-test:
     needs: [functional-test]
     uses: ./.github/workflows/p2p-execute-command.yaml
@@ -96,9 +95,26 @@ jobs:
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
 
+  integration-test:
+    needs: [nft-test]
+    uses: ./.github/workflows/p2p-execute-command.yaml
+    secrets:
+      env_vars: ${{ secrets.env_vars }}
+    strategy:
+      matrix: ${{ fromJSON(inputs.source) }}
+      fail-fast: false
+    with:
+      command: p2p-integration
+      optional: true
+      github_env: ${{ matrix.deploy_env }}
+      version: ${{ inputs.version }}
+      checkout-version: ${{ inputs.checkout-version }}
+      dry-run: ${{ inputs.dry-run }}
+      working-directory: ${{ inputs.working-directory }}
+
   promote:
     name: promote
-    needs: [nft-test, functional-test]
+    needs: [nft-test, functional-test, integration-test]
     if: success() && ( github.ref == inputs.main-branch || github.ref_type == 'tag' )
     secrets:
       env_vars: ${{ secrets.env_vars }}

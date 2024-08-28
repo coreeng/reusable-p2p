@@ -88,6 +88,7 @@ Every task will have kubectl access as your tenant
 
 #### p2p-build
 #### p2p-functional
+#### p2p-integration 
 #### p2p-nft
 #### p2p-promote-to-extended-test
 

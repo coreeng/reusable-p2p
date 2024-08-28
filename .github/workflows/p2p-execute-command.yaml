@@ -29,6 +29,10 @@ on:
         required: false
         type: string
         default: europe-west2-a
+      optional:
+        required: false
+        type: boolean
+        default: false
       pre-targets:
         description: |
           Make targets to run before the command
@@ -65,6 +69,7 @@ jobs:
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       TENANT_NAME: ${{ vars.TENANT_NAME }}
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
+      SKIP: ${{ inputs.optional }}
     steps:
       - name: print env context
         run: |
@@ -77,9 +82,22 @@ jobs:
         with:
           ref: ${{ inputs.dry-run == false && inputs.checkout-version || '' }}
 
+      - name: Skip job when optional and make target not exist
+        if: ${{ inputs.optional == true }}
+        working-directory: ${{ inputs.working-directory }}
+        id: is_optional
+        run: |          
+          declare -r optional_target=${{ inputs.command }}
+          # match target in format: `.PHONY: <target_name>`, skip if commented out
+          if grep "^[^#]*.PHONY.*${optional_target}.*" ./Makefile; then            
+            echo "SKIP=false" >> $GITHUB_ENV
+          else
+            echo "WARNING: No Makefile target [$optional_target], skipping job"
+          fi
+
       - name: Authenticate to Google Cloud
         id: auth
-        if: inputs.dry-run == false
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
@@ -89,21 +107,21 @@ jobs:
 
       - name: Setup Google Cloud SDK
         id: setup-gcloud
-        if: inputs.dry-run == false
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         uses: google-github-actions/setup-gcloud@v2
         with:
           install_components: beta,gke-gcloud-auth-plugin
 
       - name: Setup NumPy
         id: setup-numpy
-        if: inputs.dry-run == false
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         shell: bash
         # https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
         run: $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
       - name: Setup kubeconfig
         id: setup-kubeconfig
-        if: inputs.dry-run == false
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         shell: bash
         run: |
           gcloud container clusters get-credentials --project $PROJECT_ID --zone $REGION --internal-ip ${{ env.DPLATFORM }}
@@ -111,13 +129,14 @@ jobs:
 
       - name: Login to Artifact Registry
         uses: docker/login-action@v3
-        if: inputs.dry-run == false
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         with:
           registry: europe-west2-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
 
       - name: Decode environment variables
+        if:  ${{ env.SKIP == 'false' }}
         run: |
           for i in $env_vars; do
             i=$(echo $i | sed 's/=.*//g')=$(echo ${i#*=})
@@ -127,7 +146,7 @@ jobs:
 
       - name: Run Command
         id: run-command
-        if: inputs.dry-run == false
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
