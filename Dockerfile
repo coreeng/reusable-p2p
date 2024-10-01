@@ -106,8 +106,7 @@ RUN CORECTL_VERSION=$(curl -s https://api.github.com/repos/coreeng/corectl/relea
 
 WORKDIR /app
 
-
-
+RUN curl -fsSL https://get.docker.com | sh 
 
 # Set source date epoch and release revision and version
 ARG SOURCE_DATE_EPOCH

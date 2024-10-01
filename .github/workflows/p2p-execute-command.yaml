@@ -71,7 +71,7 @@ jobs:
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
       SKIP: ${{ inputs.optional }}
     container:
-      image: docker.io/tmcalves/gke-app-p2p:0.0.1
+      image: docker.io/tmcalves/gke-app-p2p:0.0.2
     steps:
       - name: print env context
         run: |
