@@ -89,7 +89,7 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         id: is_optional
         run: |          
-          declare -r optional_target=${{ inputs.command }}
+          optional_target=${{ inputs.command }}
           # match target in format: `.PHONY: <target_name>`, skip if commented out
           if grep "^[^#]*.PHONY.*${optional_target}.*" ./Makefile; then            
             echo "SKIP=false" >> $GITHUB_ENV
