@@ -70,6 +70,8 @@ jobs:
       TENANT_NAME: ${{ vars.TENANT_NAME }}
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
       SKIP: ${{ inputs.optional }}
+    container:
+      image: docker.io/tmcalves/gke-app-p2p:0.0.1
     steps:
       - name: print env context
         run: |
@@ -104,20 +106,7 @@ jobs:
           service_account: ${{ env.SERVICE_ACCOUNT }}
           token_format: access_token
           access_token_lifetime: 600s
-
-      - name: Setup Google Cloud SDK
-        id: setup-gcloud
-        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          install_components: beta,gke-gcloud-auth-plugin
-
-      - name: Setup NumPy
-        id: setup-numpy
-        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
-        shell: bash
-        # https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
-        run: $(gcloud info --format="value(basic.python_location)") -m pip install numpy
+y
 
       - name: Setup kubeconfig
         id: setup-kubeconfig
