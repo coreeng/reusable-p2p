@@ -7,6 +7,10 @@ on:
         required: false
         default: true
         type: boolean
+      branch_filter:
+        required: false
+        default: 'main'
+        type: string
     outputs:
       matrix:
         value: ${{ jobs.generate.outputs.matrix }}
@@ -27,10 +31,14 @@ jobs:
         run: |
           # generate matrix
           for f in environments/*/config.yaml ; do
-            if "${{ inputs.include_release }}"; then
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
-            else
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
+            if [ -e "${f}" ] ; then
+              if ! [ "${BRANCH_FILTER}" ] || [ "$(echo "${MATRIX_ENV_BRANCHES}" | jq -r '.[] | select(.environment == "'"$(yq .environment "${f}")"'") | .branch')" = "${BRANCH_FILTER}" ] ; then
+                if "${INCLUDE_RELEASE}" ; then
+                  e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
+                else
+                  e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
+                fi
+              fi
             fi
           done
           MATRIX="$(printf '{"include":[%s]}' "${e}")"
