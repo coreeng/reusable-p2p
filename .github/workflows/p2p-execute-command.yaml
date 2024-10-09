@@ -105,6 +105,7 @@ jobs:
           service_account: ${{ env.SERVICE_ACCOUNT }}
           token_format: access_token
           access_token_lifetime: 600s
+#          create_credentials_file: 'true'
 
       - name: Setup Google Cloud SDK
         id: setup-gcloud
@@ -158,8 +159,11 @@ jobs:
         id: run-command
         if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         working-directory: ${{ inputs.working-directory }}
+#        env:
+#          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         run: |
           ls -la /opt/hostedtoolcache/cedws/iapc/v0.1.7/linux-x64
+          cat $GOOGLE_APPLICATION_CREDENTIALS
           nohup sh -c "iapc to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}" &
           sleep 4
           kubectl cluster-info
