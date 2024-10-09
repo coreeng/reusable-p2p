@@ -157,7 +157,8 @@ jobs:
         if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
-          nohup sh -c "while true ; do iapc to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
+          ls -la /opt/hostedtoolcache/cedws/iapc/v0.1.7/linux-x64
+          nohup sh -c "iapc to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}" &
           sleep 4
           kubectl cluster-info
           make ${{ inputs.command }}
