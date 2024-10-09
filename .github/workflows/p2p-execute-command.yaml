@@ -148,7 +148,7 @@ jobs:
       - name: Install iapc
         uses: jaxxstorm/action-install-gh-release@v1.10.0
         with: # Grab the latest version
-          repo: cecg/iapc
+          repo: coreeng/iapc
           tag: v0.1.8
           extension-matching: 'disable'
           rename-to: iapc
