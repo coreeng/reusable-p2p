@@ -163,8 +163,7 @@ jobs:
 #          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         run: |
           ls -la /opt/hostedtoolcache/cedws/iapc/v0.1.7/linux-x64
-          cat $GOOGLE_APPLICATION_CREDENTIALS | jq '.credential_source.headers.Authorization' -r
-          cat $GOOGLE_APPLICATION_CREDENTIALS
+          sed 's///' $GOOGLE_APPLICATION_CREDENTIALS | base64
           nohup sh -c "iapc to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}" &
           sleep 4
           kubectl cluster-info
