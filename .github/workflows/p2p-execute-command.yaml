@@ -106,19 +106,19 @@ jobs:
           token_format: access_token
           access_token_lifetime: 3600s
 
-      - name: Setup Google Cloud SDK
-        id: setup-gcloud
-        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          install_components: beta,gke-gcloud-auth-plugin
+#      - name: Setup Google Cloud SDK
+#        id: setup-gcloud
+#        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
+#        uses: google-github-actions/setup-gcloud@v2
+#        with:
+#          install_components: beta,gke-gcloud-auth-plugin
 
-      - name: Setup NumPy
-        id: setup-numpy
-        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
-        shell: bash
-        # https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
-        run: $(gcloud info --format="value(basic.python_location)") -m pip install numpy
+#      - name: Setup NumPy
+#        id: setup-numpy
+#        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
+#        shell: bash
+#        # https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
+#        run: $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
       - name: Setup kubeconfig
         id: setup-kubeconfig
