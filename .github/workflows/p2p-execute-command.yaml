@@ -151,6 +151,7 @@ jobs:
           repo: cedws/iapc
           tag: v0.1.7
           extension-matching: 'disable'
+          rename-to: iapc
 
       - name: Run Command
         id: run-command
