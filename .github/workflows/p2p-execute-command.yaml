@@ -146,11 +146,11 @@ jobs:
           done
 
       - name: Install iapc
-        if: ${{ env.SKIP == 'false' }}
-        run: |
-          curl -Lso iapc "https://github.com/cedws/iapc/releases/download/v${IAPC_VERSION}/iapc-linux-$(uname -m | sed -e "s/aarch64/arm64/" -e "s/x86_64/amd64/")"
-          install -o root -g root -m 0755 iapc /usr/local/bin/
-          rm iapc
+        uses: jaxxstorm/action-install-gh-release@v1.10.0
+        with: # Grab the latest version
+          repo: cedws/iapc
+          tag: v0.1.7
+          extension-matching: 'disable'
 
       - name: Run Command
         id: run-command
