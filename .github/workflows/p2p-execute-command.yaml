@@ -104,7 +104,7 @@ jobs:
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
           token_format: access_token
-          access_token_lifetime: 10000s
+          access_token_lifetime: 3600s
           access_token_scopes: 'https://www.googleapis.com/auth/cloud-platform,'
 
       - name: Setup Google Cloud SDK
