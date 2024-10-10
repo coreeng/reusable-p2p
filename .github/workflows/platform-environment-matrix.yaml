@@ -13,7 +13,7 @@ on:
         type: boolean
       environment:
         required: false
-        default: "*"
+        default: ""
         type: string
     outputs:
       matrix:
@@ -35,9 +35,12 @@ jobs:
         run: |
           # generate matrix
           YAML_FILE=environments/environments.yaml 
-          include_all=${{ inputs.include_all }}
+          include_all="${{ inputs.include_all }}"
+          environment="${{ inputs.environment }}"
+          include_release="${{ inputs.include_release }}"
 
           yaml_list={}
+
           if [[ ! -f "$YAML_FILE" ]]; then
             echo "File $YAML_FILE does not exist. Including all."
             include_all=true
@@ -45,14 +48,30 @@ jobs:
               yaml_list=$(yq eval '.enabled[]' "$YAML_FILE")
           fi
 
-          for f in environments/${{ inputs.environments }}/config.yaml; do
-            env=$(echo "$f" | cut -d'/' -f2)
+          if [[ "${include_all}" == true ]] && [[ "${environment}" ]]; then
+            echo "Conflicting flags 'include_all' and 'environment have been set. Aborting..."
+            exit 1
+          fi
+
+          for f in environments/*/config.yaml; do
             if [ -e "${f}" ]; then
-              if echo "$yaml_list" | grep -wq "^$env$" || [[ "${include_all}" == true ]]; then
-                if "${{ inputs.include_release }}"; then
-                  [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
+              env=$(yq .environment "${f}")
+              allowed=false
+              if [ "${include_all}" == true ]; then
+                allowed=true
+              elif echo "$env" | grep -wq "^${environment}$" && [ ! -e "${environment}" ]; then
+                allowed=true
+              elif echo "$yaml_list" | grep -wq "^$env$" && [ -e "${environment}" ]; then
+                allowed=true
+              elif [ ! -e "${environment}" ] && echo "$env" | grep -wq "^${environment}$"; then
+                allowed=true
+              fi 
+              
+              if [[ "${allowed}" == true ]]; then
+                if [[ "${include_release}" == true ]]; then
+                  e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
                 else
-                  [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
+                  e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
                 fi
               fi
             fi
