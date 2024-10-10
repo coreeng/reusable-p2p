@@ -7,6 +7,14 @@ on:
         required: false
         default: true
         type: boolean
+      include_all:
+        required: false
+        default: false
+        type: boolean
+      environment:
+        required: false
+        default: ""
+        type: string
     outputs:
       matrix:
         value: ${{ jobs.generate.outputs.matrix }}
@@ -26,11 +34,46 @@ jobs:
         name: Generate Matrix
         run: |
           # generate matrix
-          for f in environments/*/config.yaml ; do
-            if "${{ inputs.include_release }}"; then
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
-            else
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
+          YAML_FILE=environments/environments.yaml 
+          include_all="${{ inputs.include_all }}"
+          environment="${{ inputs.environment }}"
+          include_release="${{ inputs.include_release }}"
+
+          yaml_list={}
+
+          if [ ! -f "$YAML_FILE" ]; then
+            echo "File $YAML_FILE does not exist. Including all."
+            include_all=true
+          else
+              yaml_list=$(yq eval '.enabled[]' "$YAML_FILE")
+          fi
+
+          if [ "${include_all}" == true ] && [ "${environment}" ]; then
+            echo "Conflicting flags 'include_all' and 'environment have been set. Aborting..."
+            exit 1
+          fi
+
+          for f in environments/*/config.yaml; do
+            if [ -e "${f}" ]; then
+              env=$(yq .environment "${f}")
+              allowed=false
+              if [ "${include_all}" == true ]; then
+                allowed=true
+              elif echo "$env" | grep -wq "^${environment}$" && [ "${environment}" ]; then
+                allowed=true
+              elif echo "$yaml_list" | grep -wq "^$env$" && [ ! "${environment}" ]; then
+                allowed=true
+              elif [ ! -e "${environment}" ] && echo "$env" | grep -wq "^${environment}$"; then
+                allowed=true
+              fi 
+              
+              if [ "${allowed}" == true ]; then
+                if [ "${include_release}" == true ]; then
+                  e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
+                else
+                  e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
+                fi
+              fi
             fi
           done
           MATRIX="$(printf '{"include":[%s]}' "${e}")"
