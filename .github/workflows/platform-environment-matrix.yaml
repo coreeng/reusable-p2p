@@ -41,14 +41,14 @@ jobs:
 
           yaml_list={}
 
-          if [[ ! -f "$YAML_FILE" ]]; then
+          if [ ! -f "$YAML_FILE" ]; then
             echo "File $YAML_FILE does not exist. Including all."
             include_all=true
           else
               yaml_list=$(yq eval '.enabled[]' "$YAML_FILE")
           fi
 
-          if [[ "${include_all}" == true ]] && [[ "${environment}" ]]; then
+          if [ "${include_all}" == true ] && [ "${environment}" ]; then
             echo "Conflicting flags 'include_all' and 'environment have been set. Aborting..."
             exit 1
           fi
@@ -67,8 +67,8 @@ jobs:
                 allowed=true
               fi 
               
-              if [[ "${allowed}" == true ]]; then
-                if [[ "${include_release}" == true ]]; then
+              if [ "${allowed}" == true ]; then
+                if [ "${include_release}" == true ]; then
                   e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
                 else
                   e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
