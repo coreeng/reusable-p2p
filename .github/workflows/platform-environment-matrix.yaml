@@ -7,6 +7,14 @@ on:
         required: false
         default: true
         type: boolean
+      include_all:
+        required: false
+        default: false
+        type: boolean
+      environment:
+        required: false
+        default: "*"
+        type: string
     outputs:
       matrix:
         value: ${{ jobs.generate.outputs.matrix }}
@@ -26,11 +34,27 @@ jobs:
         name: Generate Matrix
         run: |
           # generate matrix
-          for f in environments/*/config.yaml ; do
-            if "${{ inputs.include_release }}"; then
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
-            else
-              [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
+          YAML_FILE=environments/environments.yaml 
+          include_all=${{ inputs.include_all }}
+
+          yaml_list={}
+          if [[ ! -f "$YAML_FILE" ]]; then
+            echo "File $YAML_FILE does not exist. Including all."
+            include_all=true
+          else
+              yaml_list=$(yq eval '.enabled[]' "$YAML_FILE")
+          fi
+
+          for f in environments/${{ inputs.environments }}/config.yaml; do
+            env=$(echo "$f" | cut -d'/' -f2)
+            if [ -e "${f}" ]; then
+              if echo "$yaml_list" | grep -wq "^$env$" || [[ "${include_all}" == true ]]; then
+                if "${{ inputs.include_release }}"; then
+                  [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
+                else
+                  [ -e "${f}" ] && e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\"},"
+                fi
+              fi
             fi
           done
           MATRIX="$(printf '{"include":[%s]}' "${e}")"
