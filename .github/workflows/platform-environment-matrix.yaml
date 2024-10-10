@@ -59,9 +59,9 @@ jobs:
               allowed=false
               if [ "${include_all}" == true ]; then
                 allowed=true
-              elif echo "$env" | grep -wq "^${environment}$" && [ ! -e "${environment}" ]; then
+              elif echo "$env" | grep -wq "^${environment}$" && [ "${environment}" ]; then
                 allowed=true
-              elif echo "$yaml_list" | grep -wq "^$env$" && [ -e "${environment}" ]; then
+              elif echo "$yaml_list" | grep -wq "^$env$" && [ ! "${environment}" ]; then
                 allowed=true
               elif [ ! -e "${environment}" ] && echo "$env" | grep -wq "^${environment}$"; then
                 allowed=true
