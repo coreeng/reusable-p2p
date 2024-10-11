@@ -104,7 +104,7 @@ jobs:
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
           token_format: access_token
-          access_token_lifetime: 3600s
+          access_token_lifetime: 600s
 
       - name: Setup Google Cloud SDK
         id: setup-gcloud
@@ -147,7 +147,7 @@ jobs:
 
       - name: Install iapc
         uses: jaxxstorm/action-install-gh-release@v1.10.0
-        with: # Grab the latest version
+        with:
           repo: coreeng/iapc
           tag: v0.1.8
           extension-matching: 'disable'
