@@ -145,12 +145,23 @@ jobs:
             printf '%s\n' $i >> $GITHUB_ENV
           done
 
+      - name: Install iapc
+        uses: jaxxstorm/action-install-gh-release@v1.10.0
+        with:
+          repo: coreeng/iapc
+          tag: v0.1.8
+          extension-matching: 'disable'
+          rename-to: iapc
+          chmod: 755
+
       - name: Run Command
         id: run-command
         if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         working-directory: ${{ inputs.working-directory }}
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         run: |
-          nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
+          nohup sh -c "iapc to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}" &
           sleep 4
           kubectl cluster-info
           make ${{ inputs.command }}
