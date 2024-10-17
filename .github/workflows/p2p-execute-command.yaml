@@ -149,7 +149,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.10.0
         with:
           repo: cedws/iapc
-          tag: v0.1.8
+          tag: v0.1.9
           extension-matching: 'disable'
           rename-to: iapc
           chmod: 755
@@ -161,7 +161,7 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         run: |
-          nohup sh -c "iapc to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}" &
+          nohup sh -c "iapc --log-level warn to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }} --zone ${{ inputs.zone }}" &
           sleep 4
           kubectl cluster-info
           make ${{ inputs.command }}
