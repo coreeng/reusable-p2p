@@ -49,7 +49,7 @@ on:
 
 jobs:
   lookup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
     env:
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
@@ -68,7 +68,7 @@ jobs:
 
   promote-image:
     name: promote-to-${{ inputs.promotion-stage }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [lookup]
     environment: ${{ inputs.dest_github_env }}
     env:

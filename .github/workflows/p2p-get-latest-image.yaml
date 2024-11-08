@@ -37,7 +37,7 @@ on:
 jobs:
   get-latest-image:
     name: get-latest-image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.get-latest-image.outputs.version }}
     environment: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}

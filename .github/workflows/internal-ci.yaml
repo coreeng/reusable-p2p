@@ -14,7 +14,7 @@ jobs:
       dry-run: true
 
   print-version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: increment-version
     steps:
       - env:

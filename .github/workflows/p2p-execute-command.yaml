@@ -54,7 +54,7 @@ on:
 jobs:
   exec:
     name: '${{ inputs.command }} (${{ inputs.github_env }})'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: ${{ inputs.github_env }}
     env:
       env_vars: ${{ secrets.env_vars }}
