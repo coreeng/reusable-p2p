@@ -26,7 +26,7 @@ on:
 
 jobs:
   publish-pkg:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.ref_type == 'tag'
     permissions:
       contents: write
@@ -42,7 +42,7 @@ jobs:
           git push origin "pkg/${{ github.ref_name }}"
 
   generate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read

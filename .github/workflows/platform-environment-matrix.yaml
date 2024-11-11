@@ -22,7 +22,7 @@ on:
 jobs:
   generate:
     name: generate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.generate-matrix.outputs.matrix }}
     steps:
@@ -34,7 +34,7 @@ jobs:
         name: Generate Matrix
         run: |
           # generate matrix
-          YAML_FILE=environments/environments.yaml 
+          YAML_FILE=environments/environments.yaml
           include_all="${{ inputs.include_all }}"
           environment="${{ inputs.environment }}"
           include_release="${{ inputs.include_release }}"
@@ -65,8 +65,8 @@ jobs:
                 allowed=true
               elif [ ! -e "${environment}" ] && echo "$env" | grep -wq "^${environment}$"; then
                 allowed=true
-              fi 
-              
+              fi
+
               if [ "${allowed}" == true ]; then
                 if [ "${include_release}" == true ]; then
                   e+="{\"environment\":\"$(yq .environment "${f}")\",\"platform\":\"$(yq .platform.vendor "${f}")\",\"release\":\"$(yq .release "${f}")\"},"
