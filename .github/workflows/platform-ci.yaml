@@ -24,7 +24,7 @@ on:
 
 jobs:
   changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       id-token: write
@@ -111,5 +111,3 @@ jobs:
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
-      
-

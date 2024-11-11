@@ -32,7 +32,7 @@ on:
 jobs:
   developer-platform:
     name: ${{ inputs.feature }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     concurrency: ${{ inputs.environment }}-${{ github.ref }}
     environment: ${{ inputs.environment }}
 
