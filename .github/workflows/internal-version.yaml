@@ -1,4 +1,3 @@
-
 name: increment-version
 
 on:
@@ -30,22 +29,22 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.setversion.outputs.patch }}
-      
+
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0  
+        fetch-depth: 0
     - name: Configure Git
       run: |
         git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"    
-        
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
     - name: Get Previous tag
       id: previoustag
       shell: bash
       run: |
-        git tag | sort -r --version-sort | head -n1 
-        echo "tag=$(git tag | sort -r --version-sort | head -n1)" >> "$GITHUB_OUTPUT" 
+        git tag | sort -r --version-sort | head -n1
+        echo "tag=$(git tag | sort -r --version-sort | head -n1)" >> "$GITHUB_OUTPUT"
       env:
         GITHUB_TOKEN: ${{ secrets.git-token }}
 
@@ -59,7 +58,7 @@ jobs:
       id: semvers
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
-        version: ${{ inputs.override != ''  && inputs.override || steps.previousversion.outputs.version }} 
+        version: ${{ inputs.override != ''  && inputs.override || steps.previousversion.outputs.version }}
 
     - name: Set bumped version in output
       id: setversion
@@ -68,7 +67,6 @@ jobs:
         echo "patch=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
         echo "minor=${{ steps.semvers.outputs.patch }}" | cut -d. -f1,2 >> "$GITHUB_OUTPUT"
         echo "major=${{ steps.semvers.outputs.patch }}" | cut -d. -f1 >> "$GITHUB_OUTPUT"
-        
 
     - name: Show the tags
       shell: bash
@@ -100,4 +98,3 @@ jobs:
       with:
         tag: v${{ steps.setversion.outputs.patch }}
         tag_exists_error: true
-

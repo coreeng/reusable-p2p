@@ -50,7 +50,6 @@ on:
         type: string
         default: '.'
 
-
 jobs:
   exec:
     name: '${{ inputs.command }} (${{ inputs.github_env }})'
@@ -87,10 +86,10 @@ jobs:
         if: ${{ inputs.optional == true }}
         working-directory: ${{ inputs.working-directory }}
         id: is_optional
-        run: |          
+        run: |
           declare -r optional_target=${{ inputs.command }}
           # match target in format: `.PHONY: <target_name>`, skip if commented out
-          if grep "^[^#]*.PHONY.*${optional_target}.*" ./Makefile; then            
+          if grep "^[^#]*.PHONY.*${optional_target}.*" ./Makefile; then
             echo "SKIP=false" >> $GITHUB_ENV
           else
             echo "WARNING: No Makefile target [$optional_target], skipping job"

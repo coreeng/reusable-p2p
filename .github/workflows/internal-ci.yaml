@@ -36,7 +36,7 @@ jobs:
     with:
       dry-run: true
     uses: ./.github/workflows/p2p-version.yaml
-    
+
   test_execute_command:
     needs: [test_version]
     uses: ./.github/workflows/p2p-execute-command.yaml
@@ -70,7 +70,7 @@ jobs:
 
   test_extended_test:
     uses: ./.github/workflows/p2p-workflow-extended-test.yaml
-    needs: [get_image_extended_test] 
+    needs: [get_image_extended_test]
     secrets:
       env_vars: |
         TEST_VARIABLE=value
