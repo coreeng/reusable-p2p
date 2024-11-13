@@ -46,10 +46,9 @@ on:
         required: false
         type: string
 
-
 jobs:
   lookup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
     env:
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
@@ -68,7 +67,7 @@ jobs:
 
   promote-image:
     name: promote-to-${{ inputs.promotion-stage }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [lookup]
     environment: ${{ inputs.dest_github_env }}
     env:
@@ -99,7 +98,7 @@ jobs:
           yq -p=json -C <<EOT
           ${{ toJSON(env) }}
           EOT
-  
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -142,7 +141,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
         with:
           install_components: beta,gke-gcloud-auth-plugin
-          
+
       - name: Setup kubeconfig
         id: setup-kubeconfig
         if: inputs.dry-run == false && inputs.connect-to-k8s == true
@@ -171,7 +170,7 @@ jobs:
           chmod +x corectl
           sudo mv corectl /usr/local/bin/
           rm corectl.tar.gz
-          
+
           corectl help
 
       - name: Decode environment variables
@@ -203,4 +202,3 @@ jobs:
           DEST_ACCESS_TOKEN: ${{ steps.auth-dest.outputs.access_token }}
         run: |
           make p2p-promote-to-${{ inputs.promotion-stage }}
-

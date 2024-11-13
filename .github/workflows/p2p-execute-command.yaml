@@ -50,11 +50,10 @@ on:
         type: string
         default: '.'
 
-
 jobs:
   exec:
     name: '${{ inputs.command }} (${{ inputs.github_env }})'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: ${{ inputs.github_env }}
     env:
       env_vars: ${{ secrets.env_vars }}
@@ -87,10 +86,10 @@ jobs:
         if: ${{ inputs.optional == true }}
         working-directory: ${{ inputs.working-directory }}
         id: is_optional
-        run: |          
+        run: |
           declare -r optional_target=${{ inputs.command }}
           # match target in format: `.PHONY: <target_name>`, skip if commented out
-          if grep "^[^#]*.PHONY.*${optional_target}.*" ./Makefile; then            
+          if grep "^[^#]*.PHONY.*${optional_target}.*" ./Makefile; then
             echo "SKIP=false" >> $GITHUB_ENV
           else
             echo "WARNING: No Makefile target [$optional_target], skipping job"
@@ -146,7 +145,7 @@ jobs:
           done
 
       - name: Install iapc
-        uses: jaxxstorm/action-install-gh-release@v1.10.0
+        uses: jaxxstorm/action-install-gh-release@v1
         with:
           repo: cedws/iapc
           tag: v0.1.9

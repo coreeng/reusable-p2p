@@ -30,15 +30,14 @@ on:
         type: string
         default: ''
 
-
 jobs:
   increment-version:
     name: increment-version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.setversion.outputs.version }}
       previous_version: ${{ steps.setversion.outputs.previous_version }}
-      
+
     steps:
     - uses: actions/checkout@v4
       with:
@@ -47,7 +46,7 @@ jobs:
     - name: Configure Git
       run: |
         git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"    
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
     - name: Get Previous tag
       id: previoustag
@@ -59,8 +58,7 @@ jobs:
         REGEX=$(echo "^${VERSION_PREFIX}([0-9]+)\.([0-9]+)\.([0-9]+)$")
         PREVIOUS_VERSION=$(git tag | sort -r --version-sort | (grep -E ${REGEX} || echo "") | head -n1 )
         [ -z "$PREVIOUS_VERSION" ] && PREVIOUS_VERSION=${VERSION_PREFIX}0.0.0
-        echo "tag=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT" 
-      
+        echo "tag=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT"
 
     - name: get previous version from tag
       id: previousversion
@@ -74,7 +72,7 @@ jobs:
       id: semvers
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
-        version: ${{ steps.previousversion.outputs.version }} 
+        version: ${{ steps.previousversion.outputs.version }}
 
     - name: get git hashes
       id: githashes
@@ -110,7 +108,7 @@ jobs:
 
         TAG=${{ steps.semvers.outputs.patch }}
         PREVIOUS_TAG=${{ steps.previousversion.outputs.version }}
- 
+
         HASH=${{ steps.githashes.outputs.current_hash }}
         LAST_TAG_HASH=${{ steps.githashes.outputs.previous_tag_hash }}
 

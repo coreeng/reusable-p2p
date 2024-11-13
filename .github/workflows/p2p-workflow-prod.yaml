@@ -1,4 +1,3 @@
-
 on:
   workflow_call:
     secrets:
@@ -30,7 +29,6 @@ on:
         type: string
         default: 'v'
 
-
 jobs:
   prod-deploy:
     name: prod-deploy
@@ -48,5 +46,3 @@ jobs:
       dry-run: ${{ inputs.dry-run }}
       working-directory: ${{ inputs.working-directory }}
       checkout-version: ${{ inputs.version-prefix }}${{ inputs.version }}
-
-

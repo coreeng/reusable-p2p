@@ -33,11 +33,10 @@ on:
         required: true
         type: string
 
-
 jobs:
   get-latest-image:
     name: get-latest-image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.get-latest-image.outputs.version }}
     environment: ${{ fromJson(inputs.environment).include[0]['deploy_env'] }}
@@ -84,6 +83,6 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: |
             [ $DRY_RUN == false ] && version=$(gcloud container images list-tags ${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME} --limit=1 --format=json )
-            [  $? -gt 0 ] && [ $DRY_RUN == false ] && echo "exiting" && exit 1
+            [ $? -gt 0 ] && [ $DRY_RUN == false ] && echo "exiting" && exit 1
             [ $DRY_RUN == true ] && version="[{\"tags\": [\"0.0.0\"]}]"
             echo "version=$(echo ${version} | jq -r '.[0].tags[0]')" >> "$GITHUB_OUTPUT"

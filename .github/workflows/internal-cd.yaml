@@ -18,7 +18,7 @@ jobs:
       generate-minor: false
 
   trigger-p2p-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [internal-version]
     env:
       ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
