@@ -1,4 +1,4 @@
-name: Developer Platform
+name: Core Platform
 
 on:
   workflow_call:
@@ -23,14 +23,14 @@ on:
         type: string
     secrets:
       cecg-registry-username:
-        description: 'The username for the GHCR registry to pull the developer-platform image from'
+        description: 'The username for the GHCR registry to pull the Core Platform image from'
         required: true
       cecg-registry-secret:
-        description: 'The secret for the GHCR registry to pull the developer-platform image from'
+        description: 'The secret for the GHCR registry to pull the Core Platform image from'
         required: true
 
 jobs:
-  developer-platform:
+  core-platform:
     name: ${{ inputs.feature }}
     runs-on: ubuntu-24.04
     concurrency: ${{ inputs.environment }}-${{ github.ref }}

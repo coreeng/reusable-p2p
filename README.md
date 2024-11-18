@@ -1,6 +1,6 @@
-# CECG Developer Platform P2P 
+# CECG Core Platform P2P 
 
-This is a reusable Github Actions P2P for CECG's Developer Platform
+This is a reusable Github Actions P2P for CECG's Core Platform
 
 ## Version 1
 
@@ -64,7 +64,7 @@ Usually you need at least two environments e.g.
 * `gcp-prod`
 
 
-For an instance of the CECG developer platform on GCP.
+For an instance of the CECG Core Platform on GCP.
 
 A single dev environment is enough for fastfeedback.
 

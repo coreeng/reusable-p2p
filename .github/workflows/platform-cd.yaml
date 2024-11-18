@@ -1,4 +1,4 @@
-name: Developer Platform CD
+name: Core Platform CD
 
 on:
   workflow_call:
