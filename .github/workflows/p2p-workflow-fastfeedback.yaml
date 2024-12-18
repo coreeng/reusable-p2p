@@ -78,7 +78,7 @@ jobs:
       working-directory: ${{ inputs.working-directory }}
 
   nft-test:
-    needs: [functional-test]
+    needs: [build]
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
@@ -94,7 +94,7 @@ jobs:
       working-directory: ${{ inputs.working-directory }}
 
   integration-test:
-    needs: [nft-test]
+    needs: [build]
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
