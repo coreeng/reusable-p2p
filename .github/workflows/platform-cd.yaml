@@ -45,27 +45,33 @@ jobs:
             environments:
               - 'environments/**'
 
-  tenants:
-    name: tenants
+  tenants-validate:
+    name: tenants-validate
+    needs: [changes]
     uses: ./.github/workflows/platform-execute-command.yaml
+    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: validate
+      name: tenants-validate
       targets: tenants-validate
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
 
   environments-validate:
-    name: environments
+    name: environments-validate
+    needs: [changes]
     uses: ./.github/workflows/platform-execute-command.yaml
+    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: validate
+      name: environments-validate
       targets: environments-validate
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
@@ -93,22 +99,24 @@ jobs:
       matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     with:
       action: features-apply
+      name: ${{ matrix.feature }}
       feature: ${{ matrix.feature }}
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
 
-  tenants-apply:
-    name: tenants-yaml
+  tenants:
+    name: tenants-apply
     uses: ./.github/workflows/platform-execute-command.yaml
-    needs: [tenants, changes]
-    if: ${{ needs.changes.outputs.environments != 'true' && needs.changes.outputs.tenants == 'true' }}
+    needs: [changes]
+    if: ${{ inputs.release_build == false && needs.changes.outputs.environments != 'true' && needs.changes.outputs.tenants == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
-      action: features-apply
-      feature: tenants-yaml
+      action: tenants-apply
+      name: tenants-apply
+      targets: tenants-apply
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}

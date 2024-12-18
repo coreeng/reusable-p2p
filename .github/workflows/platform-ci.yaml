@@ -46,26 +46,32 @@ jobs:
               - 'environments/**'
 
   tenants-validate:
-    name: tenants
+    name: tenants-validate
+    needs: [changes]
     uses: ./.github/workflows/platform-execute-command.yaml
+    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: validate
+      name: tenants-validate
       targets: tenants-validate
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
 
   environments-validate:
-    name: environments
+    name: environments-validate
+    needs: [changes]
     uses: ./.github/workflows/platform-execute-command.yaml
+    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
       action: validate
+      name: environments-validate
       targets: environments-validate
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
@@ -75,6 +81,7 @@ jobs:
     name: Matrix
     needs: [changes]
     uses: ./.github/workflows/platform-environment-feature-matrix.yaml
+    if: ${{ inputs.release_build == true || needs.changes.outputs.environments == 'true' }}
     with:
       environment: ${{ inputs.environment }}
 
@@ -92,22 +99,24 @@ jobs:
       matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     with:
       action: features-plan
+      name: ${{ matrix.feature }}
       feature: ${{ matrix.feature }}
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}
 
-  tenants-plan:
-    name: tenants-yaml
+  tenants:
+    name: tenants-plan
     uses: ./.github/workflows/platform-execute-command.yaml
-    needs: [tenants-validate, changes]
-    if: ${{  inputs.release_build == false && needs.changes.outputs.environments != 'true' && needs.changes.outputs.tenants == 'true' }}
+    needs: [changes]
+    if: ${{ inputs.release_build == false && needs.changes.outputs.environments != 'true' && needs.changes.outputs.tenants == 'true' }}
     secrets:
       cecg-registry-username: ${{ secrets.cecg-registry-username }}
       cecg-registry-secret: ${{ secrets.cecg-registry-secret }}
     with:
-      action: features-plan
-      feature: tenants-yaml
+      action: tenants-plan
+      name: tenants-plan
+      targets: tenants-plan
       environment: ${{ inputs.environment }}
       platform: ${{ inputs.platform }}
       release: ${{ inputs.release }}

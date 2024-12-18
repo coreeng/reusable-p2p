@@ -3,6 +3,9 @@ name: Core Platform
 on:
   workflow_call:
     inputs:
+      name:
+        required: true
+        type: string
       action:
         required: true
         type: string
@@ -31,7 +34,7 @@ on:
 
 jobs:
   core-platform:
-    name: ${{ inputs.feature }}
+    name: ${{ inputs.name }}
     runs-on: ubuntu-24.04
     concurrency: ${{ inputs.environment }}-${{ github.ref }}
     environment: ${{ inputs.environment }}
