@@ -134,6 +134,8 @@ jobs:
           done
 
       - name: Install iapc
+        id: install-iapc
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
         uses: jaxxstorm/action-install-gh-release@v1
         with:
           repo: cedws/iapc
@@ -142,10 +144,9 @@ jobs:
           rename-to: iapc
           chmod: 755
 
-      - name: Run Command
-        id: run-command
+      - name: Start Tunnel
+        id: start-tunnel
         if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
-        working-directory: ${{ inputs.working-directory }}
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         run: |
@@ -153,4 +154,12 @@ jobs:
           sleep 4
           kubectl config set clusters.${{ env.DPLATFORM }}.proxy-url http://localhost:57755
           kubectl cluster-info
+
+      - name: Run Command
+        id: run-command
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+        run: |
           make ${{ inputs.command }}

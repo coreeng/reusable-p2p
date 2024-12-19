@@ -171,13 +171,24 @@ jobs:
             printf '%s\n' $i >> $GITHUB_ENV
           done
 
-      - name: Tunnel
+      - name: Install iapc
+        id: install-iapc
+        if: inputs.dry-run == false && inputs.connect-to-k8s == true
+        uses: jaxxstorm/action-install-gh-release@v1
+        with:
+          repo: cedws/iapc
+          tag: v0.1.9
+          extension-matching: 'disable'
+          rename-to: iapc
+          chmod: 755
+
+      - name: Start Tunnel
         id: start-tunnel
         if: inputs.dry-run == false && inputs.connect-to-k8s == true
         env:
-          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth-source.outputs.credentials_file_path }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth-source.outputs.credentials_file_path }}
         run: |
-          nohup sh -c "while true ; do gcloud compute start-iap-tunnel ${{ env.DPLATFORM }}-bastion 3128 --local-host-port localhost:57755 --project ${{ env.PROJECT_ID }}  --zone ${{ inputs.zone }}  ; done" &
+          nohup sh -c "iapc --log-level warn to-instance ${{ env.DPLATFORM }}-bastion -p 3128 --listen 127.0.0.1:57755 --project ${{ env.PROJECT_ID }} --zone ${{ inputs.zone }}" &
           sleep 4
           kubectl config set clusters.${{ env.DPLATFORM }}.proxy-url http://localhost:57755
           kubectl cluster-info
