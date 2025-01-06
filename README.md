@@ -73,7 +73,7 @@ Defaults to false
 
 Used to specify where your makefile is. Defaults tot he root of the project.
 
-### working-directory
+### main-branch
 
 The default main branch. This is used to on p2p fast feedback to trigger promotion to extended-test, as other branches won't be promoted.
 
