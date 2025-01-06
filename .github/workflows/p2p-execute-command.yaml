@@ -3,6 +3,12 @@ on:
     secrets:
       env_vars:
         required: false
+      container_registry_user:
+        required: false
+      container_registry_pat:
+        required: false
+      container_registry_url:
+        required: false
     inputs:
       command:
         required: true
@@ -154,6 +160,15 @@ jobs:
           sleep 4
           kubectl config set clusters.${{ env.DPLATFORM }}.proxy-url http://localhost:57755
           kubectl cluster-info
+
+      - name: Login to tenant provided registry
+        env:
+          REGISTRY_USER: ${{ secrets.container_registry_user }}
+          REGISTRY_PAT: ${{ secrets.container_registry_pat }}
+          REGISTRY_URL: ${{ secrets.container_registry_url }}
+        if:  ${{ env.SKIP == 'false' && env.REGISTRY_USER && env.REGISTRY_PAT }}
+        run: |
+          echo ${{ env.REGISTRY_PAT }} | docker login ${{ env.REGISTRY_URL }} -u ${{ env.REGISTRY_USER }} --password-stdin
 
       - name: Run Command
         id: run-command

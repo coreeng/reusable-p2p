@@ -3,6 +3,12 @@ on:
     secrets:
       env_vars:
         required: false
+      container_registry_user:
+        required: false
+      container_registry_pat:
+        required: false
+      container_registry_url:
+        required: false
     inputs:
       source:
         required: false
@@ -20,6 +26,10 @@ on:
         required: false
         type: string
         default: '.'
+      region:
+        required: false
+        type: string
+        default: europe-west2
       version:
         required: false
         type: string
@@ -36,11 +46,15 @@ jobs:
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      container_registry_user: ${{ secrets.container_registry_user }}
+      container_registry_pat: ${{ secrets.container_registry_pat }}
+      container_registry_url: ${{ secrets.container_registry_url }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-prod
+      region: ${{ inputs.region }}
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}
