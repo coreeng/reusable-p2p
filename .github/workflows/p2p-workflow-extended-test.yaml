@@ -52,8 +52,8 @@ jobs:
     secrets:
       env_vars: ${{ secrets.env_vars }}
       container_registry_user: ${{ secrets.container_registry_user }}
-      container_registry_url: ${{ secrets.container_registry_url }}
       container_registry_pat: ${{ secrets.container_registry_pat }}
+      container_registry_url: ${{ secrets.container_registry_url }}
     strategy:
       matrix: ${{ fromJSON(inputs.source ) }}
       fail-fast: false
