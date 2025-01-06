@@ -3,6 +3,10 @@ on:
     secrets:
       env_vars:
         required: false
+      dockerhub_user:
+        required: false
+      dockerhub_pat:
+        required: false
     inputs:
       dry-run:
         required: false
@@ -42,14 +46,13 @@ on:
       version:
         value: ${{ inputs.version }}
 
-env:
-  REGION: ${{ inputs.region }}
-
 jobs:
   build:
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      dockerhub_user: ${{ secrets.dockerhub_user }}
+      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
@@ -59,6 +62,7 @@ jobs:
       version: ${{ inputs.version }}
       checkout-version: ${{ inputs.checkout-version }}
       dry-run: ${{ inputs.dry-run }}
+      region: ${{ inputs.region }}
       working-directory: ${{ inputs.working-directory }}
 
   functional-test:
@@ -66,11 +70,14 @@ jobs:
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      dockerhub_user: ${{ secrets.dockerhub_user }}
+      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-functional
+      region: ${{ inputs.region }}
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       checkout-version: ${{ inputs.checkout-version }}
@@ -82,11 +89,14 @@ jobs:
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      dockerhub_user: ${{ secrets.dockerhub_user }}
+      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-nft
+      region: ${{ inputs.region }}
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       checkout-version: ${{ inputs.checkout-version }}
@@ -98,12 +108,15 @@ jobs:
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      dockerhub_user: ${{ secrets.dockerhub_user }}
+      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-integration
       optional: true
+      region: ${{ inputs.region }}
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       checkout-version: ${{ inputs.checkout-version }}
@@ -116,6 +129,8 @@ jobs:
     if: success() && ( github.ref == inputs.main-branch || github.ref_type == 'tag' )
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      dockerhub_user: ${{ secrets.dockerhub_user }}
+      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
       matrix: ${{ fromJSON(inputs.destination) }}
@@ -123,6 +138,7 @@ jobs:
     with:
       source_matrix: ${{ inputs.source }}
       dest_github_env: ${{ matrix.deploy_env }}
+      region: ${{ inputs.region }}
       promotion-stage: extended-test
       version: ${{ inputs.version }}
       checkout-version: ${{ inputs.checkout-version }}

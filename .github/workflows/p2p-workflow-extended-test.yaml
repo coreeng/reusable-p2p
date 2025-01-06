@@ -3,6 +3,10 @@ on:
     secrets:
       env_vars:
         required: false
+      dockerhub_user:
+        required: false
+      dockerhub_pat:
+        required: false
     inputs:
       source:
         required: false
@@ -39,15 +43,14 @@ on:
         required: false
         type: string
 
-env:
-  REGION: ${{ inputs.region }}
-
 jobs:
   run-tests:
     uses: ./.github/workflows/p2p-execute-command.yaml
     if: success() && (github.ref == inputs.main-branch )
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      dockerhub_user: ${{ secrets.dockerhub_user }}
+      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     strategy:
       matrix: ${{ fromJSON(inputs.source ) }}
       fail-fast: false

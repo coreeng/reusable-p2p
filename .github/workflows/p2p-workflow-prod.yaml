@@ -3,6 +3,10 @@ on:
     secrets:
       env_vars:
         required: false
+      dockerhub_user:
+        required: false
+      dockerhub_pat:
+        required: false
     inputs:
       source:
         required: false
@@ -20,6 +24,10 @@ on:
         required: false
         type: string
         default: '.'
+      region:
+        required: false
+        type: string
+        default: europe-west2
       version:
         required: false
         type: string
@@ -36,11 +44,14 @@ jobs:
     uses: ./.github/workflows/p2p-execute-command.yaml
     secrets:
       env_vars: ${{ secrets.env_vars }}
+      dockerhub_user: ${{ secrets.dockerhub_user }}
+      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     strategy:
       matrix: ${{ fromJSON(inputs.source) }}
       fail-fast: false
     with:
       command: p2p-prod
+      region: ${{ inputs.region }}
       github_env: ${{ matrix.deploy_env }}
       version: ${{ inputs.version }}
       dry-run: ${{ inputs.dry-run }}

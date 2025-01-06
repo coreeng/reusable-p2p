@@ -10,7 +10,7 @@ Supported quality dates:
 
 Usage:
 
-```
+```yaml
 push:
     branches:
       - main
@@ -34,7 +34,52 @@ jobs:
     with:
       version: ${{ needs.version.outputs.version }}
 ```
+## Additional Fields
 
+In addition to the above mentioned fields there are a few optional on all jobs:
+
+
+```yaml
+fastfeedback:
+    needs: [version]
+    uses: coreeng/p2p/.github/workflows/p2p-workflow-fastfeedback.yaml@v1
+    with:
+      dry-run: false
+      working-directory: "."
+      main-branch: main
+      version-prefix: v
+    secrets:
+      dockerhub_user: ${{ secrets.DOCKERHUB_USER }}
+      dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
+      env_vars: |
+          SECRET_USER=${{ secrets.SECRET_USER }}
+          SECRET_PASSWORD=${{ secrets.SECRET_PASSWORD }}        
+```
+### secrets.env_vars
+
+This is a way you can pass secrets to be exposed as environment variables for your makefile to use. This will also ensure
+your secrets stay secret and hidden from any inputs on the CI jobs.
+
+### secrets.dockerhub_user && dockerhub_pat
+
+These will be used to authenticate to dockerhub with your own generated account. Check the documentation on how to generate these. These are optional fields but we recommend you create your own tokens since there is a rate limit on dockerhub pulls. Being logged in assures you won't share the pull pool with other tenants.
+
+### dry_run
+
+Typically used for syntax testing. Will run most jobs without actually connecting to them or calling the makefile tasks.
+Defaults to false
+
+### working-directory
+
+Used to specify where your makefile is. Defaults tot he root of the project.
+
+### working-directory
+
+The default main branch. This is used to on p2p fast feedback to trigger promotion to extended-test, as other branches won't be promoted.
+
+### version-prefix
+By default, version will be created and used assuming `v` prefix, such as `v0.25.0`. You can override this to the desired value, for example, if you have multiple projects on the same repo, since tags will be created based on this prefix.
+ 
 ### Application Versioning
 
 The `p2p-version` workflow has the following behavior:

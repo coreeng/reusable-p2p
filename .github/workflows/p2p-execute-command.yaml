@@ -3,6 +3,10 @@ on:
     secrets:
       env_vars:
         required: false
+      dockerhub_user:
+        required: false
+      dockerhub_pat:
+        required: false
     inputs:
       command:
         required: true
@@ -154,6 +158,11 @@ jobs:
           sleep 4
           kubectl config set clusters.${{ env.DPLATFORM }}.proxy-url http://localhost:57755
           kubectl cluster-info
+
+      - name: Login to dockerhub
+        if:  ${{ env.SKIP == 'false' && inputs.dockerhub_user != '' && inputs.dockerhub_pat != '' }}
+        run: |
+          echo ${{ inputs.dockerhub_pat }} | docker login -u ${{ inputs.dockerhub_user }} --password-stdin
 
       - name: Run Command
         id: run-command
