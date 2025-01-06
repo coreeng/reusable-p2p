@@ -162,9 +162,13 @@ jobs:
           kubectl cluster-info
 
       - name: Login to tenant provided registry
-        if:  ${{ env.SKIP == 'false' && secrets.container_registry_user && secrets.container_registry_pat }}
+        env:
+          REGISTRY_USER: ${{ secrets.container_registry_user }}
+          REGISTRY_PAT: ${{ secrets.container_registry_pat }}
+          REGISTRY_URL: ${{ secrets.container_registry_url }}
+        if:  ${{ env.SKIP == 'false' && env.REGISTRY_USER && env.REGISTRY_PAT }}
         run: |
-          echo ${{ secrets.container_registry_pat }} | docker login ${{ secrets.container_registry_url }} -u ${{ secrets.container_registry_user }} --password-stdin
+          echo ${{ env.REGISTRY_PAT }} | docker login ${{ env.REGISTRY_URL }} -u ${{ env.REGISTRY_USER }} --password-stdin
 
       - name: Run Command
         id: run-command
