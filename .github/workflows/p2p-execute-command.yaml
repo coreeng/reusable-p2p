@@ -7,6 +7,9 @@ on:
         required: false
       container_registry_pat:
         required: false
+      container_registry_url:
+        type: string
+        required: false
     inputs:
       command:
         required: true
@@ -160,9 +163,9 @@ jobs:
           kubectl cluster-info
 
       - name: Login to tenant provided registry
-        if:  ${{ env.SKIP == 'false' && inputs.container_registry_user != '' && inputs.container_registry_pat != '' }}
+        if:  ${{ env.SKIP == 'false' && secrets.container_registry_user != '' && secrets.container_registry_pat != '' }}
         run: |
-          echo ${{ inputs.container_registry_pat }} | docker login -u ${{ inputs.container_registry_user }} --password-stdin
+          echo ${{ secrets.container_registry_pat }} | docker login ${{ secrets.container_registry_url }} -u ${{ secrets.container_registry_user }} --password-stdin
 
       - name: Run Command
         id: run-command

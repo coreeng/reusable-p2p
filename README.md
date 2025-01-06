@@ -64,6 +64,10 @@ your secrets stay secret and hidden from any inputs on the CI jobs.
 
 These will be used to authenticate to tenant provided registry with tenant's own account. Check the documentation on how to generate these for dockerhub.
 
+### secrets.container_registry_url
+
+Tenant provided registry url. If unspecified, the default of dockerhub will be used
+
 ### dry_run
 
 Typically used for syntax testing. Will run most jobs without actually connecting to them or calling the makefile tasks.
