@@ -8,7 +8,6 @@ on:
       container_registry_pat:
         required: false
       container_registry_url:
-        type: string
         required: false
     inputs:
       source:
