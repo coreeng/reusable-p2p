@@ -3,9 +3,9 @@ on:
     secrets:
       env_vars:
         required: false
-      dockerhub_user:
+      container_registry_user:
         required: false
-      dockerhub_pat:
+      container_registry_pat:
         required: false
     inputs:
       source:
@@ -49,8 +49,8 @@ jobs:
     if: success() && (github.ref == inputs.main-branch )
     secrets:
       env_vars: ${{ secrets.env_vars }}
-      dockerhub_user: ${{ secrets.dockerhub_user }}
-      dockerhub_pat: ${{ secrets.dockerhub_pat }}
+      container_registry_user: ${{ secrets.container_registry_user }}
+      container_registry_pat: ${{ secrets.container_registry_pat }}
     strategy:
       matrix: ${{ fromJSON(inputs.source ) }}
       fail-fast: false

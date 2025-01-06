@@ -49,8 +49,8 @@ fastfeedback:
       main-branch: main
       version-prefix: v
     secrets:
-      dockerhub_user: ${{ secrets.DOCKERHUB_USER }}
-      dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
+      container_registry_user: ${{ secrets.CONTAINER_REGISTRY_USER }}
+      container_registry_pat: ${{ secrets.CONTAINER_REGISTRY_PAT }}
       env_vars: |
           SECRET_USER=${{ secrets.SECRET_USER }}
           SECRET_PASSWORD=${{ secrets.SECRET_PASSWORD }}        
@@ -60,9 +60,9 @@ fastfeedback:
 This is a way you can pass secrets to be exposed as environment variables for your makefile to use. This will also ensure
 your secrets stay secret and hidden from any inputs on the CI jobs.
 
-### secrets.dockerhub_user && dockerhub_pat
+### secrets.container_registry_user && container_registry_pat
 
-These will be used to authenticate to dockerhub with your own generated account. Check the documentation on how to generate these. These are optional fields but we recommend you create your own tokens since there is a rate limit on dockerhub pulls. Being logged in assures you won't share the pull pool with other tenants.
+These will be used to authenticate to tenant provided registry with tenant's own account. Check the documentation on how to generate these for dockerhub.
 
 ### dry_run
 
