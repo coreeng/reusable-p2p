@@ -129,8 +129,6 @@ jobs:
     if: success() && ( github.ref == inputs.main-branch || github.ref_type == 'tag' )
     secrets:
       env_vars: ${{ secrets.env_vars }}
-      dockerhub_user: ${{ secrets.dockerhub_user }}
-      dockerhub_pat: ${{ secrets.dockerhub_pat }}
     uses: ./.github/workflows/p2p-promote-image.yaml
     strategy:
       matrix: ${{ fromJSON(inputs.destination) }}
