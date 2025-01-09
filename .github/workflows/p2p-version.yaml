@@ -126,8 +126,8 @@ jobs:
         fi
         echo "previous_version=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
 
-    - name: "Output version: ${{ steps.setversion.outputs.version }}"
+    - name: "Output version: ${{ inputs.version-prefix }}${{ steps.setversion.outputs.version }}"
       id: outputversion
       shell: bash
       run: |
-        echo "Output version: ${{ steps.setversion.outputs.version }}"
+        echo "Output version: ${{ inputs.version-prefix }}${{ steps.setversion.outputs.version }}"
