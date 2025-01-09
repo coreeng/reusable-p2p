@@ -86,3 +86,9 @@ jobs:
             [ $? -gt 0 ] && [ $DRY_RUN == false ] && echo "exiting" && exit 1
             [ $DRY_RUN == true ] && version="[{\"tags\": [\"0.0.0\"]}]"
             echo "version=$(echo ${version} | jq -r '.[0].tags[0]')" >> "$GITHUB_OUTPUT"
+
+      - name: "Output version: ${{ steps.get-latest-image.outputs.version }}"
+        id: outputversion
+        shell: bash
+        run: |
+          echo "Output version: ${{ steps.get-latest-image.outputs.version }}"
