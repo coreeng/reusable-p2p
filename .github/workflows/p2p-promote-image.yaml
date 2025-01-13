@@ -52,10 +52,12 @@ jobs:
     environment: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
     env:
       REGISTRY: ${{ inputs.region }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/tenant/${{ vars.TENANT_NAME }}
+      PROJECT_ID: ${{ vars.PROJECT_ID }}
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       WORKLOAD_IDENTITY_PROVIDER: projects/${{ vars.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/p2p-${{ vars.TENANT_NAME }}/providers/p2p-${{ vars.TENANT_NAME }}
     outputs:
       source_registry: ${{ env.REGISTRY }}
+      source_project_id: ${{ env.PROJECT_ID }}
       source_service_account: ${{ env.SERVICE_ACCOUNT }}
       source_workflow_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
     steps:
@@ -83,6 +85,7 @@ jobs:
       SERVICE_ACCOUNT: p2p-${{ vars.TENANT_NAME }}@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com
       VERSION: ${{ inputs.version }}
       SOURCE_GITHUB_ENV: ${{ fromJson(inputs.source_matrix).include[0]['deploy_env'] }}
+      SOURCE_PROJECT_ID: ${{ needs.lookup.outputs.source_project_id }}
       SOURCE_REGISTRY: ${{ needs.lookup.outputs.source_registry }}
       SOURCE_SERVICE_ACCOUNT: ${{ needs.lookup.outputs.source_service_account }}
       SOURCE_WORKLOAD_IDENTITY_PROVIDER: ${{ needs.lookup.outputs.source_workflow_identity_provider }}
@@ -113,6 +116,7 @@ jobs:
           export_environment_variables: false
           workload_identity_provider: ${{ env.SOURCE_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SOURCE_SERVICE_ACCOUNT }}
+          project_id: ${{ env.SOURCE_PROJECT_ID }}
           token_format: access_token
           access_token_lifetime: 600s
 
@@ -125,6 +129,7 @@ jobs:
           export_environment_variables: false
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
+          project_id: ${{ env.PROJECT_ID }}
           token_format: access_token
           access_token_lifetime: 600s
 
@@ -133,13 +138,11 @@ jobs:
         if: inputs.dry-run == false && inputs.connect-to-k8s == true
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth-source.outputs.credentials_file_path }}
-          GOOGLE_CLOUD_PROJECT: ${{ steps.auth-source.outputs.project_id }}
         uses: google-github-actions/get-gke-credentials@v2
         with:
           context_name: gke_${{ env.PROJECT_ID }}_${{ inputs.region }}_${{ env.DPLATFORM }}
           cluster_name: ${{ env.DPLATFORM }}
           location: ${{ inputs.region }}
-          project_id: ${{ env.PROJECT_ID }}
           use_internal_ip: true
 
       - name: Setup corectl
