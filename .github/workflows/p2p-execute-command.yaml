@@ -119,7 +119,6 @@ jobs:
           context_name: gke_${{ env.PROJECT_ID }}_${{ inputs.region }}_${{ env.DPLATFORM }}
           cluster_name: ${{ env.DPLATFORM }}
           location: ${{ inputs.region }}
-          project_id: ${{ env.PROJECT_ID }}
           use_internal_ip: true
 
       - name: Login to Artifact Registry
