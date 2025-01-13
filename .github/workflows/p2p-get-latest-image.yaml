@@ -73,6 +73,7 @@ jobs:
           export_environment_variables: true
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
+          project_id: ${{ env.PROJECT_ID }}
           token_format: access_token
           access_token_lifetime: 600s
 
