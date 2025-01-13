@@ -112,6 +112,13 @@ jobs:
           token_format: access_token
           access_token_lifetime: 600s
 
+      - name: Setup Google Cloud SDK
+        id: setup-gcloud
+        if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          skip_install: true
+
       - name: Setup kubeconfig
         id: setup-kubeconfig
         if: ${{ inputs.dry-run == false && env.SKIP == 'false' }}
